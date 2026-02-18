@@ -13,6 +13,11 @@ body {
     -webkit-text-size-adjust: 100%;
 }
 
+.recipe, .index {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
 h1 { font-size: 1.5rem; margin-bottom: 0.4rem; color: #2c2c2c; }
 h2 { font-size: 1.05rem; margin-bottom: 0.5rem; color: #5a5a5a; letter-spacing: 0.02em; text-transform: uppercase; font-weight: 600; }
 
