@@ -18,7 +18,7 @@
             margin: 0 auto;
         }
         h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 1.1rem; margin-bottom: 0.5rem; text-transform: capitalize; }
+        h2 { font-size: 1.1rem; margin-bottom: 0.5rem; }
         .card {
             background: #fff;
             border-radius: 10px;
@@ -29,10 +29,10 @@
         .header-card { text-align: center; }
         .header-card .subtitle { font-size: 0.9rem; color: #666; margin-top: 0.35rem; }
         .recipe-list { list-style: none; padding-left: 0; }
-        .recipe-list li { margin-bottom: 0.3rem; }
-        .recipe-list a { color: #2563eb; text-decoration: none; }
+        .recipe-list li { margin-bottom: 0.6rem; }
+        .recipe-list a { color: #2563eb; text-decoration: none; font-weight: 500; }
         .recipe-list a:hover { text-decoration: underline; }
-        .category-name { color: #555; }
+        .recipe-desc { font-size: 0.8rem; color: #888; font-style: italic; margin-top: 0.1rem; }
     </style>
 </head>
 <body>
@@ -46,7 +46,10 @@
         <div class="card">
             <h2>🍲 Soups and Stews</h2>
             <ul class="recipe-list">
-                <li><a href="soups-and-stews/delicious-ham-and-potato-soup.html">Delicious Ham and Potato Soup</a></li>
+                <li>
+                    <a href="soups-and-stews/delicious-ham-and-potato-soup.html">Delicious Ham and Potato Soup</a>
+                    <p class="recipe-desc">A cozy, creamy comfort bowl that comes together in under an hour.</p>
+                </li>
             </ul>
         </div>
 

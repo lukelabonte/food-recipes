@@ -30,11 +30,11 @@
         .header-card .subtitle { font-size: 0.9rem; color: #666; margin-top: 0.35rem; font-style: italic; }
         ul, ol { padding-left: 1.25rem; }
         li { margin-bottom: 0.3rem; }
-        ol li { margin-bottom: 0.75rem; }
+        ol li { margin-bottom: 1rem; }
         .meta-list { list-style: none; padding-left: 0; }
         .meta-list li { color: #555; font-size: 0.9rem; }
         .meta-list li strong { color: #333; }
-        .ingredient-grams { color: #888; font-size: 0.85em; }
+        .ingredient-grams { color: #aaa; font-size: 0.8em; }
         .nutrition-list { list-style: none; padding-left: 0; }
         .nutrition-list li { font-size: 0.9rem; color: #555; }
         .nutrition-list li strong { color: #333; }
@@ -53,10 +53,22 @@
         }
         .source-card { text-align: center; font-size: 0.8rem; color: #999; }
         .source-card a { color: #999; }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 0.25rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="recipe">
+
+        <a href="../index.html" class="back-link">← All Recipes</a>
 
         <div class="card header-card">
             <h1>Delicious Ham and Potato Soup</h1>
@@ -122,7 +134,7 @@
         </div>
 
         <div class="card source-card">
-            Source: <a href="https://www.allrecipes.com/recipe/56927/delicious-ham-and-potato-soup/">allrecipes.com</a> · By ELLIE11
+            Source: <a href="https://www.allrecipes.com/recipe/56927/delicious-ham-and-potato-soup/" target="_blank" rel="noopener">allrecipes.com</a> · By ELLIE11
         </div>
 
     </div>
