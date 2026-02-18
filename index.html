@@ -3,54 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipes</title>
+    <title>Our Recipes</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: #f2f2f7;
+            color: #3d3d3d;
+            background: #faf8f5;
             padding: 1rem;
         }
         .index {
             max-width: 640px;
             margin: 0 auto;
         }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        h2 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        h1 { font-size: 1.5rem; color: #2c2c2c; }
+        h2 { font-size: 1.1rem; margin-bottom: 0.6rem; color: #5a5a5a; }
         .card {
             background: #fff;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 1.25rem;
-            margin-bottom: 0.75rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+            margin-bottom: 0.65rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
         }
-        .header-card { text-align: center; }
-        .header-card .subtitle { font-size: 0.9rem; color: #666; margin-top: 0.35rem; }
-        .recipe-list { list-style: none; padding-left: 0; }
-        .recipe-list li { margin-bottom: 0.6rem; }
-        .recipe-list a { color: #2563eb; text-decoration: none; font-weight: 500; }
-        .recipe-list a:hover { text-decoration: underline; }
-        .recipe-desc { font-size: 0.8rem; color: #888; font-style: italic; margin-top: 0.1rem; }
+        .header-card {
+            text-align: center;
+            padding: 1.75rem 1.25rem;
+        }
+        .header-card .subtitle { font-size: 0.9rem; color: #888; margin-top: 0.35rem; }
+        .section-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #aaa;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            padding-left: 0.15rem;
+        }
+
+        .recipe-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            background: #fff;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            transition: box-shadow 0.15s ease;
+        }
+        .recipe-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .recipe-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c2c2c;
+        }
+        .recipe-card-title .fav { font-size: 0.85rem; margin-right: 0.2rem; }
+        .recipe-card-desc {
+            font-size: 0.82rem;
+            color: #999;
+            font-style: italic;
+            margin-top: 0.15rem;
+        }
+        .recipe-card-meta {
+            font-size: 0.78rem;
+            color: #bbb;
+            margin-top: 0.3rem;
+        }
+        .recipe-card-meta span { margin-right: 0.75rem; }
+
+        .category-section { margin-bottom: 1rem; }
+        .category-header {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #5a5a5a;
+            margin-bottom: 0.4rem;
+            padding-left: 0.15rem;
+        }
     </style>
 </head>
 <body>
     <div class="index">
 
         <div class="card header-card">
-            <h1>Recipes</h1>
+            <h1>Our Recipes</h1>
             <p class="subtitle">1 recipe · Last updated Feb 18, 2026</p>
         </div>
 
-        <div class="card">
-            <h2>🍲 Soups and Stews</h2>
-            <ul class="recipe-list">
-                <li>
-                    <a href="soups-and-stews/delicious-ham-and-potato-soup.html">Delicious Ham and Potato Soup</a>
-                    <p class="recipe-desc">A cozy, creamy comfort bowl that comes together in under an hour.</p>
-                </li>
-            </ul>
+        <div class="category-section">
+            <p class="section-label">⭐ Favorites</p>
+            <a href="soups-and-stews/delicious-ham-and-potato-soup.html" class="recipe-card">
+                <div class="recipe-card-title"><span class="fav">⭐</span> Delicious Ham and Potato Soup</div>
+                <div class="recipe-card-desc">A cozy, creamy comfort bowl that comes together in under an hour.</div>
+                <div class="recipe-card-meta">
+                    <span>45 min</span>
+                    <span>8 servings</span>
+                    <span>Stovetop</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="category-section">
+            <p class="section-label">🍲 Soups and Stews</p>
+            <a href="soups-and-stews/delicious-ham-and-potato-soup.html" class="recipe-card">
+                <div class="recipe-card-title"><span class="fav">⭐</span> Delicious Ham and Potato Soup</div>
+                <div class="recipe-card-desc">A cozy, creamy comfort bowl that comes together in under an hour.</div>
+                <div class="recipe-card-meta">
+                    <span>45 min</span>
+                    <span>8 servings</span>
+                    <span>Stovetop</span>
+                </div>
+            </a>
         </div>
 
     </div>
