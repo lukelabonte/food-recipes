@@ -34,25 +34,23 @@
 
         /* Collapsible category headers */
         .category-section { margin-bottom: 0.75rem; }
-        .category-section details { }
         .category-section summary {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1rem;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            padding: 0.6rem 1rem;
             cursor: pointer;
             list-style: none;
             -webkit-tap-highlight-color: rgba(0,0,0,0.05);
             user-select: none;
+            border-bottom: 1px solid #e8e4df;
+            margin-bottom: 0.5rem;
         }
         .category-section summary::-webkit-details-marker { display: none; }
         .category-section summary::before {
             content: "▸";
-            font-size: 0.85rem;
-            color: #bbb;
-            margin-right: 0.6rem;
+            font-size: 0.75rem;
+            color: #ccc;
+            margin-right: 0.5rem;
             transition: transform 0.15s ease;
             display: inline-block;
         }
@@ -60,19 +58,21 @@
             transform: rotate(90deg);
         }
         .category-section summary:active { opacity: 0.8; }
-        .category-emoji { font-size: 1.2rem; margin-right: 0.5rem; }
+        .category-emoji { font-size: 1rem; margin-right: 0.4rem; }
         .category-name {
-            font-size: 1.05rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: #3d3d3d;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
         .category-count {
-            font-size: 0.78rem;
-            color: #bbb;
+            font-size: 0.75rem;
+            color: #ccc;
             margin-left: auto;
             padding-left: 0.5rem;
         }
-        .category-recipes { padding-top: 0.5rem; }
+        .category-recipes { padding-top: 0.25rem; }
 
         /* Recipe cards */
         .recipe-card {
@@ -129,17 +129,16 @@
             .recipe-card-title { font-size: 1.1rem; }
             .recipe-card-desc { font-size: 0.88rem; }
             .recipe-card-meta { font-size: 0.82rem; }
-            .category-name { font-size: 1.15rem; }
         }
 
         /* Print */
         @media print {
             body { background: #fff; padding: 0; color: #000; }
-            .card, .recipe-card, .category-section summary {
+            .card, .recipe-card {
                 box-shadow: none;
                 border: 1px solid #ddd;
             }
-            .category-section details { open: true; }
+            .category-section summary { border-bottom-color: #ccc; }
             .category-section summary::before { content: ""; margin: 0; }
             .recipe-card-chevron { display: none; }
         }
