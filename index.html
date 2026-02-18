@@ -31,17 +31,53 @@
             padding: 1.75rem 1.25rem;
         }
         .header-card .subtitle { font-size: 0.9rem; color: #888; margin-top: 0.35rem; }
-        .section-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #aaa;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            padding-left: 0.15rem;
+
+        /* Collapsible category headers */
+        .category-section { margin-bottom: 0.75rem; }
+        .category-section details { }
+        .category-section summary {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            cursor: pointer;
+            list-style: none;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+            user-select: none;
         }
+        .category-section summary::-webkit-details-marker { display: none; }
+        .category-section summary::before {
+            content: "▸";
+            font-size: 0.85rem;
+            color: #bbb;
+            margin-right: 0.6rem;
+            transition: transform 0.15s ease;
+            display: inline-block;
+        }
+        .category-section details[open] > summary::before {
+            transform: rotate(90deg);
+        }
+        .category-section summary:active { opacity: 0.8; }
+        .category-emoji { font-size: 1.2rem; margin-right: 0.5rem; }
+        .category-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #3d3d3d;
+        }
+        .category-count {
+            font-size: 0.78rem;
+            color: #bbb;
+            margin-left: auto;
+            padding-left: 0.5rem;
+        }
+        .category-recipes { padding-top: 0.5rem; }
+
+        /* Recipe cards */
         .recipe-card {
-            display: block;
+            display: flex;
+            align-items: center;
             text-decoration: none;
             color: inherit;
             background: #fff;
@@ -57,6 +93,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         .recipe-card:active { opacity: 0.85; }
+        .recipe-card-content { flex: 1; }
         .recipe-card-title {
             font-size: 1rem;
             font-weight: 600;
@@ -75,7 +112,12 @@
             margin-top: 0.3rem;
         }
         .recipe-card-meta span { margin-right: 0.75rem; }
-        .category-section { margin-bottom: 1rem; }
+        .recipe-card-chevron {
+            color: #ccc;
+            font-size: 1.2rem;
+            margin-left: 0.75rem;
+            flex-shrink: 0;
+        }
 
         /* iPad landscape and larger phones */
         @media (min-width: 768px) {
@@ -87,6 +129,19 @@
             .recipe-card-title { font-size: 1.1rem; }
             .recipe-card-desc { font-size: 0.88rem; }
             .recipe-card-meta { font-size: 0.82rem; }
+            .category-name { font-size: 1.15rem; }
+        }
+
+        /* Print */
+        @media print {
+            body { background: #fff; padding: 0; color: #000; }
+            .card, .recipe-card, .category-section summary {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            .category-section details { open: true; }
+            .category-section summary::before { content: ""; margin: 0; }
+            .recipe-card-chevron { display: none; }
         }
     </style>
 </head>
@@ -99,16 +154,27 @@
         </div>
 
         <div class="category-section">
-            <p class="section-label">🍲 Soups and Stews</p>
-            <a href="soups-and-stews/delicious-ham-and-potato-soup.html" class="recipe-card">
-                <div class="recipe-card-title">Delicious Ham and Potato Soup</div>
-                <div class="recipe-card-desc">A cozy, creamy comfort bowl that comes together in under an hour.</div>
-                <div class="recipe-card-meta">
-                    <span>45 min</span>
-                    <span>8 servings</span>
-                    <span>Stovetop</span>
+            <details open>
+                <summary>
+                    <span class="category-emoji">🍲</span>
+                    <span class="category-name">Soups and Stews</span>
+                    <span class="category-count">1 recipe</span>
+                </summary>
+                <div class="category-recipes">
+                    <a href="soups-and-stews/delicious-ham-and-potato-soup.html" class="recipe-card">
+                        <div class="recipe-card-content">
+                            <div class="recipe-card-title">Delicious Ham and Potato Soup</div>
+                            <div class="recipe-card-desc">A cozy, creamy comfort bowl that comes together in under an hour.</div>
+                            <div class="recipe-card-meta">
+                                <span>45 min</span>
+                                <span>8 servings</span>
+                                <span>Stovetop</span>
+                            </div>
+                        </div>
+                        <span class="recipe-card-chevron">›</span>
+                    </a>
                 </div>
-            </a>
+            </details>
         </div>
 
     </div>
