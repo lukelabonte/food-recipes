@@ -4,145 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Recipes</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
-            line-height: 1.6;
-            color: #3d3d3d;
-            background: #faf8f5;
-            padding: 1rem;
-            -webkit-text-size-adjust: 100%;
-        }
-        .index {
-            max-width: 640px;
-            margin: 0 auto;
-        }
-        h1 { font-size: 1.5rem; color: #2c2c2c; }
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-bottom: 0.65rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
-        }
-        .header-card {
-            text-align: center;
-            padding: 1.75rem 1.25rem;
-        }
-        .header-card .subtitle { font-size: 0.9rem; color: #888; margin-top: 0.35rem; }
-
-        /* Collapsible category headers */
-        .category-section { margin-bottom: 0.75rem; }
-        .category-section summary {
-            display: flex;
-            align-items: center;
-            padding: 0.6rem 1rem;
-            cursor: pointer;
-            list-style: none;
-            -webkit-tap-highlight-color: rgba(0,0,0,0.05);
-            user-select: none;
-            border-bottom: 1px solid #e8e4df;
-            margin-bottom: 0.5rem;
-        }
-        .category-section summary::-webkit-details-marker { display: none; }
-        .category-section summary::before {
-            content: "▸";
-            font-size: 0.75rem;
-            color: #ccc;
-            margin-right: 0.5rem;
-            transition: transform 0.15s ease;
-            display: inline-block;
-        }
-        .category-section details[open] > summary::before {
-            transform: rotate(90deg);
-        }
-        .category-section summary:active { opacity: 0.8; }
-        .category-emoji { font-size: 1rem; margin-right: 0.4rem; }
-        .category-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .category-count {
-            font-size: 0.75rem;
-            color: #ccc;
-            margin-left: auto;
-            padding-left: 0.5rem;
-        }
-        .category-recipes { padding-top: 0.25rem; }
-
-        /* Recipe cards */
-        .recipe-card {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: inherit;
-            background: #fff;
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
-            transition: box-shadow 0.15s ease;
-            -webkit-tap-highlight-color: rgba(0,0,0,0.05);
-            min-height: 44px;
-        }
-        .recipe-card:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .recipe-card:active { opacity: 0.85; }
-        .recipe-card-content { flex: 1; }
-        .recipe-card-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #2c2c2c;
-        }
-        .recipe-card-title .fav { font-size: 0.85rem; margin-right: 0.2rem; }
-        .recipe-card-desc {
-            font-size: 0.82rem;
-            color: #999;
-            font-style: italic;
-            margin-top: 0.15rem;
-        }
-        .recipe-card-meta {
-            font-size: 0.78rem;
-            color: #bbb;
-            margin-top: 0.3rem;
-        }
-        .recipe-card-meta span { margin-right: 0.75rem; }
-        .recipe-card-chevron {
-            color: #ccc;
-            font-size: 1.2rem;
-            margin-left: 0.75rem;
-            flex-shrink: 0;
-        }
-
-        /* iPad landscape and larger phones */
-        @media (min-width: 768px) {
-            body { padding: 2rem; }
-            .index { max-width: 720px; }
-            .header-card { padding: 2rem 1.5rem; }
-            h1 { font-size: 1.75rem; }
-            .recipe-card { padding: 1.25rem 1.5rem; }
-            .recipe-card-title { font-size: 1.1rem; }
-            .recipe-card-desc { font-size: 0.88rem; }
-            .recipe-card-meta { font-size: 0.82rem; }
-        }
-
-        /* Print */
-        @media print {
-            body { background: #fff; padding: 0; color: #000; }
-            .card, .recipe-card {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-            .category-section summary { border-bottom-color: #ccc; }
-            .category-section summary::before { content: ""; margin: 0; }
-            .recipe-card-chevron { display: none; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>">
+    <meta property="og:title" content="Our Recipes">
+    <meta property="og:description" content="A family recipe collection. 1 recipe and counting.">
+    <meta property="og:type" content="website">
 </head>
 <body>
     <div class="index">
@@ -150,6 +16,22 @@
         <div class="card header-card">
             <h1>Our Recipes</h1>
             <p class="subtitle">1 recipe · Last updated Feb 18, 2026</p>
+        </div>
+
+        <div class="category-section">
+            <p class="section-label">🕐 Recently Added</p>
+            <a href="soups-and-stews/delicious-ham-and-potato-soup.html" class="recipe-card">
+                <div class="recipe-card-content">
+                    <div class="recipe-card-title">Delicious Ham and Potato Soup</div>
+                    <div class="recipe-card-desc">A cozy, creamy comfort bowl that comes together in under an hour.</div>
+                    <div class="recipe-card-meta">
+                        <span>45 min</span>
+                        <span>8 servings</span>
+                        <span>Stovetop</span>
+                    </div>
+                </div>
+                <span class="recipe-card-chevron">›</span>
+            </a>
         </div>
 
         <div class="category-section">
