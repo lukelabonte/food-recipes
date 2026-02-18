@@ -12,6 +12,7 @@
             color: #3d3d3d;
             background: #faf8f5;
             padding: 1rem;
+            -webkit-text-size-adjust: 100%;
         }
         .recipe {
             max-width: 640px;
@@ -27,11 +28,9 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
         }
         .header-card { text-align: center; padding: 1.5rem 1.25rem; }
-        .header-card .favorite { font-size: 1.2rem; margin-bottom: 0.3rem; }
         .header-card .subtitle { font-size: 0.9rem; color: #888; margin-top: 0.4rem; font-style: italic; }
-        ul, ol { padding-left: 1.25rem; }
+        ul { padding-left: 1.25rem; }
         li { margin-bottom: 0.3rem; }
-        ol li { margin-bottom: 1rem; line-height: 1.65; }
         .meta-list { list-style: none; padding-left: 0; }
         .meta-list li { color: #666; font-size: 0.9rem; padding: 0.15rem 0; }
         .meta-list li strong { color: #3d3d3d; }
@@ -40,6 +39,20 @@
         .nutrition-list li { font-size: 0.9rem; color: #666; padding: 0.1rem 0; }
         .nutrition-list li strong { color: #3d3d3d; }
         .nutrition-source { font-size: 0.78rem; color: #aaa; font-style: italic; margin-top: 0.5rem; }
+
+        /* Steps — optimized for cooking */
+        .steps-card { padding: 1.25rem 1.25rem 0.75rem; }
+        .steps-card ol { padding-left: 1.5rem; }
+        .steps-card li {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+            padding: 0.75rem;
+            background: #fdfcfa;
+            border-left: 3px solid #e0d6c8;
+            border-radius: 0 8px 8px 0;
+        }
+
         .weight-card {
             background: #eef3f9;
             border: 1px solid #d6e0ed;
@@ -57,13 +70,36 @@
         .back-link {
             display: block;
             text-align: center;
-            margin-top: 0.25rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.85rem;
+            padding: 0.75rem;
+            font-size: 0.9rem;
             color: #9a7b5b;
             text-decoration: none;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.05);
         }
-        .back-link:hover { text-decoration: underline; }
+        .back-link:active { opacity: 0.6; }
+
+        /* iPad landscape and larger phones */
+        @media (min-width: 768px) {
+            body { padding: 2rem; }
+            .recipe { max-width: 720px; }
+            .card { padding: 1.5rem; margin-bottom: 0.85rem; }
+            .header-card { padding: 2rem 1.5rem; }
+            h1 { font-size: 1.75rem; }
+            .steps-card li {
+                font-size: 1.1rem;
+                line-height: 1.75;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 375px) {
+            .steps-card li {
+                font-size: 1rem;
+                padding: 0.6rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -72,7 +108,6 @@
         <a href="../index.html" class="back-link">← All Recipes</a>
 
         <div class="card header-card">
-            <div class="favorite">⭐</div>
             <h1>Delicious Ham and Potato Soup</h1>
             <p class="subtitle">A cozy, creamy comfort bowl that comes together in under an hour.</p>
         </div>
@@ -105,7 +140,7 @@
             </ul>
         </div>
 
-        <div class="card">
+        <div class="card steps-card">
             <h2>Steps</h2>
             <ol>
                 <li>Combine the potatoes, celery, onion, ham and water in a stockpot. Bring to a boil, then cook over medium heat until potatoes are tender, about 10 to 15 minutes. Stir in the chicken bouillon, salt and pepper.</li>
@@ -138,6 +173,8 @@
         <div class="card source-card">
             Source: <a href="https://www.allrecipes.com/recipe/56927/delicious-ham-and-potato-soup/" target="_blank" rel="noopener">allrecipes.com</a> · By ELLIE11
         </div>
+
+        <a href="../index.html" class="back-link">← All Recipes</a>
 
     </div>
 </body>
