@@ -10,6 +10,8 @@
     <meta property="og:title" content="Our Recipes">
     <meta property="og:description" content="A family recipe collection. 5 recipes and counting.">
     <meta property="og:type" content="website">
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js" defer></script>
+    <script src="search.js" defer></script>
 </head>
 <body>
     <div class="index">
@@ -17,8 +19,16 @@
         <div class="card header-card">
             <h1>Our Recipes</h1>
             <p class="subtitle">5 recipes · Last updated Feb 19, 2026</p>
+            <div class="search-wrapper">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+                <input type="text" id="search-input" placeholder="Search recipes..." autocomplete="off">
+                <button class="search-clear" id="search-clear" aria-label="Clear search">&times;</button>
+            </div>
         </div>
 
+        <div id="default-content">
         <div class="category-section">
             <p class="section-label">🕐 Recently Added</p>
             <a href="soups-and-stews/jamies-minestrone-soup.html" class="recipe-card">
@@ -154,6 +164,10 @@
                 </div>
             </details>
         </div>
+        </div>
+
+        <div id="search-results"></div>
+        <div id="no-results">No recipes found</div>
 
     </div>
 </body>

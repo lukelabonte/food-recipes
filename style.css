@@ -48,6 +48,74 @@ li { margin-bottom: 0.3rem; }
 }
 
 /* ===========================
+   Search
+   =========================== */
+
+.search-wrapper {
+    position: relative;
+    margin-top: 1rem;
+}
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #bbb;
+    pointer-events: none;
+}
+#search-input {
+    width: 100%;
+    padding: 0.65rem 2.25rem 0.65rem 2.25rem;
+    border: 1px solid #e0d6c8;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #3d3d3d;
+    background: #faf8f5;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    -webkit-appearance: none;
+    min-height: 44px;
+}
+#search-input::placeholder { color: #c4b8a8; }
+#search-input:focus {
+    border-color: #c4a882;
+    box-shadow: 0 0 0 3px rgba(196, 168, 130, 0.12);
+}
+.search-clear {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #bbb;
+    font-size: 1.25rem;
+    line-height: 1;
+    padding: 0.25rem;
+    border-radius: 50%;
+    display: none;
+    min-width: 28px;
+    min-height: 28px;
+    align-items: center;
+    justify-content: center;
+}
+.search-clear.visible { display: flex; }
+.search-clear:hover { color: #888; background: #f0ece6; }
+
+#search-results { display: none; }
+#no-results {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.95rem;
+    padding: 2rem 1rem;
+    display: none;
+}
+
+/* ===========================
    Back link
    =========================== */
 
@@ -329,6 +397,7 @@ li { margin-bottom: 0.3rem; }
     .recipe-card-desc { font-size: 0.88rem; }
     .recipe-card-meta { font-size: 0.82rem; }
     .category-name { font-size: 0.9rem; }
+    #search-input { font-size: 1rem; padding: 0.75rem 2.5rem; }
 }
 
 /* ===========================
@@ -368,4 +437,7 @@ li { margin-bottom: 0.3rem; }
     .category-section summary::before { content: ""; margin: 0; }
     .recipe-card { box-shadow: none; border: 1px solid #ddd; }
     .recipe-card-chevron { display: none; }
+    .search-wrapper { display: none; }
+    #search-results { display: none; }
+    #no-results { display: none; }
 }
