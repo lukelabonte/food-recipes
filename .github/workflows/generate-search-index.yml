@@ -3,6 +3,9 @@ name: Generate Search Index
 on:
   push:
     branches: [main]
+    paths:
+      - '**/*.html'
+      - 'generate_search_index.py'
 
 jobs:
   generate-index:

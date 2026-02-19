@@ -49,7 +49,7 @@
         var meta = document.createElement('div');
         meta.className = 'recipe-card-meta';
 
-        var servingsText = recipe.servings ? recipe.servings + ' servings' : '';
+        var servingsText = recipe.servings ? recipe.servings + (recipe.servings === '1' ? ' serving' : ' servings') : '';
         [recipe.time, servingsText, recipe.method].forEach(function(text) {
             if (text) {
                 var span = document.createElement('span');
@@ -104,5 +104,13 @@
         input.value = '';
         input.dispatchEvent(new Event('input'));
         input.focus();
+    });
+
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+            input.blur();
+        }
     });
 })();

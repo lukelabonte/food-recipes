@@ -3,7 +3,6 @@
 
 import json
 import os
-import re
 from html.parser import HTMLParser
 
 
@@ -14,6 +13,7 @@ class RecipeParser(HTMLParser):
         super().__init__()
         self.title = ""
         self.description = ""
+        self.subtitle = ""
         self.time = ""
         self.servings = ""
         self.method = ""
@@ -21,6 +21,7 @@ class RecipeParser(HTMLParser):
 
         # State tracking
         self._in_title = False
+        self._in_subtitle = False
         self._in_meta_list = False
         self._in_meta_li = False
         self._in_meta_strong = False
@@ -36,6 +37,10 @@ class RecipeParser(HTMLParser):
 
         if tag == "title":
             self._in_title = True
+
+        elif tag == "p":
+            if "subtitle" in attrs_dict.get("class", ""):
+                self._in_subtitle = True
 
         elif tag == "meta":
             if attrs_dict.get("property") == "og:description":
@@ -69,6 +74,9 @@ class RecipeParser(HTMLParser):
         if tag == "title":
             self._in_title = False
 
+        elif tag == "p" and self._in_subtitle:
+            self._in_subtitle = False
+
         elif tag == "ul":
             if self._in_meta_list:
                 self._in_meta_list = False
@@ -101,6 +109,9 @@ class RecipeParser(HTMLParser):
     def handle_data(self, data):
         if self._in_title:
             self.title += data
+
+        elif self._in_subtitle:
+            self.subtitle += data
 
         elif self._in_meta_strong:
             self._current_meta_label += data
@@ -145,7 +156,7 @@ def main():
 
             recipe = {
                 "title": parser.title,
-                "description": parser.description,
+                "description": parser.subtitle or parser.description,
                 "category": format_category(entry),
                 "time": parser.time,
                 "servings": parser.servings,
