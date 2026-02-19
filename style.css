@@ -164,6 +164,7 @@ li { margin-bottom: 0.3rem; }
 
 .recipe-nav {
     display: flex;
+    justify-content: center;
     gap: 0.4rem;
     padding: 0.5rem 0.75rem;
     background: rgba(255, 255, 255, 0.95);
