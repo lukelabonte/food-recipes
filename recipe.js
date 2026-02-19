@@ -80,11 +80,13 @@
         var currentOpen = null;
         var subsItems = ingredientList.querySelectorAll('li[data-subs]');
 
-        // Add a11y attributes
+        // Add a11y attributes and remove hidden (CSS handles visibility)
         subsItems.forEach(function(li) {
             li.setAttribute('tabindex', '0');
             li.setAttribute('role', 'button');
             li.setAttribute('aria-expanded', 'false');
+            var sl = li.querySelector('.sub-list');
+            if (sl) sl.removeAttribute('hidden');
         });
 
         function toggleSub(li) {
@@ -95,14 +97,11 @@
             if (currentOpen && currentOpen !== li) {
                 currentOpen.classList.remove('open');
                 currentOpen.setAttribute('aria-expanded', 'false');
-                var prevSub = currentOpen.querySelector('.sub-list');
-                if (prevSub) prevSub.hidden = true;
             }
 
             // Toggle current item
             var isOpen = li.classList.toggle('open');
             li.setAttribute('aria-expanded', String(isOpen));
-            subList.hidden = !isOpen;
             currentOpen = isOpen ? li : null;
 
             if (updateScrollPadding) updateScrollPadding();
