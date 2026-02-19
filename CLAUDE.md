@@ -14,6 +14,7 @@ food-recipes/
 ├── index.html                # Recipe index with categories and fuzzy search
 ├── style.css                 # Shared stylesheet for all pages
 ├── search.js                 # Fuse.js search logic (separate file for resilience)
+├── recipe.js                 # Pill bar nav + substitution toggle for recipe pages
 ├── recipes.json              # AUTO-GENERATED — do not edit manually
 ├── generate_search_index.py  # Generates recipes.json from recipe HTML files
 ├── .github/workflows/        # GitHub Action runs generator on every push
@@ -35,9 +36,11 @@ food-recipes/
 Every recipe page follows this structure:
 
 1. Nav bar: back link + print button
+1a. Section nav: sticky pill bar (`<nav class="recipe-nav">`) with anchor links to each card section
 2. Header card: title + subtitle (`.header-card`)
 3. Overview card: prep, cook, total time, servings, cooking method (`.meta-list`)
 4. Ingredients card: bulleted list with gram weights (`.ingredient-list`)
+4a. Ingredient substitutions: tappable inline expand via `data-subs` attribute + `.sub-list` (see Substitutions section below)
 5. Steps card: numbered steps (`.steps-card ol`)
 6. Tips card (optional): `.tips-card`
 7. Nutrition card: `.nutrition-list`
@@ -71,3 +74,25 @@ When modifying `index.html`, preserve these elements:
 - `.search-wrapper` div inside `.header-card`
 - `<div id="default-content">` wrapper around all category sections
 - `<div id="search-results">` and `<div id="no-results">` after `#default-content`
+
+## Substitutions
+
+Some ingredients have tappable substitution suggestions that expand inline. The data is baked into the HTML by Claude Web at generation time.
+
+Markup: `<li data-subs>` on the ingredient, with a `<ul class="sub-list" hidden>` containing substitution `<li>` items. Each sub has `.sub-name` (substitute + ratio) and `.sub-note` (context/calorie note).
+
+Rules for generating substitutions:
+- Only offer substitutions that preserve the dish's character
+- Never substitute core identity ingredients (primary protein, defining flavor)
+- Always include ratio/amount
+- Add context notes for flavor, texture, or calorie differences
+- Use directional calorie language ("lower calorie", "higher calorie") — no exact numbers
+- If no high-confidence substitution exists, don't add `data-subs`
+
+## Section Navigation
+
+Recipe pages have a sticky pill bar (`<nav class="recipe-nav">`) placed after the header card. It contains anchor links to each card section via `id` attributes.
+
+- `recipe.js` handles smooth-scroll and active pill highlighting via IntersectionObserver
+- Pills are included only for sections that exist: always Ingredients and Steps; Tips, Nutrition, Weight if present
+- Hides when printing
