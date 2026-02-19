@@ -1,7 +1,7 @@
 [
   {
     "title": "Basic Vanilla Pudding",
-    "description": "Creamy, old-fashioned stovetop pudding made from scratch. 4 servings · 25 min.",
+    "description": "Creamy, old-fashioned stovetop pudding made from scratch. Top it however you like.",
     "category": "Desserts",
     "time": "25 min",
     "servings": "4",
@@ -18,7 +18,7 @@
   },
   {
     "title": "Delicious Ham and Potato Soup",
-    "description": "A cozy, creamy comfort bowl that comes together in under an hour. 8 servings · 45 min.",
+    "description": "A cozy, creamy comfort bowl that comes together in under an hour.",
     "category": "Soups and Stews",
     "time": "45 min",
     "servings": "8",
@@ -40,7 +40,7 @@
   },
   {
     "title": "Jamie's Minestrone Soup",
-    "description": "A hearty, vegetable-loaded Italian soup that gets better the longer it simmers. 8 servings · 1 hr 20 min.",
+    "description": "A hearty, vegetable-loaded Italian soup that gets better the longer it simmers.",
     "category": "Soups and Stews",
     "time": "1 hr 20 min",
     "servings": "8",
@@ -70,7 +70,7 @@
   },
   {
     "title": "Quick and Easy Chicken Noodle Soup",
-    "description": "A simple, comforting chicken noodle soup for when you don't have time to make it from scratch. 6 servings · 40 min.",
+    "description": "A simple, comforting shortcut soup for when you don't have time to make it from scratch.",
     "category": "Soups and Stews",
     "time": "40 min",
     "servings": "6",
