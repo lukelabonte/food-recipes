@@ -66,7 +66,7 @@ The index page has a fuzzy search bar powered by Fuse.js (loaded from CDN). The 
 
 When modifying `index.html`, preserve these elements:
 
-- `<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js" defer>` in `<head>`
+- `<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js" defer>` in `<head>`
 - `<script src="search.js" defer>` in `<head>`
 - `.search-wrapper` div inside `.header-card`
 - `<div id="default-content">` wrapper around all category sections
