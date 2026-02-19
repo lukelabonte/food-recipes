@@ -78,30 +78,50 @@
     var ingredientList = document.querySelector('.ingredient-list');
     if (ingredientList) {
         var currentOpen = null;
+        var subsItems = ingredientList.querySelectorAll('li[data-subs]');
 
-        ingredientList.addEventListener('click', function(e) {
-            var li = e.target.closest('li[data-subs]');
-            if (!li || !ingredientList.contains(li)) return;
+        // Add a11y attributes
+        subsItems.forEach(function(li) {
+            li.setAttribute('tabindex', '0');
+            li.setAttribute('role', 'button');
+            li.setAttribute('aria-expanded', 'false');
+        });
 
-            // Don't toggle if user clicked inside the sub-list itself
-            if (e.target.closest('.sub-list')) return;
-
+        function toggleSub(li) {
             var subList = li.querySelector('.sub-list');
             if (!subList) return;
 
             // Close previously open item
             if (currentOpen && currentOpen !== li) {
                 currentOpen.classList.remove('open');
+                currentOpen.setAttribute('aria-expanded', 'false');
                 var prevSub = currentOpen.querySelector('.sub-list');
                 if (prevSub) prevSub.hidden = true;
             }
 
             // Toggle current item
             var isOpen = li.classList.toggle('open');
+            li.setAttribute('aria-expanded', String(isOpen));
             subList.hidden = !isOpen;
             currentOpen = isOpen ? li : null;
 
             if (updateScrollPadding) updateScrollPadding();
+        }
+
+        ingredientList.addEventListener('click', function(e) {
+            var li = e.target.closest('li[data-subs]');
+            if (!li || !ingredientList.contains(li)) return;
+            if (e.target.closest('.sub-list')) return;
+            toggleSub(li);
+        });
+
+        ingredientList.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            var li = e.target.closest('li[data-subs]');
+            if (!li || !ingredientList.contains(li)) return;
+            if (e.target.closest('.sub-list')) return;
+            e.preventDefault();
+            toggleSub(li);
         });
     }
 })();
