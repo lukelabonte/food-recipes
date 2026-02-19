@@ -1,4 +1,6 @@
 (function() {
+    var updateScrollPadding = null;
+
     // --- Pill bar navigation ---
     var nav = document.querySelector('.recipe-nav');
     if (nav) {
@@ -59,7 +61,7 @@
         // Ensure last section can scroll to nav position
         var recipe = nav.closest('.recipe');
         if (recipe && sections.length > 0) {
-            var updateScrollPadding = function() {
+            updateScrollPadding = function() {
                 recipe.style.paddingBottom = '0';
                 var last = sections[sections.length - 1].el;
                 var scrollNeeded = last.offsetTop - navHeight;
@@ -98,6 +100,8 @@
             var isOpen = li.classList.toggle('open');
             subList.hidden = !isOpen;
             currentOpen = isOpen ? li : null;
+
+            if (updateScrollPadding) updateScrollPadding();
         });
     }
 })();
