@@ -55,6 +55,21 @@
                 observer.observe(s.el);
             });
         }
+
+        // Ensure last section can scroll to nav position
+        var recipe = nav.closest('.recipe');
+        if (recipe && sections.length > 0) {
+            var updateScrollPadding = function() {
+                recipe.style.paddingBottom = '0';
+                var last = sections[sections.length - 1].el;
+                var scrollNeeded = last.offsetTop - navHeight;
+                var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                var deficit = scrollNeeded - maxScroll;
+                recipe.style.paddingBottom = deficit > 0 ? deficit + 'px' : '';
+            };
+            updateScrollPadding();
+            window.addEventListener('resize', updateScrollPadding);
+        }
     }
 
     // --- Ingredient substitutions ---
