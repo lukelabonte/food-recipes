@@ -56,4 +56,33 @@
             });
         }
     }
+
+    // --- Ingredient substitutions ---
+    var ingredientList = document.querySelector('.ingredient-list');
+    if (ingredientList) {
+        var currentOpen = null;
+
+        ingredientList.addEventListener('click', function(e) {
+            var li = e.target.closest('li[data-subs]');
+            if (!li || !ingredientList.contains(li)) return;
+
+            // Don't toggle if user clicked inside the sub-list itself
+            if (e.target.closest('.sub-list')) return;
+
+            var subList = li.querySelector('.sub-list');
+            if (!subList) return;
+
+            // Close previously open item
+            if (currentOpen && currentOpen !== li) {
+                currentOpen.classList.remove('open');
+                var prevSub = currentOpen.querySelector('.sub-list');
+                if (prevSub) prevSub.hidden = true;
+            }
+
+            // Toggle current item
+            var isOpen = li.classList.toggle('open');
+            subList.hidden = !isOpen;
+            currentOpen = isOpen ? li : null;
+        });
+    }
 })();
