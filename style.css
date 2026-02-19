@@ -220,6 +220,54 @@ li { margin-bottom: 0.3rem; }
 }
 .ingredient-grams { color: #bbb; font-size: 0.8em; }
 
+/* Ingredients — Substitutions */
+
+.ingredient-list li[data-subs] {
+    cursor: pointer;
+    position: relative;
+    padding-right: 2rem;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+}
+.ingredient-list li[data-subs]::after {
+    content: "⇄";
+    position: absolute;
+    right: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: #ccc;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+.ingredient-list li[data-subs]:hover::after { color: #aaa; }
+.ingredient-list li[data-subs].open {
+    background: #f5f0ea;
+}
+.ingredient-list li[data-subs].open::after {
+    color: #c4a882;
+    transform: translateY(-50%) rotate(90deg);
+}
+.sub-list {
+    list-style: none;
+    padding: 0.5rem 0 0.25rem 0.75rem;
+    margin-top: 0.4rem;
+    border-top: 1px solid #e8e4df;
+}
+.sub-list li {
+    padding: 0.3rem 0;
+    margin-bottom: 0;
+    background: none !important;
+}
+.sub-name {
+    font-size: 0.85rem;
+    color: #555;
+}
+.sub-note {
+    font-size: 0.78rem;
+    color: #aaa;
+    font-style: italic;
+    display: block;
+}
+
 /* ===========================
    Recipe — Steps (cooking-optimized)
    =========================== */
@@ -473,6 +521,8 @@ li { margin-bottom: 0.3rem; }
     .back-link { display: none; }
     .print-btn { display: none; }
     .recipe-nav { display: none; }
+    .sub-list { display: none; }
+    .ingredient-list li[data-subs]::after { display: none; }
     .nav-bar { display: none; }
     .source-footer a { color: #000; }
     .header-card .subtitle { color: #555; }
