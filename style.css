@@ -167,7 +167,9 @@ li { margin-bottom: 0.3rem; }
     justify-content: center;
     gap: 0.4rem;
     padding: 0.5rem 0.75rem;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid #e8e4df;
     margin-bottom: 0.65rem;
     position: sticky;
