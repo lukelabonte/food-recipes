@@ -518,6 +518,16 @@ li { margin-bottom: 0.3rem; }
 }
 
 /* ===========================
+   Reduced motion
+   =========================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .sub-list { transition: none; }
+    .ingredient-list li[data-subs]::after { transition: none; }
+    .recipe-nav { scroll-behavior: auto; }
+}
+
+/* ===========================
    Print
    =========================== */
 

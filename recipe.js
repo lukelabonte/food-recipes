@@ -1,5 +1,7 @@
 (function() {
     var updateScrollPadding = null;
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
 
     // --- Pill bar navigation ---
     var nav = document.querySelector('.recipe-nav');
@@ -25,7 +27,7 @@
                     if (target) {
                         e.preventDefault();
                         var top = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
-                        window.scrollTo({ top: top, behavior: 'smooth' });
+                        window.scrollTo({ top: top, behavior: scrollBehavior });
                     }
                 }
             });
@@ -43,7 +45,7 @@
                             if (sections[i].el === entry.target) {
                                 sections[i].pill.classList.add('active');
                                 currentActive = sections[i].pill;
-                                sections[i].pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                                sections[i].pill.scrollIntoView({ behavior: scrollBehavior, block: 'nearest', inline: 'nearest' });
                                 break;
                             }
                         }
