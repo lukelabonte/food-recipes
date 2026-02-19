@@ -261,7 +261,7 @@ li { margin-bottom: 0.3rem; }
     transition: max-height 0.25s ease, padding 0.25s ease, margin-top 0.25s ease;
 }
 .ingredient-list li[data-subs].open .sub-list {
-    max-height: 500px;
+    max-height: 200px;
     padding: 0.5rem 0 0.25rem 0.75rem;
     margin-top: 0.4rem;
     border-top: 1px solid #e8e4df;
