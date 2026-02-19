@@ -77,7 +77,6 @@
     // --- Ingredient substitutions ---
     var ingredientList = document.querySelector('.ingredient-list');
     if (ingredientList) {
-        var currentOpen = null;
         var subsItems = ingredientList.querySelectorAll('li[data-subs]');
 
         // Add a11y attributes and remove hidden (CSS handles visibility)
@@ -93,16 +92,8 @@
             var subList = li.querySelector('.sub-list');
             if (!subList) return;
 
-            // Close previously open item
-            if (currentOpen && currentOpen !== li) {
-                currentOpen.classList.remove('open');
-                currentOpen.setAttribute('aria-expanded', 'false');
-            }
-
-            // Toggle current item
             var isOpen = li.classList.toggle('open');
             li.setAttribute('aria-expanded', String(isOpen));
-            currentOpen = isOpen ? li : null;
 
             if (updateScrollPadding) updateScrollPadding();
         }
