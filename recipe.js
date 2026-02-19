@@ -43,6 +43,7 @@
                             if (sections[i].el === entry.target) {
                                 sections[i].pill.classList.add('active');
                                 currentActive = sections[i].pill;
+                                sections[i].pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
                                 break;
                             }
                         }
