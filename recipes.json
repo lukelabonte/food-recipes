@@ -1,0 +1,113 @@
+[
+  {
+    "title": "Basic Vanilla Pudding",
+    "description": "Creamy, old-fashioned stovetop pudding made from scratch. 4 servings · 25 min.",
+    "category": "Desserts",
+    "time": "25 min",
+    "servings": "4",
+    "method": "Stovetop",
+    "ingredients": [
+      "3 cups milk",
+      "2 egg yolks",
+      "½ cup sugar",
+      "⅓ cup flour",
+      "¼ tsp. salt",
+      "2 tsp. vanilla"
+    ],
+    "url": "desserts/basic-vanilla-pudding.html"
+  },
+  {
+    "title": "Delicious Ham and Potato Soup",
+    "description": "A cozy, creamy comfort bowl that comes together in under an hour. 8 servings · 45 min.",
+    "category": "Soups and Stews",
+    "time": "45 min",
+    "servings": "8",
+    "method": "Stovetop",
+    "ingredients": [
+      "3 1/2 cups peeled and diced potatoes",
+      "1/3 cup diced celery",
+      "1/3 cup finely chopped onion",
+      "3/4 cup diced cooked ham",
+      "3 1/4 cups water",
+      "2 tablespoons chicken bouillon granules",
+      "1/2 teaspoon salt",
+      "1 teaspoon ground white or black pepper",
+      "5 tablespoons butter",
+      "5 tablespoons all-purpose flour",
+      "2 cups milk"
+    ],
+    "url": "soups-and-stews/delicious-ham-and-potato-soup.html"
+  },
+  {
+    "title": "Jamie's Minestrone Soup",
+    "description": "A hearty, vegetable-loaded Italian soup that gets better the longer it simmers. 8 servings · 1 hr 20 min.",
+    "category": "Soups and Stews",
+    "time": "1 hr 20 min",
+    "servings": "8",
+    "method": "Stovetop",
+    "ingredients": [
+      "3 tablespoons olive oil",
+      "3 cloves garlic, chopped",
+      "2 onions, chopped",
+      "2 cups chopped celery",
+      "5 carrots, sliced",
+      "4 cups tomato sauce",
+      "2 cups chicken broth",
+      "2 cups water",
+      "½ cup red wine, optional",
+      "3 zucchinis, quartered and sliced",
+      "2 cups fresh or frozen green beans, cut into 1½-inch pieces",
+      "2 cups baby spinach, rinsed",
+      "1 cup canned kidney beans, drained",
+      "2 tablespoons chopped fresh basil",
+      "1 tablespoon chopped fresh oregano",
+      "Salt and pepper to taste",
+      "½ cup shell pasta",
+      "2 tablespoons grated Parmesan cheese, for topping",
+      "1 tablespoon olive oil, for drizzling"
+    ],
+    "url": "soups-and-stews/jamies-minestrone-soup.html"
+  },
+  {
+    "title": "Quick and Easy Chicken Noodle Soup",
+    "description": "A simple, comforting chicken noodle soup for when you don't have time to make it from scratch. 6 servings · 40 min.",
+    "category": "Soups and Stews",
+    "time": "40 min",
+    "servings": "6",
+    "method": "Stovetop",
+    "ingredients": [
+      "1 tablespoon butter",
+      "1/2 cup chopped onion",
+      "1/2 cup chopped celery",
+      "4 (14.5-ounce) cans chicken broth",
+      "1 (14.5-ounce) can vegetable broth",
+      "1/2 pound chopped cooked chicken breast",
+      "1 1/2 cups egg noodles",
+      "1 cup sliced carrots",
+      "1/2 teaspoon dried basil",
+      "1/2 teaspoon dried oregano",
+      "Salt and ground black pepper to taste"
+    ],
+    "url": "soups-and-stews/quick-and-easy-chicken-noodle-soup.html"
+  },
+  {
+    "title": "Speedy Taco Bake",
+    "description": "A beefy, cheesy taco casserole with a Bisquick crust that bakes up golden in 35 minutes.",
+    "category": "Main Dishes",
+    "time": "45 min",
+    "servings": "8–10",
+    "method": "Oven (350°F)",
+    "ingredients": [
+      "1 lb hamburger (ground beef)",
+      "½ cup chopped onion",
+      "1 pkg dry taco seasoning mix",
+      "1 can tomato sauce",
+      "1 can whole kernel corn, drained",
+      "2 cups shredded Cheddar cheese",
+      "2 cups Bisquick",
+      "1 cup milk",
+      "2 eggs"
+    ],
+    "url": "main-dishes/speedy-taco-bake.html"
+  }
+]
