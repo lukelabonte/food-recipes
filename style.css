@@ -159,6 +159,46 @@ li { margin-bottom: 0.3rem; }
 .print-btn svg { display: block; width: 18px; height: 18px; }
 
 /* ===========================
+   Recipe — Section navigation
+   =========================== */
+
+.recipe-nav {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid #e8e4df;
+    margin-bottom: 0.65rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.recipe-nav::-webkit-scrollbar { display: none; }
+.recipe-nav-pill {
+    flex-shrink: 0;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #aaa;
+    text-decoration: none;
+    background: #f5f3f0;
+    transition: color 0.15s ease, background 0.15s ease;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+}
+.recipe-nav-pill:hover { color: #888; background: #eeebe6; }
+.recipe-nav-pill.active {
+    color: #7a5f43;
+    background: #f0e8d8;
+}
+
+/* ===========================
    Recipe — Overview (no heading)
    =========================== */
 
@@ -391,6 +431,8 @@ li { margin-bottom: 0.3rem; }
     }
     .steps-card li::before { font-size: 1.3rem; top: 0.9rem; }
     .ingredient-list li { padding: 0.5rem 0.75rem; }
+    .recipe-nav { padding: 0.6rem 1rem; gap: 0.5rem; }
+    .recipe-nav-pill { font-size: 0.82rem; padding: 0.35rem 0.85rem; }
     .print-btn svg { width: 20px; height: 20px; }
     .recipe-card { padding: 1.25rem 1.5rem; }
     .recipe-card-title { font-size: 1.1rem; }
@@ -430,6 +472,7 @@ li { margin-bottom: 0.3rem; }
     .ingredient-list li:nth-child(odd) { background: #f5f5f5; }
     .back-link { display: none; }
     .print-btn { display: none; }
+    .recipe-nav { display: none; }
     .nav-bar { display: none; }
     .source-footer a { color: #000; }
     .header-card .subtitle { color: #555; }
