@@ -95,6 +95,34 @@
     "url": "main-dishes/mapo-tofu.html"
   },
   {
+    "title": "Pailin's Authentic Pad Thai",
+    "description": "The real-deal Thai street food classic with tamarind, palm sugar, and all the proper bits.",
+    "category": "Main Dishes",
+    "time": "1 hr 20 min",
+    "servings": "2",
+    "method": "Wok",
+    "ingredients": [
+      "2 eggs",
+      "2½ cups bean sprouts, loosely packed",
+      "3 cloves garlic, chopped",
+      "3 oz pressed tofu, cut into small pieces",
+      "3 tablespoons vegetable oil",
+      "3 tablespoons Thai tamarind paste",
+      "3 tablespoons sweet preserved daikon radish, chopped",
+      "35 g palm sugar, chopped (about 3 tablespoons tightly packed)",
+      "4 oz dry rice noodles, medium width, soaked in room-temperature water for 1 hour",
+      "7–10 stalks garlic chives, cut into 2-inch pieces",
+      "10 medium shrimp, peeled and deveined",
+      "1 tablespoon dried shrimp",
+      "2 tablespoons fish sauce",
+      "¼ cup roasted peanuts, roughly crushed",
+      "¼ cup shallots, thinly sliced",
+      "Dried chili flakes to taste",
+      "Lime wedges for serving"
+    ],
+    "url": "main-dishes/pailins-authentic-pad-thai.html"
+  },
+  {
     "title": "Quick and Easy Chicken Noodle Soup",
     "description": "A simple, comforting shortcut soup for when you don't have time to make it from scratch.",
     "category": "Soups and Stews",
