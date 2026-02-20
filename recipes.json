@@ -5,7 +5,7 @@
     "category": "Desserts",
     "time": "25 min",
     "servings": "4",
-    "method": "",
+    "method": "Stovetop",
     "ingredients": [
       "3 cups milk",
       "2 egg yolks",
@@ -22,7 +22,7 @@
     "category": "Soups and Stews",
     "time": "45 min",
     "servings": "8",
-    "method": "",
+    "method": "Stovetop",
     "ingredients": [
       "3 1/2 cups peeled and diced potatoes",
       "1/3 cup diced celery",
@@ -44,7 +44,7 @@
     "category": "Soups and Stews",
     "time": "1 hr 20 min",
     "servings": "8",
-    "method": "",
+    "method": "Stovetop",
     "ingredients": [
       "3 tablespoons olive oil",
       "3 cloves garlic, chopped",
@@ -74,7 +74,7 @@
     "category": "Soups and Stews",
     "time": "40 min",
     "servings": "6",
-    "method": "",
+    "method": "Stovetop",
     "ingredients": [
       "1 tablespoon butter",
       "1/2 cup chopped onion",
@@ -96,7 +96,7 @@
     "category": "Main Dishes",
     "time": "45 min",
     "servings": "8–10",
-    "method": "",
+    "method": "Oven (350°F)",
     "ingredients": [
       "1 lb hamburger (ground beef)",
       "½ cup chopped onion",
