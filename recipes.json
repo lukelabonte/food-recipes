@@ -69,6 +69,32 @@
     "url": "soups-and-stews/jamies-minestrone-soup.html"
   },
   {
+    "title": "Mapo Tofu",
+    "description": "The real-deal Sichuan classic — spicy, tongue-numbing, and absolutely not optional without rice.",
+    "category": "Main Dishes",
+    "time": "35 min",
+    "servings": "6",
+    "method": "Wok / Stovetop",
+    "ingredients": [
+      "1–2 tablespoons spicy bean sauce (doubanjiang)",
+      "1–2 fresh Thai bird chili peppers, thinly sliced",
+      "½ cup neutral oil, divided",
+      "½–1½ tablespoons Sichuan peppercorns, ground (reserve ¼ tsp for garnish)",
+      "¼ cup water",
+      "¼ teaspoon sesame oil (optional)",
+      "¼ teaspoon sugar (optional)",
+      "⅔ cup low-sodium chicken broth",
+      "1 lb silken tofu, cut into 1-inch cubes",
+      "1 scallion, finely chopped",
+      "1½ teaspoons cornstarch",
+      "3 tablespoons garlic, finely minced",
+      "3 tablespoons ginger, finely minced",
+      "6–8 dried red chilies, roughly chopped",
+      "8 oz ground pork"
+    ],
+    "url": "main-dishes/mapo-tofu.html"
+  },
+  {
     "title": "Quick and Easy Chicken Noodle Soup",
     "description": "A simple, comforting shortcut soup for when you don't have time to make it from scratch.",
     "category": "Soups and Stews",
