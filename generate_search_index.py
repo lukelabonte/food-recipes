@@ -101,7 +101,7 @@ class RecipeParser(HTMLParser):
                     self.time = value
                 elif label == "servings":
                     self.servings = value
-                elif label == "cooking method":
+                elif label in ("method", "cooking method"):
                     self.method = value
             elif self._in_ingredient_li:
                 self._in_ingredient_li = False

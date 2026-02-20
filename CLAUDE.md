@@ -17,7 +17,9 @@ food-recipes/
 ├── recipe.js                 # Pill bar nav + substitution toggle for recipe pages
 ├── recipes.json              # AUTO-GENERATED — do not edit manually
 ├── generate_search_index.py  # Generates recipes.json from recipe HTML files
-├── .github/workflows/        # Combined deploy: generates search index + deploys to Pages
+├── generate_og_images.py     # Generates og-images/ from recipe HTML files
+├── og-images/                # AUTO-GENERATED — do not edit manually
+├── .github/workflows/        # Deploy: generates search index + OG images, deploys to Pages
 ├── CLAUDE.md                 # This file
 ├── README.md
 └── <category>/               # Recipe HTML files organized by category
@@ -92,9 +94,32 @@ Rules for generating substitutions:
 
 Recipe pages have a sticky pill bar (`<nav class="recipe-nav">`) placed after the header card. It contains anchor links to each card section via `id` attributes.
 
-- `recipe.js` handles smooth-scroll, active pill highlighting (IntersectionObserver), and auto-scroll to keep the active pill visible on mobile
+- `recipe.js` handles smooth-scroll, active pill highlighting (scroll-position-based), and auto-scroll to keep the active pill visible on mobile
 - Frosted-glass backdrop blur on the sticky bar
 - Dynamic bottom padding so the last section can always scroll to the nav position
 - Pills are included only for sections that exist: always Ingredients and Steps; Tips, Nutrition, Weight if present
 - Respects `prefers-reduced-motion` (disables smooth scroll and CSS transitions)
 - Hides when printing
+
+## OG Images (Link Previews)
+
+Each page has `og:image`, `og:image:width`, `og:image:height`, and `og:url` meta tags for rich link previews in iMessage, Slack, Discord, etc.
+
+- **`og-images/` is auto-generated.** The deploy workflow runs `generate_og_images.py` on every push, commits the results, then deploys.
+- Images are 1200x630 PNGs: warm cream background, category-colored accent bar, recipe title, subtitle, and metadata.
+- `og:image` URLs must be **absolute** (e.g., `https://lukelabonte.github.io/food-recipes/og-images/recipe-name.png`).
+- New recipes need `og:image`, `og:image:width`, `og:image:height`, and `og:url` meta tags in `<head>`.
+
+## Change Impact Checklist
+
+Recipe HTML files are parsed by multiple systems. When making changes, verify these downstream effects:
+
+| When you change... | Also check... |
+|---------------------|---------------|
+| HTML label text (e.g., `<strong>` in meta-list) | `generate_search_index.py` and `generate_og_images.py` parsers match the new labels |
+| CSS for screen layout | `@media print` block in `style.css` — print styles may need parallel updates |
+| Recipe template structure (new/removed sections) | `recipe.js` (pill bar, substitution toggles), all existing recipe HTML files for consistency |
+| Adding a new recipe | `index.html` (add to category + recently added), add `og:image`/`og:url` meta tags |
+| Adding a new category | Category Emoji Map above, `CATEGORY_ACCENTS` in `generate_og_images.py`, `index.html` |
+| `index.html` structure | Preserve search UI elements (see Search section), `search.js` selectors |
+| Substitution markup | `recipe.js` toggle logic, print CSS `.sub-list` rules |
