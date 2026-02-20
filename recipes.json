@@ -39,6 +39,30 @@
     "url": "soups-and-stews/delicious-ham-and-potato-soup.html"
   },
   {
+    "title": "Double Chocolate Cookies",
+    "description": "Rich, fudgy cookies loaded with semisweet chips and dark chocolate chunks. A hit of espresso makes the chocolate sing.",
+    "category": "Desserts",
+    "time": "57 min",
+    "servings": "24",
+    "method": "Oven",
+    "ingredients": [
+      "1 cup all-purpose flour",
+      "1 cup brown sugar",
+      "1 cup chopped dark chocolate chunks",
+      "1 cup semisweet chocolate chips",
+      "1 tsp baking soda",
+      "2 large eggs",
+      "2 tsp vanilla extract",
+      "½ cup cocoa powder",
+      "½ cup granulated sugar",
+      "½ cup unsalted butter, softened",
+      "½ tsp baking powder",
+      "½ tsp espresso powder",
+      "½ tsp salt"
+    ],
+    "url": "desserts/double-chocolate-cookies.html"
+  },
+  {
     "title": "Jamie's Minestrone Soup",
     "description": "A hearty, vegetable-loaded Italian soup that gets better the longer it simmers.",
     "category": "Soups and Stews",
