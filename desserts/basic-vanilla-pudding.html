@@ -10,6 +10,7 @@
     <meta property="og:title" content="Basic Vanilla Pudding">
     <meta property="og:description" content="Creamy, old-fashioned stovetop pudding made from scratch. 4 servings · 25 min.">
     <meta property="og:type" content="article">
+    <script src="../recipe.js" defer></script>
 </head>
 <body>
     <div class="recipe">
@@ -28,7 +29,14 @@
             <p class="subtitle">Creamy, old-fashioned stovetop pudding made from scratch. Top it however you like.</p>
         </div>
 
-        <div class="card">
+        <nav class="recipe-nav">
+            <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
+            <a href="#steps" class="recipe-nav-pill">Steps</a>
+            <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
+            <a href="#weight" class="recipe-nav-pill">Weight</a>
+        </nav>
+
+        <div class="card" id="overview">
             <ul class="meta-list">
                 <li><strong>Prep:</strong> 5 min</li>
                 <li><strong>Cook:</strong> 20 min</li>
@@ -38,19 +46,37 @@
             </ul>
         </div>
 
-        <div class="card">
+        <div class="card" id="ingredients">
             <h2>Ingredients</h2>
             <ul class="ingredient-list">
-                <li>3 cups milk <span class="ingredient-grams">(732 g)</span></li>
+                <li data-subs>3 cups milk <span class="ingredient-grams">(732 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Oat milk — 1:1</span>
+                            <span class="sub-note">Dairy-free; slightly thinner, add 1 tbsp extra flour</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Coconut milk, full-fat — 1:1</span>
+                            <span class="sub-note">Richer; adds subtle coconut flavor, higher calorie</span>
+                        </li>
+                    </ul>
+                </li>
                 <li>2 egg yolks <span class="ingredient-grams">(34 g)</span></li>
                 <li>½ cup sugar <span class="ingredient-grams">(96 g)</span></li>
-                <li>⅓ cup flour <span class="ingredient-grams">(42 g)</span></li>
+                <li data-subs>⅓ cup flour <span class="ingredient-grams">(42 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Cornstarch — 2½ tbsp</span>
+                            <span class="sub-note">Silkier texture; clearer appearance; gluten-free</span>
+                        </li>
+                    </ul>
+                </li>
                 <li>¼ tsp. salt <span class="ingredient-grams">(1.5 g)</span></li>
                 <li>2 tsp. vanilla <span class="ingredient-grams">(8.5 g)</span></li>
             </ul>
         </div>
 
-        <div class="card steps-card">
+        <div class="card steps-card" id="steps">
             <h2>Steps</h2>
             <ol>
                 <li>In a medium saucepan, bring 2½ cups of the milk to a boil over medium heat.</li>
@@ -61,7 +87,7 @@
             </ol>
         </div>
 
-        <div class="card">
+        <div class="card" id="nutrition">
             <h2>Nutrition Facts</h2>
             <ul class="nutrition-list">
                 <li><strong>Calories:</strong> 277</li>
@@ -72,7 +98,7 @@
             <p class="nutrition-source">Nutrition estimated from ingredients</p>
         </div>
 
-        <div class="card weight-card">
+        <div class="card weight-card" id="weight">
             <h2>Weight Estimates</h2>
             <p><strong>Estimated uncooked weight:</strong> ~914 g</p>
             <p><strong>Estimated cooked weight:</strong> ~810 g</p>

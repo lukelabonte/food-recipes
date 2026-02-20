@@ -10,6 +10,7 @@
     <meta property="og:title" content="Quick and Easy Chicken Noodle Soup">
     <meta property="og:description" content="A simple, comforting chicken noodle soup for when you don't have time to make it from scratch. 6 servings · 40 min.">
     <meta property="og:type" content="article">
+    <script src="../recipe.js" defer></script>
 </head>
 <body>
     <div class="recipe">
@@ -28,7 +29,14 @@
             <p class="subtitle">A simple, comforting shortcut soup for when you don't have time to make it from scratch.</p>
         </div>
 
-        <div class="card">
+        <nav class="recipe-nav">
+            <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
+            <a href="#steps" class="recipe-nav-pill">Steps</a>
+            <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
+            <a href="#weight" class="recipe-nav-pill">Weight</a>
+        </nav>
+
+        <div class="card" id="overview">
             <ul class="meta-list">
                 <li><strong>Prep:</strong> 10 min</li>
                 <li><strong>Cook:</strong> 30 min</li>
@@ -38,16 +46,34 @@
             </ul>
         </div>
 
-        <div class="card">
+        <div class="card" id="ingredients">
             <h2>Ingredients</h2>
             <ul class="ingredient-list">
-                <li>1 tablespoon butter <span class="ingredient-grams">(14 g)</span></li>
+                <li data-subs>1 tablespoon butter <span class="ingredient-grams">(14 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Olive oil — 1 tbsp</span>
+                            <span class="sub-note">Dairy-free; slightly different flavor</span>
+                        </li>
+                    </ul>
+                </li>
                 <li>1/2 cup chopped onion <span class="ingredient-grams">(80 g)</span></li>
                 <li>1/2 cup chopped celery <span class="ingredient-grams">(60 g)</span></li>
                 <li>4 (14.5-ounce) cans chicken broth <span class="ingredient-grams">(1,644 g)</span></li>
                 <li>1 (14.5-ounce) can vegetable broth <span class="ingredient-grams">(411 g)</span></li>
                 <li>1/2 pound chopped cooked chicken breast <span class="ingredient-grams">(227 g)</span></li>
-                <li>1 1/2 cups egg noodles <span class="ingredient-grams">(105 g)</span></li>
+                <li data-subs>1 1/2 cups egg noodles <span class="ingredient-grams">(105 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Rotini pasta — 1:1</span>
+                            <span class="sub-note">Holds shape better in leftovers; similar calories</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Wide rice noodles — 1:1</span>
+                            <span class="sub-note">Gluten-free; cook separately to avoid starch clouding broth</span>
+                        </li>
+                    </ul>
+                </li>
                 <li>1 cup sliced carrots <span class="ingredient-grams">(128 g)</span></li>
                 <li>1/2 teaspoon dried basil <span class="ingredient-grams">(1 g)</span></li>
                 <li>1/2 teaspoon dried oregano <span class="ingredient-grams">(1 g)</span></li>
@@ -55,7 +81,7 @@
             </ul>
         </div>
 
-        <div class="card steps-card">
+        <div class="card steps-card" id="steps">
             <h2>Steps</h2>
             <ol>
                 <li>Melt butter in a large pot over medium heat. Add onion and celery and cook until just tender, about 5 minutes.</li>
@@ -65,7 +91,7 @@
             </ol>
         </div>
 
-        <div class="card">
+        <div class="card" id="nutrition">
             <h2>Nutrition Facts</h2>
             <ul class="nutrition-list">
                 <li><strong>Calories:</strong> 162</li>
@@ -85,7 +111,7 @@
             <p class="nutrition-source">Nutrition from source</p>
         </div>
 
-        <div class="card weight-card">
+        <div class="card weight-card" id="weight">
             <h2>Weight Estimates</h2>
             <p><strong>Estimated uncooked weight:</strong> ~2,671 g</p>
             <p><strong>Estimated cooked weight:</strong> ~2,350 g</p>

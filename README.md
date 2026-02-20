@@ -15,11 +15,14 @@ A family recipe collection. Each recipe is a styled HTML page hosted via GitHub 
 ## What Each Recipe Includes
 
 - Ingredients with gram equivalents for every measurement
+- Ingredient substitutions — tap an ingredient to see alternatives with ratios and notes
+- Sticky pill bar navigation for jumping between sections while cooking
 - Proofread, numbered steps optimized for reading while cooking
 - Estimated uncooked and cooked weights (conservative, for calorie tracking)
 - Nutrition info labeled as "from source" or "estimated"
 - Tips when applicable
 - Print-friendly layout
+- Accessible: keyboard navigation, screen reader support, respects reduced motion preferences
 
 ## Search
 

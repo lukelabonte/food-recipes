@@ -10,6 +10,7 @@
     <meta property="og:title" content="Jamie's Minestrone Soup">
     <meta property="og:description" content="A hearty, vegetable-loaded Italian soup that gets better the longer it simmers. 8 servings · 1 hr 20 min.">
     <meta property="og:type" content="article">
+    <script src="../recipe.js" defer></script>
 </head>
 <body>
     <div class="recipe">
@@ -28,7 +29,14 @@
             <p class="subtitle">A hearty, vegetable-loaded Italian soup that gets better the longer it simmers.</p>
         </div>
 
-        <div class="card">
+        <nav class="recipe-nav">
+            <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
+            <a href="#steps" class="recipe-nav-pill">Steps</a>
+            <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
+            <a href="#weight" class="recipe-nav-pill">Weight</a>
+        </nav>
+
+        <div class="card" id="overview">
             <ul class="meta-list">
                 <li><strong>Prep:</strong> 35 min</li>
                 <li><strong>Cook:</strong> 45 min</li>
@@ -38,7 +46,7 @@
             </ul>
         </div>
 
-        <div class="card">
+        <div class="card" id="ingredients">
             <h2>Ingredients</h2>
             <ul class="ingredient-list">
                 <li>3 tablespoons olive oil <span class="ingredient-grams">(40 g)</span></li>
@@ -47,23 +55,66 @@
                 <li>2 cups chopped celery <span class="ingredient-grams">(200 g)</span></li>
                 <li>5 carrots, sliced <span class="ingredient-grams">(375 g)</span></li>
                 <li>4 cups tomato sauce <span class="ingredient-grams">(960 g)</span></li>
-                <li>2 cups chicken broth <span class="ingredient-grams">(480 g)</span></li>
+                <li data-subs>2 cups chicken broth <span class="ingredient-grams">(480 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Vegetable broth — 1:1</span>
+                            <span class="sub-note">Makes it vegetarian; similar flavor profile</span>
+                        </li>
+                    </ul>
+                </li>
                 <li>2 cups water <span class="ingredient-grams">(480 g)</span></li>
-                <li>½ cup red wine, optional <span class="ingredient-grams">(120 g)</span></li>
+                <li data-subs>½ cup red wine, optional <span class="ingredient-grams">(120 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Balsamic vinegar, 1 tbsp + water</span>
+                            <span class="sub-note">Alcohol-free; adds similar depth and acidity</span>
+                        </li>
+                    </ul>
+                </li>
                 <li>3 zucchinis, quartered and sliced <span class="ingredient-grams">(600 g)</span></li>
                 <li>2 cups fresh or frozen green beans, cut into 1½-inch pieces <span class="ingredient-grams">(200 g)</span></li>
                 <li>2 cups baby spinach, rinsed <span class="ingredient-grams">(60 g)</span></li>
-                <li>1 cup canned kidney beans, drained <span class="ingredient-grams">(177 g)</span></li>
+                <li data-subs>1 cup canned kidney beans, drained <span class="ingredient-grams">(177 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Cannellini beans — 1:1</span>
+                            <span class="sub-note">Traditional Italian alternative; creamier texture</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Chickpeas — 1:1</span>
+                            <span class="sub-note">Heartier; slightly nutty flavor</span>
+                        </li>
+                    </ul>
+                </li>
                 <li>2 tablespoons chopped fresh basil <span class="ingredient-grams">(5 g)</span></li>
                 <li>1 tablespoon chopped fresh oregano <span class="ingredient-grams">(3 g)</span></li>
                 <li>Salt and pepper to taste</li>
-                <li>½ cup shell pasta <span class="ingredient-grams">(55 g)</span></li>
-                <li>2 tablespoons grated Parmesan cheese, for topping <span class="ingredient-grams">(20 g)</span></li>
+                <li data-subs>½ cup shell pasta <span class="ingredient-grams">(55 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Elbow macaroni — 1:1</span>
+                            <span class="sub-note">Similar size and shape; similar calories</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Gluten-free pasta — 1:1</span>
+                            <span class="sub-note">Gluten-free; cook separately to avoid starch clouding broth</span>
+                        </li>
+                    </ul>
+                </li>
+                <li data-subs>2 tablespoons grated Parmesan cheese, for topping <span class="ingredient-grams">(20 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Pecorino Romano — 1:1</span>
+                            <span class="sub-note">Sharper and tangier; traditional Italian alternative</span>
+                        </li>
+                    </ul>
+                </li>
                 <li>1 tablespoon olive oil, for drizzling <span class="ingredient-grams">(14 g)</span></li>
             </ul>
         </div>
 
-        <div class="card steps-card">
+        <div class="card steps-card" id="steps">
             <h2>Steps</h2>
             <ol>
                 <li>Heat 3 tablespoons of olive oil in a large stockpot over medium-low heat. Sauté the garlic in the hot oil until fragrant, 2 to 3 minutes.</li>
@@ -77,7 +128,7 @@
             </ol>
         </div>
 
-        <div class="card">
+        <div class="card" id="nutrition">
             <h2>Nutrition Facts</h2>
             <ul class="nutrition-list">
                 <li><strong>Calories:</strong> 228</li>
@@ -88,7 +139,7 @@
             <p class="nutrition-source">Nutrition estimated from ingredients</p>
         </div>
 
-        <div class="card weight-card">
+        <div class="card weight-card" id="weight">
             <h2>Weight Estimates</h2>
             <p><strong>Estimated uncooked weight:</strong> ~4,098 g</p>
             <p><strong>Estimated cooked weight:</strong> ~3,690 g</p>

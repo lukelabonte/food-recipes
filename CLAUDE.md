@@ -36,17 +36,16 @@ food-recipes/
 Every recipe page follows this structure:
 
 1. Nav bar: back link + print button
-1a. Section nav: sticky pill bar (`<nav class="recipe-nav">`) with anchor links to each card section
 2. Header card: title + subtitle (`.header-card`)
-3. Overview card: prep, cook, total time, servings, cooking method (`.meta-list`)
-4. Ingredients card: bulleted list with gram weights (`.ingredient-list`)
-4a. Ingredient substitutions: tappable inline expand via `data-subs` attribute + `.sub-list` (see Substitutions section below)
-5. Steps card: numbered steps (`.steps-card ol`)
-6. Tips card (optional): `.tips-card`
-7. Nutrition card: `.nutrition-list`
-8. Weight card: `.weight-card`
-9. Source footer
-10. Back link
+3. Pill bar: `<nav class="recipe-nav">` — sticky section nav with anchor pills to each card section
+4. Overview card: prep, cook, total time, servings, cooking method (`.meta-list`)
+5. Ingredients card: bulleted list with gram weights (`.ingredient-list`), some with tappable substitutions via `data-subs` + `.sub-list`
+6. Steps card: numbered steps (`.steps-card ol`)
+7. Tips card (optional): `.tips-card`
+8. Nutrition card: `.nutrition-list`
+9. Weight card: `.weight-card`
+10. Source footer
+11. Back link
 
 ## Category Emoji Map
 
@@ -77,9 +76,9 @@ When modifying `index.html`, preserve these elements:
 
 ## Substitutions
 
-Some ingredients have tappable substitution suggestions that expand inline. The data is baked into the HTML by Claude Web at generation time.
+Some ingredients have tappable substitution suggestions that expand inline. The data is baked into the HTML by Claude Web at generation time. Multiple substitutions can be open simultaneously (each toggles independently).
 
-Markup: `<li data-subs>` on the ingredient, with a `<ul class="sub-list" hidden>` containing substitution `<li>` items. Each sub has `.sub-name` (substitute + ratio) and `.sub-note` (context/calorie note).
+Markup: `<li data-subs>` on the ingredient, with a `<ul class="sub-list" hidden>` containing substitution `<li>` items. Each sub has `.sub-name` (substitute + ratio) and `.sub-note` (context/calorie note). The `hidden` attribute is a no-JS fallback — `recipe.js` removes it and CSS `max-height` handles visibility/animation.
 
 Rules for generating substitutions:
 - Only offer substitutions that preserve the dish's character
@@ -93,6 +92,9 @@ Rules for generating substitutions:
 
 Recipe pages have a sticky pill bar (`<nav class="recipe-nav">`) placed after the header card. It contains anchor links to each card section via `id` attributes.
 
-- `recipe.js` handles smooth-scroll and active pill highlighting via IntersectionObserver
+- `recipe.js` handles smooth-scroll, active pill highlighting (IntersectionObserver), and auto-scroll to keep the active pill visible on mobile
+- Frosted-glass backdrop blur on the sticky bar
+- Dynamic bottom padding so the last section can always scroll to the nav position
 - Pills are included only for sections that exist: always Ingredients and Steps; Tips, Nutrition, Weight if present
+- Respects `prefers-reduced-motion` (disables smooth scroll and CSS transitions)
 - Hides when printing
