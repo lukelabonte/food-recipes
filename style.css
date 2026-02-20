@@ -38,7 +38,12 @@ li { margin-bottom: 0.3rem; }
 
 .header-card {
     text-align: center;
-    padding: 1.5rem 1.25rem;
+    padding: 1.5rem 1.25rem 1rem;
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: none;
+    border-bottom: none;
 }
 .header-card .subtitle {
     font-size: 0.9rem;
@@ -171,6 +176,8 @@ li { margin-bottom: 0.3rem; }
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid #e8e4df;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
     margin-bottom: 0.65rem;
     position: sticky;
     top: 0;
@@ -205,9 +212,37 @@ li { margin-bottom: 0.3rem; }
    Recipe — Overview (no heading)
    =========================== */
 
-.meta-list { list-style: none; padding-left: 0; }
-.meta-list li { color: #666; font-size: 0.9rem; padding: 0.15rem 0; }
-.meta-list li strong { color: #3d3d3d; }
+.meta-list {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+}
+.meta-list li {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    background: #f7f5f2;
+    border-radius: 8px;
+    padding: 0.45rem 0.75rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #3d3d3d;
+    line-height: 1.3;
+    flex: 1 0 4.5rem;
+    max-width: 9rem;
+}
+.meta-list li strong {
+    font-size: 0.62rem;
+    font-weight: 500;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-top: 0.1rem;
+}
 
 /* ===========================
    Recipe — Ingredients
@@ -333,10 +368,49 @@ li { margin-bottom: 0.3rem; }
    Recipe — Nutrition
    =========================== */
 
-.nutrition-list { list-style: none; padding-left: 0; }
-.nutrition-list li { font-size: 0.9rem; color: #666; padding: 0.1rem 0; }
-.nutrition-list li strong { color: #3d3d3d; }
-.nutrition-source { font-size: 0.78rem; color: #aaa; font-style: italic; margin-top: 0.5rem; }
+.nutrition-list {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+}
+.nutrition-list li {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    background: #f7f5f2;
+    border-radius: 8px;
+    padding: 0.45rem 0.75rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #3d3d3d;
+    line-height: 1.3;
+    flex: 1 0 6rem;
+    max-width: 9rem;
+}
+.nutrition-list li strong {
+    font-size: 0.62rem;
+    font-weight: 500;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-top: 0.1rem;
+}
+.nutrition-list li[data-macro="calories"] { order: 0; border-bottom: 3px solid #4A9DE5; }
+.nutrition-list li[data-macro="protein"]  { order: 1; border-bottom: 3px solid #E06055; }
+.nutrition-list li[data-macro="fat"]      { order: 2; border-bottom: 3px solid #E5A83E; }
+.nutrition-list li[data-macro="carbs"]    { order: 3; border-bottom: 3px solid #5BB85B; }
+.nutrition-list::before {
+    content: "";
+    flex-basis: 100%;
+    order: 4;
+    height: 0;
+}
+.nutrition-list li:not([data-macro]) { order: 5; }
+.nutrition-source { font-size: 0.78rem; color: #aaa; font-style: italic; margin-top: 0.65rem; text-align: center; }
 
 /* ===========================
    Recipe — Weight estimates
@@ -346,11 +420,41 @@ li { margin-bottom: 0.3rem; }
     background: #eef3f9;
     border: 1px solid #d6e0ed;
 }
-.weight-card p { font-size: 0.9rem; margin-bottom: 0.2rem; }
+.weight-list {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+}
+.weight-list li {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    padding: 0.45rem 0.75rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #3d3d3d;
+    line-height: 1.3;
+    flex: 1 0 6rem;
+    max-width: 9rem;
+}
+.weight-list li strong {
+    font-size: 0.62rem;
+    font-weight: 500;
+    color: #7a8ea0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-top: 0.1rem;
+}
 .weight-card .method {
     font-size: 0.78rem;
     color: #8899aa;
-    margin-top: 0.5rem;
+    margin-top: 0.65rem;
     text-align: center;
     font-style: italic;
 }
@@ -484,7 +588,7 @@ li { margin-bottom: 0.3rem; }
     body { padding: 2rem; }
     .recipe, .index { max-width: 720px; }
     .card { padding: 1.5rem; margin-bottom: 0.85rem; }
-    .header-card { padding: 2rem 1.5rem; }
+    .header-card { padding: 2rem 1.5rem 1.25rem; margin-bottom: 0; }
     h1 { font-size: 1.75rem; }
     .steps-card li {
         font-size: 1.1rem;
@@ -532,25 +636,116 @@ li { margin-bottom: 0.3rem; }
    =========================== */
 
 @media print {
-    body { background: #fff; padding: 0; color: #000; }
+    body { background: #fff; padding: 0; margin: 0; color: #000; }
+
+    /* Kill dynamic scroll padding that creates blank trailing pages */
+    .recipe { max-width: 100% !important; padding-bottom: 0 !important; margin: 0; }
+
     .card {
         box-shadow: none;
         border: 1px solid #ddd;
-        break-inside: avoid;
+        border-radius: 0;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.3rem;
     }
-    .weight-card { background: #f5f5f5; border: 1px solid #ccc; }
-    .tips-card { background: #fafafa; border: 1px solid #ddd; }
-    .steps-card li { background: none; border-left-color: #999; }
-    .steps-card li::before { color: #666; }
+
+    /* Let cards flow across pages instead of forcing page breaks */
+    .steps-card, #ingredients, #nutrition, #weight { break-inside: auto; }
+    .header-card, #overview { break-inside: avoid; }
+
+    h1 { font-size: 1.3rem; margin: 0.2rem 0; }
+    h2 { font-size: 0.95rem; margin: 0.2rem 0 0.3rem; }
+    .header-card { padding: 0.4rem 0.75rem; margin-bottom: 0; }
+    .header-card .subtitle { color: #555; font-size: 0.8rem; margin-top: 0.15rem; }
+
+    /* Overview stat blocks — compact for print */
+    .meta-list { gap: 0.3rem; }
+    .meta-list li {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+        background: #f5f5f5;
+        flex: 1 0 4rem;
+        max-width: 7rem;
+    }
+    .meta-list li strong { font-size: 0.55rem; }
+
+    /* Ingredients */
+    .ingredient-list li { padding: 0.15rem 0.4rem; font-size: 0.8rem; }
     .ingredient-list li:nth-child(odd) { background: #f5f5f5; }
+    .ingredient-list li[data-subs]::after { display: none; }
+    .ingredient-grams { font-size: 0.7rem; }
+
+    /* Substitutions — show in print with indentation */
+    .sub-list {
+        display: block !important;
+        max-height: none !important;
+        opacity: 1 !important;
+        list-style: none;
+        padding: 0.15rem 0 0.15rem 1.8rem;
+        margin: 0.15rem 0 0;
+        border-left: none;
+    }
+    .sub-list li {
+        font-size: 0.55rem;
+        color: #666;
+        padding: 0.05rem 0;
+        background: none !important;
+    }
+    .sub-list li::before {
+        content: "↳ ";
+        color: #999;
+    }
+    .sub-list .sub-name { font-weight: 500; color: #333; font-size: 0.55rem; }
+    .sub-list .sub-note { font-style: italic; color: #aaa; font-size: 0.5rem; }
+    .sub-list .sub-note::before { content: " — "; }
+
+    /* Steps */
+    .steps-card li {
+        font-size: 0.8rem;
+        line-height: 1.45;
+        margin-bottom: 0.3rem;
+        padding: 0.25rem 0.4rem 0.25rem 2.2rem;
+        background: none;
+        border-left-color: #999;
+    }
+    .steps-card li::before { color: #666; font-size: 0.85rem; left: 0.5rem; top: 0.2rem; }
+
+    /* Nutrition stat blocks — compact for print */
+    .nutrition-list { gap: 0.25rem; }
+    .nutrition-list li {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+        background: #f5f5f5;
+        flex: 1 0 3.5rem;
+        max-width: 6rem;
+        border-bottom: none;
+    }
+    .nutrition-list li strong { font-size: 0.5rem; }
+    .nutrition-list li[data-macro] { border-bottom: 2px solid #999; }
+    .nutrition-source { font-size: 0.65rem; }
+
+    /* Weight stat blocks — compact for print */
+    .weight-card { background: #f5f5f5; border: 1px solid #ccc; }
+    .weight-list { gap: 0.25rem; }
+    .weight-list li {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+        background: rgba(255, 255, 255, 0.7);
+        flex: 1 0 4rem;
+        max-width: 7rem;
+    }
+    .weight-list li strong { font-size: 0.5rem; }
+    .weight-card .method { font-size: 0.65rem; }
+    .tips-card { background: #fafafa; border: 1px solid #ddd; }
+
+    /* Hide non-print elements */
     .back-link { display: none; }
     .print-btn { display: none; }
     .recipe-nav { display: none; }
-    .sub-list { display: none; }
-    .ingredient-list li[data-subs]::after { display: none; }
     .nav-bar { display: none; }
-    .source-footer a { color: #000; }
-    .header-card .subtitle { color: #555; }
+    .source-footer { display: none; }
+
+    /* Index page */
     .category-section summary { border-bottom-color: #ccc; }
     .category-section summary::before { content: ""; margin: 0; }
     .recipe-card { box-shadow: none; border: 1px solid #ddd; }

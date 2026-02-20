@@ -30,6 +30,7 @@
         </div>
 
         <nav class="recipe-nav">
+            <a href="#overview" class="recipe-nav-pill">Overview</a>
             <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
             <a href="#steps" class="recipe-nav-pill">Steps</a>
             <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
@@ -38,11 +39,11 @@
 
         <div class="card" id="overview">
             <ul class="meta-list">
-                <li><strong>Prep:</strong> 10 min</li>
-                <li><strong>Cook:</strong> 35 min</li>
-                <li><strong>Total:</strong> 45 min</li>
-                <li><strong>Servings:</strong> 8–10</li>
-                <li><strong>Cooking Method:</strong> Oven (350°F)</li>
+                <li><strong>Prep</strong> 10 min</li>
+                <li><strong>Cook</strong> 35 min</li>
+                <li><strong>Total</strong> 45 min</li>
+                <li><strong>Servings</strong> 8–10</li>
+                <li><strong>Method</strong> Oven (350°F)</li>
             </ul>
         </div>
 
@@ -104,19 +105,21 @@
         <div class="card" id="nutrition">
             <h2>Nutrition Facts</h2>
             <ul class="nutrition-list">
-                <li><strong>Calories:</strong> ~450</li>
-                <li><strong>Protein:</strong> ~22 g</li>
-                <li><strong>Fat:</strong> ~24 g</li>
-                <li><strong>Carbohydrates:</strong> ~36 g</li>
+                <li data-macro="calories"><strong>Calories</strong> ~450</li>
+                <li data-macro="protein"><strong>Protein</strong> ~22 g</li>
+                <li data-macro="fat"><strong>Fat</strong> ~24 g</li>
+                <li data-macro="carbs"><strong>Carbs</strong> ~36 g</li>
             </ul>
             <p class="nutrition-source">Nutrition estimated from ingredients · Per serving (based on 8 servings)</p>
         </div>
 
         <div class="card weight-card" id="weight">
             <h2>Weight Estimates</h2>
-            <p><strong>Uncooked weight:</strong> ~1,952 g total</p>
-            <p><strong>Cooked weight:</strong> ~1,600 g total (conservative)</p>
-            <p><strong>Per serving (8):</strong> ~200 g</p>
+            <ul class="weight-list">
+                <li><strong>Uncooked</strong> ~1,952 g</li>
+                <li><strong>Cooked</strong> ~1,600 g</li>
+                <li><strong>Per Serving</strong> ~200 g</li>
+            </ul>
             <p class="method">Bisquick batter and meat mixture lose roughly 15–20% moisture during baking. Using the lower estimate to keep calorie density conservative.</p>
         </div>
 

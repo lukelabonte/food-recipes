@@ -30,6 +30,7 @@
         </div>
 
         <nav class="recipe-nav">
+            <a href="#overview" class="recipe-nav-pill">Overview</a>
             <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
             <a href="#steps" class="recipe-nav-pill">Steps</a>
             <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
@@ -38,11 +39,11 @@
 
         <div class="card" id="overview">
             <ul class="meta-list">
-                <li><strong>Prep:</strong> 35 min</li>
-                <li><strong>Cook:</strong> 45 min</li>
-                <li><strong>Total:</strong> 1 hr 20 min</li>
-                <li><strong>Servings:</strong> 8</li>
-                <li><strong>Cooking Method:</strong> Stovetop</li>
+                <li><strong>Prep</strong> 35 min</li>
+                <li><strong>Cook</strong> 45 min</li>
+                <li><strong>Total</strong> 1 hr 20 min</li>
+                <li><strong>Servings</strong> 8</li>
+                <li><strong>Method</strong> Stovetop</li>
             </ul>
         </div>
 
@@ -131,19 +132,21 @@
         <div class="card" id="nutrition">
             <h2>Nutrition Facts</h2>
             <ul class="nutrition-list">
-                <li><strong>Calories:</strong> 228</li>
-                <li><strong>Protein:</strong> 8 g</li>
-                <li><strong>Carbohydrates:</strong> 30 g</li>
-                <li><strong>Fat:</strong> 9 g</li>
+                <li data-macro="calories"><strong>Calories</strong> 228</li>
+                <li data-macro="protein"><strong>Protein</strong> 8 g</li>
+                <li data-macro="carbs"><strong>Carbs</strong> 30 g</li>
+                <li data-macro="fat"><strong>Fat</strong> 9 g</li>
             </ul>
             <p class="nutrition-source">Nutrition estimated from ingredients</p>
         </div>
 
         <div class="card weight-card" id="weight">
             <h2>Weight Estimates</h2>
-            <p><strong>Estimated uncooked weight:</strong> ~4,098 g</p>
-            <p><strong>Estimated cooked weight:</strong> ~3,690 g</p>
-            <p><strong>Per serving:</strong> ~461 g</p>
+            <ul class="weight-list">
+                <li><strong>Uncooked</strong> ~4,098 g</li>
+                <li><strong>Cooked</strong> ~3,690 g</li>
+                <li><strong>Per Serving</strong> ~461 g</li>
+            </ul>
             <p class="method">Conservative ~10% reduction for evaporation during a 30–40 min simmer of a large, liquid-heavy soup.</p>
         </div>
 

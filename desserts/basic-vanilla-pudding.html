@@ -30,6 +30,7 @@
         </div>
 
         <nav class="recipe-nav">
+            <a href="#overview" class="recipe-nav-pill">Overview</a>
             <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
             <a href="#steps" class="recipe-nav-pill">Steps</a>
             <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
@@ -38,11 +39,11 @@
 
         <div class="card" id="overview">
             <ul class="meta-list">
-                <li><strong>Prep:</strong> 5 min</li>
-                <li><strong>Cook:</strong> 20 min</li>
-                <li><strong>Total:</strong> 25 min</li>
-                <li><strong>Servings:</strong> 4</li>
-                <li><strong>Cooking Method:</strong> Stovetop</li>
+                <li><strong>Prep</strong> 5 min</li>
+                <li><strong>Cook</strong> 20 min</li>
+                <li><strong>Total</strong> 25 min</li>
+                <li><strong>Servings</strong> 4</li>
+                <li><strong>Method</strong> Stovetop</li>
             </ul>
         </div>
 
@@ -90,19 +91,21 @@
         <div class="card" id="nutrition">
             <h2>Nutrition Facts</h2>
             <ul class="nutrition-list">
-                <li><strong>Calories:</strong> 277</li>
-                <li><strong>Protein:</strong> 8.4 g</li>
-                <li><strong>Carbohydrates:</strong> 41 g</li>
-                <li><strong>Fat:</strong> 8.5 g</li>
+                <li data-macro="calories"><strong>Calories</strong> 277</li>
+                <li data-macro="protein"><strong>Protein</strong> 8.4 g</li>
+                <li data-macro="carbs"><strong>Carbs</strong> 41 g</li>
+                <li data-macro="fat"><strong>Fat</strong> 8.5 g</li>
             </ul>
             <p class="nutrition-source">Nutrition estimated from ingredients</p>
         </div>
 
         <div class="card weight-card" id="weight">
             <h2>Weight Estimates</h2>
-            <p><strong>Estimated uncooked weight:</strong> ~914 g</p>
-            <p><strong>Estimated cooked weight:</strong> ~810 g</p>
-            <p><strong>Per serving:</strong> ~203 g</p>
+            <ul class="weight-list">
+                <li><strong>Uncooked</strong> ~914 g</li>
+                <li><strong>Cooked</strong> ~810 g</li>
+                <li><strong>Per Serving</strong> ~203 g</li>
+            </ul>
             <p class="method">Conservative 11% reduction for steam evaporation during the low boil phase.</p>
         </div>
 

@@ -33,32 +33,30 @@
             });
         });
 
-        // Active pill highlighting via IntersectionObserver
-        if (typeof IntersectionObserver !== 'undefined' && sections.length > 0) {
+        // Active pill highlighting via scroll position
+        if (sections.length > 0) {
             var currentActive = null;
 
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    if (entry.isIntersecting) {
-                        if (currentActive) currentActive.classList.remove('active');
-                        for (var i = 0; i < sections.length; i++) {
-                            if (sections[i].el === entry.target) {
-                                sections[i].pill.classList.add('active');
-                                currentActive = sections[i].pill;
-                                sections[i].pill.scrollIntoView({ behavior: scrollBehavior, block: 'nearest', inline: 'nearest' });
-                                break;
-                            }
-                        }
+            function updateActivePill() {
+                var scrollY = window.pageYOffset + navHeight + 30;
+                var active = null;
+                for (var i = sections.length - 1; i >= 0; i--) {
+                    if (sections[i].el.offsetTop <= scrollY) {
+                        active = i;
+                        break;
                     }
-                });
-            }, {
-                rootMargin: '-' + (navHeight + 20) + 'px 0px -60% 0px',
-                threshold: 0
-            });
+                }
+                if (active === null) active = 0;
+                if (sections[active].pill !== currentActive) {
+                    if (currentActive) currentActive.classList.remove('active');
+                    sections[active].pill.classList.add('active');
+                    currentActive = sections[active].pill;
+                    sections[active].pill.scrollIntoView({ behavior: scrollBehavior, block: 'nearest', inline: 'nearest' });
+                }
+            }
 
-            sections.forEach(function(s) {
-                observer.observe(s.el);
-            });
+            window.addEventListener('scroll', updateActivePill, { passive: true });
+            updateActivePill();
         }
 
         // Ensure last section can scroll to nav position

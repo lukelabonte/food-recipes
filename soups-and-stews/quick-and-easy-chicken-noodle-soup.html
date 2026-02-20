@@ -30,6 +30,7 @@
         </div>
 
         <nav class="recipe-nav">
+            <a href="#overview" class="recipe-nav-pill">Overview</a>
             <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
             <a href="#steps" class="recipe-nav-pill">Steps</a>
             <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
@@ -38,11 +39,11 @@
 
         <div class="card" id="overview">
             <ul class="meta-list">
-                <li><strong>Prep:</strong> 10 min</li>
-                <li><strong>Cook:</strong> 30 min</li>
-                <li><strong>Total:</strong> 40 min</li>
-                <li><strong>Servings:</strong> 6</li>
-                <li><strong>Cooking Method:</strong> Stovetop</li>
+                <li><strong>Prep</strong> 10 min</li>
+                <li><strong>Cook</strong> 30 min</li>
+                <li><strong>Total</strong> 40 min</li>
+                <li><strong>Servings</strong> 6</li>
+                <li><strong>Method</strong> Stovetop</li>
             </ul>
         </div>
 
@@ -94,28 +95,30 @@
         <div class="card" id="nutrition">
             <h2>Nutrition Facts</h2>
             <ul class="nutrition-list">
-                <li><strong>Calories:</strong> 162</li>
-                <li><strong>Total Fat:</strong> 6 g</li>
-                <li><strong>Saturated Fat:</strong> 2 g</li>
-                <li><strong>Cholesterol:</strong> 46 mg</li>
-                <li><strong>Sodium:</strong> 1,357 mg</li>
-                <li><strong>Total Carbohydrate:</strong> 12 g</li>
-                <li><strong>Dietary Fiber:</strong> 2 g</li>
-                <li><strong>Total Sugars:</strong> 4 g</li>
-                <li><strong>Protein:</strong> 13 g</li>
-                <li><strong>Vitamin C:</strong> 2 mg</li>
-                <li><strong>Calcium:</strong> 31 mg</li>
-                <li><strong>Iron:</strong> 1 mg</li>
-                <li><strong>Potassium:</strong> 174 mg</li>
+                <li data-macro="calories"><strong>Calories</strong> 162</li>
+                <li data-macro="fat"><strong>Fat</strong> 6 g</li>
+                <li><strong>Sat. Fat</strong> 2 g</li>
+                <li><strong>Cholesterol</strong> 46 mg</li>
+                <li><strong>Sodium</strong> 1,357 mg</li>
+                <li data-macro="carbs"><strong>Carbs</strong> 12 g</li>
+                <li><strong>Fiber</strong> 2 g</li>
+                <li><strong>Sugars</strong> 4 g</li>
+                <li data-macro="protein"><strong>Protein</strong> 13 g</li>
+                <li><strong>Vitamin C</strong> 2 mg</li>
+                <li><strong>Calcium</strong> 31 mg</li>
+                <li><strong>Iron</strong> 1 mg</li>
+                <li><strong>Potassium</strong> 174 mg</li>
             </ul>
             <p class="nutrition-source">Nutrition from source</p>
         </div>
 
         <div class="card weight-card" id="weight">
             <h2>Weight Estimates</h2>
-            <p><strong>Estimated uncooked weight:</strong> ~2,671 g</p>
-            <p><strong>Estimated cooked weight:</strong> ~2,350 g</p>
-            <p><strong>Per serving:</strong> ~392 g</p>
+            <ul class="weight-list">
+                <li><strong>Uncooked</strong> ~2,671 g</li>
+                <li><strong>Cooked</strong> ~2,350 g</li>
+                <li><strong>Per Serving</strong> ~392 g</li>
+            </ul>
             <p class="method">Conservative 12% reduction for steam evaporation over ~25 min stovetop cooking.</p>
         </div>
 

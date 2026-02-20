@@ -30,6 +30,7 @@
         </div>
 
         <nav class="recipe-nav">
+            <a href="#overview" class="recipe-nav-pill">Overview</a>
             <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
             <a href="#steps" class="recipe-nav-pill">Steps</a>
             <a href="#tips" class="recipe-nav-pill">Tips</a>
@@ -39,11 +40,11 @@
 
         <div class="card" id="overview">
             <ul class="meta-list">
-                <li><strong>Prep:</strong> 20 min</li>
-                <li><strong>Cook:</strong> 25 min</li>
-                <li><strong>Total:</strong> 45 min</li>
-                <li><strong>Servings:</strong> 8</li>
-                <li><strong>Cooking Method:</strong> Stovetop</li>
+                <li><strong>Prep</strong> 20 min</li>
+                <li><strong>Cook</strong> 25 min</li>
+                <li><strong>Total</strong> 45 min</li>
+                <li><strong>Servings</strong> 8</li>
+                <li><strong>Method</strong> Stovetop</li>
             </ul>
         </div>
 
@@ -121,21 +122,23 @@
         <div class="card" id="nutrition">
             <h2>Nutrition Facts</h2>
             <ul class="nutrition-list">
-                <li><strong>Calories:</strong> 195</li>
-                <li><strong>Protein:</strong> 6.1 g</li>
-                <li><strong>Carbohydrates:</strong> 19.5 g</li>
-                <li><strong>Fat:</strong> 10.5 g</li>
-                <li><strong>Cholesterol:</strong> 29.9 mg</li>
-                <li><strong>Sodium:</strong> 393.7 mg</li>
+                <li data-macro="calories"><strong>Calories</strong> 195</li>
+                <li data-macro="protein"><strong>Protein</strong> 6.1 g</li>
+                <li data-macro="carbs"><strong>Carbs</strong> 19.5 g</li>
+                <li data-macro="fat"><strong>Fat</strong> 10.5 g</li>
+                <li><strong>Cholesterol</strong> 29.9 mg</li>
+                <li><strong>Sodium</strong> 393.7 mg</li>
             </ul>
             <p class="nutrition-source">Nutrition from source</p>
         </div>
 
         <div class="card weight-card" id="weight">
             <h2>Weight Estimates</h2>
-            <p><strong>Estimated uncooked weight:</strong> ~2,132 g</p>
-            <p><strong>Estimated cooked weight:</strong> ~1,855 g</p>
-            <p><strong>Per serving:</strong> ~232 g</p>
+            <ul class="weight-list">
+                <li><strong>Uncooked</strong> ~2,132 g</li>
+                <li><strong>Cooked</strong> ~1,855 g</li>
+                <li><strong>Per Serving</strong> ~232 g</li>
+            </ul>
             <p class="method">Conservative 13% reduction for steam evaporation over 25 min simmer.</p>
         </div>
 
