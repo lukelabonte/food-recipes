@@ -45,6 +45,11 @@ li { margin-bottom: 0.3rem; }
     box-shadow: none;
     border-bottom: none;
 }
+.index .header-card {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    margin-bottom: 0.65rem;
+}
 .header-card .subtitle {
     font-size: 0.9rem;
     color: #888;
