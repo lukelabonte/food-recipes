@@ -318,6 +318,8 @@ All content below the header card (Favorites, Recently Added, and all category `
 </div>
 ```
 
+A time-filter slider is injected by `search.js` after the search wrapper at runtime — do not add any time-filter HTML to `index.html`.
+
 After the closing `</div>` of `#default-content`:
 
 ```html
