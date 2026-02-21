@@ -78,6 +78,18 @@ When modifying `index.html`, preserve these elements:
 - `<div id="default-content">` wrapper around all category sections
 - `<div id="search-results">` and `<div id="no-results">` after `#default-content`
 
+## Time Filter
+
+The index page has a time range slider below the search bar. It filters recipe cards by total cooking time.
+
+- `search.js` builds the slider UI from `recipes.json` data at load time — no HTML changes needed
+- Dynamic range computed from actual recipe times (min to max)
+- Starts at max position (all recipes shown)
+- Combines with text search — both filters apply simultaneously
+- Filters cards in place within categories; hides empty categories
+- `generate_search_index.py` provides the `timeMinutes` numeric field in `recipes.json`
+- Hidden when printing
+
 ## Substitutions
 
 Some ingredients have tappable substitution suggestions that expand inline. The data is baked into the HTML by Claude Web at generation time. Multiple substitutions can be open simultaneously (each toggles independently).
@@ -148,4 +160,5 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | `index.html` structure | Preserve search UI elements (see Search section), `search.js` selectors |
 | Substitution markup | `recipe.js` toggle logic, print CSS `.sub-list` rules |
 | Source footer markup | `recipe.js` relocation logic, must use `class="source-footer"` |
+| Time-related fields | `generate_search_index.py` (`timeMinutes`), `search.js` filter logic |
 | Any recipe HTML convention | `claude-web-instructions.md` — keep in sync so Claude Web generates correct markup |

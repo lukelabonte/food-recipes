@@ -121,6 +121,74 @@ li { margin-bottom: 0.3rem; }
 .search-clear.visible { display: flex; }
 .search-clear:hover { color: #888; background: #f0ece6; }
 
+/* ===========================
+   Time filter slider
+   =========================== */
+
+.time-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+    padding: 0 0.25rem;
+}
+.time-filter-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+.time-filter-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #e8e0d4;
+    outline: none;
+    cursor: pointer;
+}
+.time-filter-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #c4a882;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.time-filter-slider::-webkit-slider-thumb:hover {
+    border-color: #9a7b5b;
+    box-shadow: 0 0 0 4px rgba(154, 123, 91, 0.1);
+}
+.time-filter-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #c4a882;
+    cursor: pointer;
+}
+.time-filter-slider::-moz-range-track {
+    height: 4px;
+    border-radius: 2px;
+    background: #e8e0d4;
+}
+.time-filter-value {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #999;
+    min-width: 2.5rem;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
 #search-results { display: none; }
 #no-results {
     text-align: center;
@@ -684,6 +752,7 @@ li { margin-bottom: 0.3rem; }
     #search-input { font-size: 1rem; padding: 0.75rem 2.5rem; }
     .stepper-btn { width: 32px; height: 32px; font-size: 1rem; }
     .stepper-value { font-size: 1rem; }
+    .time-filter-slider::-webkit-slider-thumb { width: 22px; height: 22px; }
 }
 
 /* ===========================
@@ -708,6 +777,7 @@ li { margin-bottom: 0.3rem; }
     .recipe-nav { scroll-behavior: auto; }
     .stepper-btn { transition: none; }
     .header-card .source-link a { transition: none; }
+    .time-filter-slider::-webkit-slider-thumb { transition: none; }
 }
 
 /* ===========================
@@ -834,6 +904,7 @@ li { margin-bottom: 0.3rem; }
     .recipe-card { box-shadow: none; border: 1px solid #ddd; }
     .recipe-card-chevron { display: none; }
     .search-wrapper { display: none; }
+    .time-filter { display: none; }
     #search-results { display: none; }
     #no-results { display: none; }
 }

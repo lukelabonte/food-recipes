@@ -5,9 +5,60 @@
     var searchResults = document.getElementById('search-results');
     var noResults = document.getElementById('no-results');
     var fuse = null;
+    var currentMaxTime = Infinity;
 
     // Bail out if elements aren't present (e.g., index.html not updated yet)
     if (!input || !defaultContent) return;
+
+    function formatTime(minutes) {
+        if (minutes >= 60) {
+            var hrs = Math.floor(minutes / 60);
+            var mins = minutes % 60;
+            return mins > 0 ? hrs + ' hr ' + mins + ' min' : hrs + ' hr';
+        }
+        return minutes + ' min';
+    }
+
+    function applyTimeFilter() {
+        var maxMinutes = currentMaxTime;
+
+        // Filter default-view cards
+        // Cards without data-time-minutes (unparseable time) are always shown
+        var sections = document.querySelectorAll('#default-content .category-section');
+        sections.forEach(function(section) {
+            var cards = section.querySelectorAll('.recipe-card');
+            var visibleCount = 0;
+            cards.forEach(function(card) {
+                var t = parseInt(card.getAttribute('data-time-minutes'), 10);
+                var hidden = !isNaN(t) && t > maxMinutes;
+                card.style.display = hidden ? 'none' : '';
+                if (!hidden) visibleCount++;
+            });
+
+            // Update category count and hide empty sections
+            var countEl = section.querySelector('.category-count');
+            if (countEl) {
+                countEl.textContent = visibleCount + (visibleCount === 1 ? ' recipe' : ' recipes');
+            }
+            // Hide section if no visible cards (but not "Recently Added")
+            var details = section.querySelector('details');
+            if (details) {
+                details.style.display = visibleCount === 0 ? 'none' : '';
+            }
+            // Handle "Recently Added" — hide section label if no visible cards
+            var sectionLabel = section.querySelector('.section-label');
+            if (sectionLabel && !details) {
+                sectionLabel.style.display = visibleCount === 0 ? 'none' : '';
+            }
+        });
+
+        // Filter search results too (if active)
+        var searchCards = searchResults.querySelectorAll('.recipe-card');
+        searchCards.forEach(function(card) {
+            var t = parseInt(card.getAttribute('data-time-minutes'), 10);
+            card.style.display = (!isNaN(t) && t > maxMinutes) ? 'none' : '';
+        });
+    }
 
     fetch('recipes.json')
         .then(function(r) { return r.json(); })
@@ -18,12 +69,73 @@
                     { name: 'description', weight: 0.25 },
                     { name: 'ingredients', weight: 0.1 },
                     { name: 'category', weight: 0.08 },
-                    { name: 'method', weight: 0.04 },
-                    { name: 'time', weight: 0.03 }
+                    { name: 'method', weight: 0.04 }
                 ],
                 threshold: 0.2,
                 ignoreLocation: true
             });
+
+            // Build time map and annotate static cards
+            var timeMap = {};
+            var minTime = Infinity;
+            var maxTime = 0;
+            recipes.forEach(function(r) {
+                if (r.timeMinutes) {
+                    timeMap[r.url] = r.timeMinutes;
+                    if (r.timeMinutes < minTime) minTime = r.timeMinutes;
+                    if (r.timeMinutes > maxTime) maxTime = r.timeMinutes;
+                }
+            });
+
+            // Annotate existing static cards with data-time-minutes
+            document.querySelectorAll('#default-content .recipe-card').forEach(function(card) {
+                var href = card.getAttribute('href');
+                if (href && timeMap[href] !== undefined) {
+                    card.setAttribute('data-time-minutes', timeMap[href]);
+                }
+            });
+
+            // Build slider if we have time data
+            if (maxTime > 0) {
+                currentMaxTime = maxTime;
+                var searchWrapper = document.querySelector('.search-wrapper');
+                if (searchWrapper) {
+                    var filter = document.createElement('div');
+                    filter.className = 'time-filter';
+
+                    var label = document.createElement('span');
+                    label.className = 'time-filter-label';
+                    label.textContent = 'Max time';
+
+                    var slider = document.createElement('input');
+                    slider.type = 'range';
+                    slider.className = 'time-filter-slider';
+                    slider.id = 'time-filter-slider';
+                    slider.min = String(minTime);
+                    slider.max = String(maxTime);
+                    slider.step = '5';
+                    slider.value = String(maxTime);
+                    slider.setAttribute('aria-label', 'Maximum cooking time');
+
+                    var valueDisplay = document.createElement('span');
+                    valueDisplay.className = 'time-filter-value';
+                    valueDisplay.textContent = 'Any';
+
+                    filter.appendChild(label);
+                    filter.appendChild(slider);
+                    filter.appendChild(valueDisplay);
+
+                    searchWrapper.parentNode.insertBefore(filter, searchWrapper.nextSibling);
+
+                    slider.addEventListener('input', function() {
+                        currentMaxTime = parseInt(slider.value, 10);
+                        var label = currentMaxTime >= maxTime ? 'Any' : formatTime(currentMaxTime);
+                        valueDisplay.textContent = label;
+                        slider.setAttribute('aria-valuetext', label);
+                        applyTimeFilter();
+                    });
+                }
+            }
         })
         .catch(function() {
             input.placeholder = 'Search coming soon...';
@@ -34,6 +146,10 @@
         var a = document.createElement('a');
         a.href = recipe.url;
         a.className = 'recipe-card';
+
+        if (recipe.timeMinutes) {
+            a.setAttribute('data-time-minutes', recipe.timeMinutes);
+        }
 
         var content = document.createElement('div');
         content.className = 'recipe-card-content';
@@ -80,6 +196,7 @@
             searchResults.style.display = 'none';
             noResults.style.display = 'none';
             searchResults.textContent = '';
+            applyTimeFilter();
             return;
         }
 
@@ -98,6 +215,7 @@
         results.forEach(function(r) {
             searchResults.appendChild(buildCard(r.item));
         });
+        applyTimeFilter();
     });
 
     clearBtn.addEventListener('click', function() {

@@ -3,6 +3,7 @@
 
 import json
 import os
+import re
 from html.parser import HTMLParser
 
 
@@ -140,6 +141,20 @@ def format_category(dirname):
     )
 
 
+def parse_time_minutes(time_str):
+    """Convert time string like '45 min' or '1 hr 20 min' to total minutes."""
+    if not time_str:
+        return None
+    minutes = 0
+    hr_match = re.search(r'(\d+)\s*hr', time_str)
+    min_match = re.search(r'(\d+)\s*min', time_str)
+    if hr_match:
+        minutes += int(hr_match.group(1)) * 60
+    if min_match:
+        minutes += int(min_match.group(1))
+    return minutes if minutes > 0 else None
+
+
 def main():
     repo_root = os.path.dirname(os.path.abspath(__file__))
     skip_dirs = {".git", "docs"}
@@ -168,6 +183,7 @@ def main():
                 "description": parser.subtitle or parser.description,
                 "category": format_category(entry),
                 "time": parser.time,
+                "timeMinutes": parse_time_minutes(parser.time),
                 "servings": parser.servings,
                 "method": parser.method,
                 "ingredients": parser.ingredients,

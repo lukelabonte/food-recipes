@@ -4,6 +4,7 @@
     "description": "Creamy, old-fashioned stovetop pudding made from scratch. Top it however you like.",
     "category": "Desserts",
     "time": "25 min",
+    "timeMinutes": 25,
     "servings": "4",
     "method": "Stovetop",
     "ingredients": [
@@ -21,6 +22,7 @@
     "description": "A cozy, creamy comfort bowl that comes together in under an hour.",
     "category": "Soups and Stews",
     "time": "45 min",
+    "timeMinutes": 45,
     "servings": "8",
     "method": "Stovetop",
     "ingredients": [
@@ -43,6 +45,7 @@
     "description": "Rich, fudgy cookies loaded with semisweet chips and dark chocolate chunks. A hit of espresso makes the chocolate sing.",
     "category": "Desserts",
     "time": "57 min",
+    "timeMinutes": 57,
     "servings": "24",
     "method": "Oven",
     "ingredients": [
@@ -67,6 +70,7 @@
     "description": "A hearty, vegetable-loaded Italian soup that gets better the longer it simmers.",
     "category": "Soups and Stews",
     "time": "1 hr 20 min",
+    "timeMinutes": 80,
     "servings": "8",
     "method": "Stovetop",
     "ingredients": [
@@ -97,6 +101,7 @@
     "description": "The real-deal Sichuan classic — spicy, tongue-numbing, and absolutely not optional without rice.",
     "category": "Main Dishes",
     "time": "35 min",
+    "timeMinutes": 35,
     "servings": "6",
     "method": "Wok / Stovetop",
     "ingredients": [
@@ -123,6 +128,7 @@
     "description": "The real-deal Thai street food classic with tamarind, palm sugar, and all the proper bits.",
     "category": "Main Dishes",
     "time": "1 hr 20 min",
+    "timeMinutes": 80,
     "servings": "2",
     "method": "Wok",
     "ingredients": [
@@ -151,6 +157,7 @@
     "description": "A simple, comforting shortcut soup for when you don't have time to make it from scratch.",
     "category": "Soups and Stews",
     "time": "40 min",
+    "timeMinutes": 40,
     "servings": "6",
     "method": "Stovetop",
     "ingredients": [
@@ -173,6 +180,7 @@
     "description": "A beefy, cheesy taco casserole with a Bisquick crust that bakes up golden in 35 minutes.",
     "category": "Main Dishes",
     "time": "45 min",
+    "timeMinutes": 45,
     "servings": "8–10",
     "method": "Oven (350°F)",
     "ingredients": [
