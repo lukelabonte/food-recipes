@@ -12,6 +12,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Worktrees
+.worktrees/
+
 # Python (for generate_search_index.py local runs)
 __pycache__/
 *.pyc
