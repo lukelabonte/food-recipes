@@ -116,6 +116,27 @@
         });
     }
 
+    // --- Source link relocation ---
+    // Move source footer into header card as a subtle "Adapted from" link
+
+    var sourceFooter = document.querySelector('.source-footer');
+    var headerCard = document.querySelector('.header-card');
+    if (sourceFooter && headerCard) {
+        var sourceLink = sourceFooter.querySelector('a');
+        if (sourceLink) {
+            var adapted = document.createElement('p');
+            adapted.className = 'source-link';
+            var a = document.createElement('a');
+            a.href = sourceLink.href;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = 'Adapted from ' + sourceLink.textContent;
+            adapted.appendChild(a);
+            headerCard.appendChild(adapted);
+            sourceFooter.remove();
+        }
+    }
+
     // --- Recipe scaling ---
 
     // Unicode fraction map

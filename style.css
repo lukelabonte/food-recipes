@@ -38,7 +38,7 @@ li { margin-bottom: 0.3rem; }
 
 .header-card {
     text-align: center;
-    padding: 1.5rem 1.25rem 1rem;
+    padding: 1rem 1.25rem 0.75rem;
     margin-bottom: 0;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -51,6 +51,16 @@ li { margin-bottom: 0.3rem; }
     margin-top: 0.4rem;
     font-style: italic;
 }
+.header-card .source-link {
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+}
+.header-card .source-link a {
+    color: #bbb;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.header-card .source-link a:hover { color: #9a7b5b; }
 
 /* ===========================
    Search
@@ -653,7 +663,7 @@ li { margin-bottom: 0.3rem; }
     body { padding: 2rem; }
     .recipe, .index { max-width: 720px; }
     .card { padding: 1.5rem; margin-bottom: 0.85rem; }
-    .header-card { padding: 2rem 1.5rem 1.25rem; margin-bottom: 0; }
+    .header-card { padding: 1.25rem 1.5rem 0.85rem; margin-bottom: 0; }
     h1 { font-size: 1.75rem; }
     .steps-card li {
         font-size: 1.1rem;
@@ -697,6 +707,7 @@ li { margin-bottom: 0.3rem; }
     .ingredient-list li[data-subs]::after { transition: none; }
     .recipe-nav { scroll-behavior: auto; }
     .stepper-btn { transition: none; }
+    .header-card .source-link a { transition: none; }
 }
 
 /* ===========================
@@ -725,6 +736,8 @@ li { margin-bottom: 0.3rem; }
     h2 { font-size: 0.95rem; margin: 0.2rem 0 0.3rem; }
     .header-card { padding: 0.4rem 0.75rem; margin-bottom: 0; }
     .header-card .subtitle { color: #555; font-size: 0.8rem; margin-top: 0.15rem; }
+    .header-card .source-link { font-size: 0.65rem; margin-top: 0.1rem; }
+    .header-card .source-link a { color: #888; }
 
     /* Overview stat blocks — compact for print */
     .meta-list { gap: 0.3rem; }
