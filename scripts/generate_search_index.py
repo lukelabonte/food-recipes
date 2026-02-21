@@ -19,10 +19,13 @@ class RecipeParser(HTMLParser):
         self.servings = ""
         self.method = ""
         self.ingredients = []
+        self.added_by = None
 
         # State tracking
         self._in_title = False
         self._in_subtitle = False
+        self._in_contributor = False
+        self._contributor_text = ""
         self._in_meta_list = False
         self._in_meta_li = False
         self._in_meta_strong = False
@@ -73,7 +76,10 @@ class RecipeParser(HTMLParser):
 
         elif tag == "span":
             class_attr = attrs_dict.get("class", "")
-            if "ingredient-grams" in class_attr and self._in_ingredient_li:
+            if "contributor" in class_attr:
+                self._in_contributor = True
+                self._contributor_text = ""
+            elif "ingredient-grams" in class_attr and self._in_ingredient_li:
                 self._in_ingredient_grams = True
 
     def handle_endtag(self, tag):
@@ -113,12 +119,24 @@ class RecipeParser(HTMLParser):
         elif tag == "strong" and self._in_meta_strong:
             self._in_meta_strong = False
 
+        elif tag == "span" and self._in_contributor:
+            self._in_contributor = False
+            raw = self._contributor_text.strip()
+            # Strip leading separators and "By " prefix
+            raw = re.sub(r'^[\s·]+', '', raw)
+            raw = re.sub(r'^[Bb]y\s+', '', raw).strip()
+            if raw:
+                self.added_by = raw
+
         elif tag == "span" and self._in_ingredient_grams:
             self._in_ingredient_grams = False
 
     def handle_data(self, data):
         if self._in_title:
             self.title += data
+
+        elif self._in_contributor:
+            self._contributor_text += data
 
         elif self._in_subtitle:
             self.subtitle += data
@@ -187,6 +205,7 @@ def main():
                 "servings": parser.servings,
                 "method": parser.method,
                 "ingredients": parser.ingredients,
+                "addedBy": parser.added_by,
                 "url": f"{entry}/{filename}",
             }
             recipes.append(recipe)

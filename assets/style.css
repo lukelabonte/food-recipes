@@ -618,6 +618,7 @@ li { margin-bottom: 0.3rem; }
     padding: 0.25rem 0 0.5rem;
 }
 .recipe-attribution a { color: #bbb; text-decoration: underline; text-decoration-color: #ddd; }
+.contributor { color: #bbb; }
 
 /* ===========================
    Index — Category sections
@@ -716,11 +717,22 @@ li { margin-bottom: 0.3rem; }
     margin-top: 0.15rem;
 }
 .recipe-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
     font-size: 0.78rem;
     color: #bbb;
     margin-top: 0.3rem;
 }
 .recipe-card-meta span { margin-right: 0.75rem; }
+.recipe-card-meta-left span { margin-right: 0.75rem; }
+.recipe-card-meta-left span:last-child { margin-right: 0; }
+.card-contributor {
+    color: #999;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    margin-right: 0;
+}
 .recipe-card-chevron {
     color: #ccc;
     font-size: 1.2rem;

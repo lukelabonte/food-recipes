@@ -132,7 +132,8 @@
                     { name: 'description', weight: 0.25 },
                     { name: 'ingredients', weight: 0.1 },
                     { name: 'category', weight: 0.08 },
-                    { name: 'method', weight: 0.04 }
+                    { name: 'method', weight: 0.04 },
+                    { name: 'addedBy', weight: 0.03 }
                 ],
                 threshold: 0.2,
                 ignoreLocation: true
@@ -150,11 +151,32 @@
                 }
             });
 
-            // Annotate existing static cards with data-time-minutes
+            // Build contributor map
+            var contributorMap = {};
+            recipes.forEach(function(r) {
+                if (r.addedBy) contributorMap[r.url] = r.addedBy;
+            });
+
+            // Annotate existing static cards with data-time-minutes and contributor
             document.querySelectorAll('#default-content .recipe-card').forEach(function(card) {
                 var href = card.getAttribute('href');
                 if (href && timeMap[href] !== undefined) {
                     card.setAttribute('data-time-minutes', timeMap[href]);
+                }
+                if (href && contributorMap[href]) {
+                    var meta = card.querySelector('.recipe-card-meta');
+                    if (meta && !meta.querySelector('.card-contributor')) {
+                        // Wrap existing spans in a left container
+                        var left = document.createElement('span');
+                        left.className = 'recipe-card-meta-left';
+                        while (meta.firstChild) left.appendChild(meta.firstChild);
+                        meta.appendChild(left);
+                        // Add right-aligned contributor
+                        var contrib = document.createElement('span');
+                        contrib.className = 'card-contributor';
+                        contrib.textContent = 'By ' + contributorMap[href];
+                        meta.appendChild(contrib);
+                    }
                 }
             });
 
@@ -330,14 +352,25 @@
         var meta = document.createElement('div');
         meta.className = 'recipe-card-meta';
 
+        var metaLeft = document.createElement('span');
+        metaLeft.className = 'recipe-card-meta-left';
+
         var servingsText = recipe.servings ? recipe.servings + (recipe.servings === '1' ? ' serving' : ' servings') : '';
         [recipe.time, servingsText, recipe.method].forEach(function(text) {
             if (text) {
                 var span = document.createElement('span');
                 span.textContent = text;
-                meta.appendChild(span);
+                metaLeft.appendChild(span);
             }
         });
+        meta.appendChild(metaLeft);
+
+        if (recipe.addedBy) {
+            var contributor = document.createElement('span');
+            contributor.className = 'card-contributor';
+            contributor.textContent = 'By ' + recipe.addedBy;
+            meta.appendChild(contributor);
+        }
 
         content.appendChild(title);
         content.appendChild(desc);
