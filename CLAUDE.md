@@ -50,7 +50,7 @@ Every recipe page follows this structure:
 7. Tips card (optional): `.tips-card`
 8. Nutrition card: `.nutrition-list`
 9. Weight card: `.weight-card`
-10. Source footer: `<p class="source-footer">` (relocated to header card by `recipe.js`)
+10. Attribution: `<p class="recipe-attribution">` (relocated to header card by `recipe.js`)
 11. Back link
 
 ## Category Emoji Map
@@ -150,12 +150,12 @@ Recipe pages have a servings stepper (`[−] N [+]`) inside the ingredients card
 
 ## Source Attribution
 
-Recipes adapted from external sources have a `<p class="source-footer">` at the bottom of the HTML (before the back link). At load time, `recipe.js` relocates this into the header card as a subtle "Adapted from [site]" link and removes the original footer element.
+Recipes have a `<p class="recipe-attribution">` at the bottom of the HTML (before the back link). At load time, `recipe.js` relocates this into the header card as a subtle "Adapted from [site]" link and removes the original element.
 
-- Always use `class="source-footer"` (not `class="source"`)
-- Format: `<p class="source-footer">Source: <a href="..." target="_blank" rel="noopener">Site Name</a></p>`
+- Always use `class="recipe-attribution"` (not `class="source-footer"` or `class="source"`)
+- Format: `<p class="recipe-attribution">Source: <a href="..." target="_blank" rel="noopener">Site Name</a></p>`
 - Do not include author names — just the site name
-- Original/family recipes with no external source: omit the `<p class="source-footer">` entirely
+- Original/family recipes with no external source: omit the `<p class="recipe-attribution">` entirely
 
 ## OG Images (Link Previews)
 
@@ -179,7 +179,7 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | Adding a new category | Category Emoji Map above, `CATEGORY_ACCENTS` in `generate_og_images.py`, `index.html` |
 | `index.html` structure | Preserve search UI elements (see Search section), `search.js` selectors |
 | Substitution markup | `recipe.js` toggle logic, print CSS `.sub-list` rules |
-| Source footer markup | `recipe.js` relocation logic, must use `class="source-footer"` |
+| Attribution markup | `recipe.js` relocation logic, must use `class="recipe-attribution"` |
 | Time-related fields | `generate_search_index.py` (`timeMinutes`), `search.js` filter logic |
 | Ingredient data in `recipes.json` | `shopping-list.js` parser, `search.js` card selectors |
 | Quantity parsing (fractions) | `recipe.js` and `shopping-list.js` both have copies of `parseLeadingQty` / `formatQty` |

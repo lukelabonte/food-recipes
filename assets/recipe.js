@@ -119,7 +119,7 @@
     // --- Source link relocation ---
     // Move source footer into header card as a subtle "Adapted from" link
 
-    var sourceFooter = document.querySelector('.source-footer');
+    var sourceFooter = document.querySelector('.recipe-attribution');
     var headerCard = document.querySelector('.header-card');
     if (sourceFooter && headerCard) {
         var sourceLink = sourceFooter.querySelector('a');

@@ -608,16 +608,16 @@ li { margin-bottom: 0.3rem; }
 }
 
 /* ===========================
-   Recipe — Source footer
+   Recipe — Attribution
    =========================== */
 
-.source-footer {
+.recipe-attribution {
     text-align: center;
     font-size: 0.8rem;
     color: #bbb;
     padding: 0.25rem 0 0.5rem;
 }
-.source-footer a { color: #bbb; text-decoration: underline; text-decoration-color: #ddd; }
+.recipe-attribution a { color: #bbb; text-decoration: underline; text-decoration-color: #ddd; }
 
 /* ===========================
    Index — Category sections
@@ -1221,7 +1221,7 @@ li { margin-bottom: 0.3rem; }
     .servings-stepper { display: none; }
     .scale-print-note.visible { display: block; }
     .nav-bar { display: none; }
-    .source-footer { display: none; }
+    .recipe-attribution { display: none; }
 
     /* Index page */
     .category-section summary { border-bottom-color: #ccc; }

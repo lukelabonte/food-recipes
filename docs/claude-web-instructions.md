@@ -34,7 +34,7 @@ Every recipe page follows this exact structure and order. Everything in `<body>`
 7. **[Tips Card]** — ONLY if tips are very high confidence. Warm cream background. Optional. `id="tips"`
 8. **[Nutrition Card]** — Stat blocks using `<ul class="nutrition-list">`. The big 4 macros (Calories, Protein, Fat, Carbs) use data-macro attributes for color-coded accents (see Nutrition Format below). Labeled "Nutrition from source" or "Nutrition estimated from ingredients." `id="nutrition"`
 9. **[Weight Card]** — Blue-gray tint with border. Stat blocks using `<ul class="weight-list">` with labels: Uncooked, Cooked, Per Serving. Centered italic reasoning line. `id="weight"`
-10. **Source footer** — Single centered line using `<p class="source-footer">`. Format: `Source: <a href="..." target="_blank" rel="noopener">Site Name</a>`. Do not include author names. Omit entirely if no source exists.
+10. **Attribution** — Single centered line using `<p class="recipe-attribution">`. Format: `Source: <a href="..." target="_blank" rel="noopener">Site Name</a>`. Do not include author names. Omit entirely if no source exists.
 11. `← All Recipes` (back link)
 
 **Card class requirements:**
@@ -216,17 +216,17 @@ Rules:
 
 ## Source Footer
 
-For recipes adapted from external sources, include a source footer after the weight card:
+For recipes adapted from external sources, include an attribution element after the weight card:
 
 ```html
-<p class="source-footer">Source: <a href="https://example.com/recipe" target="_blank" rel="noopener">Site Name</a></p>
+<p class="recipe-attribution">Source: <a href="https://example.com/recipe" target="_blank" rel="noopener">Site Name</a></p>
 ```
 
 Rules:
-- Always use `class="source-footer"` (not `class="source"` or any other variant)
+- Always use `class="recipe-attribution"` (not `class="source-footer"` or any other variant)
 - Format: `Source: <a href="...">Site Name</a>` — just the site name, no author attribution
 - External source links must include `target="_blank" rel="noopener"`
-- If no external source exists (original/family recipe), omit the `<p class="source-footer">` entirely
+- If no external source exists (original/family recipe), omit the `<p class="recipe-attribution">` entirely
 - `recipe.js` automatically relocates this into the header card as a subtle "Adapted from" link at load time
 
 ## Estimation Rules
@@ -359,4 +359,4 @@ Only create or modify recipe HTML files (in category folders) and `index.html`.
 - The og:description meta tag can include "X servings · Y min." for social previews — the search index ignores it in favor of the subtitle text
 - og:type must be "article" for all recipe pages
 - Gram weights always use a space before "g": `(244 g)`, not `(244g)`
-- Source footer must use `class="source-footer"` — not `class="source"` or other variants
+- Attribution must use `class="recipe-attribution"` — not `class="source-footer"` or other variants
