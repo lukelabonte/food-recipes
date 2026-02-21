@@ -258,6 +258,71 @@ li { margin-bottom: 0.3rem; }
 }
 .ingredient-grams { color: #bbb; font-size: 0.8em; }
 
+/* Ingredients — Header row with stepper */
+
+.ingredients-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+.ingredients-header h2 { margin-bottom: 0; }
+
+.servings-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.stepper-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid #e0d6c8;
+    background: #fff;
+    color: #9a7b5b;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+    user-select: none;
+    line-height: 1;
+    padding: 0;
+}
+.stepper-btn:hover { border-color: #c4a882; background: #faf6f0; }
+.stepper-btn:active { background: #f0e8d8; }
+.stepper-btn:disabled {
+    color: #ddd;
+    border-color: #eee;
+    background: #fafafa;
+    cursor: default;
+}
+.stepper-value {
+    min-width: 1.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #3d3d3d;
+    font-variant-numeric: tabular-nums;
+}
+.stepper-original {
+    font-size: 0.65rem;
+    color: #bbb;
+    font-style: italic;
+    margin-right: 0.15rem;
+}
+.scale-print-note {
+    display: none;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #7a5f43;
+    font-style: italic;
+    padding: 0.25rem 0;
+}
+
 /* Ingredients — Substitutions */
 
 .ingredient-list li[data-subs] {
@@ -607,6 +672,8 @@ li { margin-bottom: 0.3rem; }
     .recipe-card-meta { font-size: 0.82rem; }
     .category-name { font-size: 0.9rem; }
     #search-input { font-size: 1rem; padding: 0.75rem 2.5rem; }
+    .stepper-btn { width: 32px; height: 32px; font-size: 1rem; }
+    .stepper-value { font-size: 1rem; }
 }
 
 /* ===========================
@@ -629,6 +696,7 @@ li { margin-bottom: 0.3rem; }
     .sub-list { transition: none; }
     .ingredient-list li[data-subs]::after { transition: none; }
     .recipe-nav { scroll-behavior: auto; }
+    .stepper-btn { transition: none; }
 }
 
 /* ===========================
@@ -742,6 +810,8 @@ li { margin-bottom: 0.3rem; }
     .back-link { display: none; }
     .print-btn { display: none; }
     .recipe-nav { display: none; }
+    .servings-stepper { display: none; }
+    .scale-print-note.visible { display: block; }
     .nav-bar { display: none; }
     .source-footer { display: none; }
 

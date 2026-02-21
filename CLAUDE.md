@@ -101,6 +101,19 @@ Recipe pages have a sticky pill bar (`<nav class="recipe-nav">`) placed after th
 - Respects `prefers-reduced-motion` (disables smooth scroll and CSS transitions)
 - Hides when printing
 
+## Servings Scaling
+
+Recipe pages have a servings stepper (`[−] N [+]`) inside the ingredients card, below the `<h2>Ingredients</h2>` heading. It lets users scale ingredient quantities, gram weights, and weight estimates by adjusting the desired serving count.
+
+- `recipe.js` builds the stepper UI programmatically at load time — no HTML template changes needed
+- Original values are stored in `data-*` attributes; scaling always computes from originals to avoid drift
+- Ingredient quantities format as friendly fractions (½, ¼) when possible
+- Per-serving nutrition values are unchanged; a note appears when batch is scaled
+- Weight estimates (Uncooked, Cooked) scale proportionally; Per Serving stays the same
+- Items without a leading quantity (e.g., "Salt to taste") are skipped
+- Range quantities (e.g., "7–10 stalks") scale both endpoints
+- Stepper is hidden in print; a "Scaled: N servings" note prints instead
+
 ## OG Images (Link Previews)
 
 Each page has `og:image`, `og:image:width`, `og:image:height`, and `og:url` meta tags for rich link previews in iMessage, Slack, Discord, etc.
