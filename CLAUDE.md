@@ -13,8 +13,10 @@ A family recipe collection hosted on GitHub Pages. Each recipe is a styled HTML 
 food-recipes/
 ├── index.html                 # Recipe index with categories and fuzzy search
 ├── style.css                  # Shared stylesheet for all pages
-├── search.js                  # Fuse.js search logic (separate file for resilience)
-├── recipe.js                  # Pill bar nav + substitution toggle for recipe pages
+├── search.js                  # Fuse.js search + time filter + shopping list selection
+├── recipe.js                  # Pill bar nav + substitution toggle + servings scaling
+├── shopping-list.html         # Shopping list page (ingredient merge + checklist)
+├── shopping-list.js           # Ingredient parser, smart merge, store sections, checklist UI
 ├── recipes.json               # AUTO-GENERATED — do not edit manually
 ├── generate_search_index.py   # Generates recipes.json from recipe HTML files
 ├── generate_og_images.py      # Generates og-images/ from recipe HTML files
@@ -90,6 +92,24 @@ The index page has a time range slider below the search bar. It filters recipe c
 - `generate_search_index.py` provides the `timeMinutes` numeric field in `recipes.json`
 - Hidden when printing
 
+## Shopping List
+
+The index page lets users select recipes and generate a combined shopping list on a dedicated page (`shopping-list.html`).
+
+- A "Build Shopping List" toggle in the index header card enters selection mode, showing checkboxes on recipe cards
+- Clicking anywhere on a card in selection mode toggles selection (links are intercepted)
+- A "Clear All" link appears in selection mode when items are selected
+- A floating "Shopping List (N)" button appears when ≥1 recipe is selected (regardless of mode)
+- `shopping-list.js` parses freeform ingredient strings, merges duplicates by name + unit, and categorizes by store section
+- Selected recipes stored in `localStorage['shopping-list-recipes']`; checked-off items in `localStorage['shopping-list-checked']`
+- Smart merge: same ingredient + same unit → summed quantities with source recipe attribution
+- ~8 store sections via keyword matching: Produce, Meat & Seafood, Dairy & Eggs, Baking, Spices & Seasonings, Canned & Jarred, Pasta & Grains, Other
+- Each section has a "Check All" / "Uncheck All" toggle; rows are tappable (label wraps checkbox)
+- Prep instructions (cut, chopped, soaked, etc.) are stripped for shopping-friendly display
+- Quantity parsing and fraction display reuse patterns from `recipe.js` (duplicated, not shared — separate pages)
+- Checklist state persists across browser sessions (designed for use at the store)
+- Hidden when printing (selection UI); shopping list page is print-friendly
+
 ## Substitutions
 
 Some ingredients have tappable substitution suggestions that expand inline. The data is baked into the HTML by Claude Web at generation time. Multiple substitutions can be open simultaneously (each toggles independently).
@@ -161,4 +181,6 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | Substitution markup | `recipe.js` toggle logic, print CSS `.sub-list` rules |
 | Source footer markup | `recipe.js` relocation logic, must use `class="source-footer"` |
 | Time-related fields | `generate_search_index.py` (`timeMinutes`), `search.js` filter logic |
+| Ingredient data in `recipes.json` | `shopping-list.js` parser, `search.js` card selectors |
+| Quantity parsing (fractions) | `recipe.js` and `shopping-list.js` both have copies of `parseLeadingQty` / `formatQty` |
 | Any recipe HTML convention | `claude-web-instructions.md` — keep in sync so Claude Web generates correct markup |

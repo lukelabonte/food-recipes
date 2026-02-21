@@ -320,6 +320,8 @@ All content below the header card (Favorites, Recently Added, and all category `
 
 A time-filter slider is injected by `search.js` after the search wrapper at runtime — do not add any time-filter HTML to `index.html`.
 
+Recipe selection checkboxes and a floating "Shopping List" button are injected by `search.js` at runtime — do not add any shopping list HTML to `index.html`.
+
 After the closing `</div>` of `#default-content`:
 
 ```html
@@ -337,6 +339,8 @@ Never create or modify these files — they are maintained separately:
 - `style.css`
 - `recipe.js`
 - `search.js`
+- `shopping-list.html`
+- `shopping-list.js`
 - `generate_search_index.py`
 - `generate_og_images.py`
 - `recipes.json`

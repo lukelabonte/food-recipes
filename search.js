@@ -10,6 +10,69 @@
     // Bail out if elements aren't present (e.g., index.html not updated yet)
     if (!input || !defaultContent) return;
 
+    // --- Shopping list selection state ---
+    var STORAGE_KEY = 'shopping-list-recipes';
+    var selectedRecipes = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+    var fab, fabCount;
+    var updateClearAll = function() {}; // set once toggle is built
+
+    function addCheckbox(card, url) {
+        var label = document.createElement('label');
+        label.className = 'recipe-select';
+        label.setAttribute('aria-label', 'Add to shopping list');
+
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'recipe-select-checkbox';
+        checkbox.checked = selectedRecipes.has(url);
+
+        var box = document.createElement('span');
+        box.className = 'recipe-select-box';
+
+        label.appendChild(checkbox);
+        label.appendChild(box);
+
+        // Prevent click from navigating the parent <a> tag
+        label.addEventListener('click', function(e) { e.stopPropagation(); });
+        label.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+        checkbox.addEventListener('change', function() {
+            toggleRecipe(url, checkbox.checked);
+        });
+
+        // In selection mode, clicking anywhere on the card toggles the checkbox
+        card.addEventListener('click', function(e) {
+            if (!card.closest('.selecting')) return; // browse mode — let link navigate
+            e.preventDefault();
+            checkbox.checked = !checkbox.checked;
+            toggleRecipe(url, checkbox.checked);
+        });
+
+        card.insertBefore(label, card.firstChild);
+        if (checkbox.checked) card.classList.add('selected');
+    }
+
+    function toggleRecipe(url, checked) {
+        if (checked) selectedRecipes.add(url);
+        else selectedRecipes.delete(url);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(selectedRecipes)));
+
+        // Sync all cards with this URL (same recipe appears in "Recently Added" + category)
+        document.querySelectorAll('.recipe-card[href="' + url + '"]').forEach(function(card) {
+            var cb = card.querySelector('.recipe-select-checkbox');
+            if (cb) cb.checked = checked;
+            card.classList.toggle('selected', checked);
+        });
+        updateFab();
+        updateClearAll();
+    }
+
+    function updateFab() {
+        if (!fab) return;
+        var count = selectedRecipes.size;
+        fab.classList.toggle('visible', count > 0);
+        fabCount.textContent = count > 0 ? 'Shopping List (' + count + ')' : '';
+    }
+
     function formatTime(minutes) {
         if (minutes >= 60) {
             var hrs = Math.floor(minutes / 60);
@@ -136,6 +199,75 @@
                     });
                 }
             }
+
+            // --- Shopping list: inject checkboxes + toggle + FAB ---
+            var indexWrapper = document.querySelector('.index');
+            if (indexWrapper) {
+                // Inject checkboxes on all static cards (hidden until shopping mode)
+                document.querySelectorAll('#default-content .recipe-card').forEach(function(card) {
+                    var href = card.getAttribute('href');
+                    if (href) addCheckbox(card, href);
+                });
+
+                // Shopping mode toggle
+                var selectToggle = document.createElement('button');
+                selectToggle.className = 'shopping-toggle';
+                selectToggle.setAttribute('aria-pressed', 'false');
+                selectToggle.textContent = 'Build Shopping List';
+
+                // Clear all button (visible in selection mode when items selected)
+                var clearAllBtn = document.createElement('button');
+                clearAllBtn.className = 'shopping-clear-all';
+                clearAllBtn.textContent = 'Clear All';
+
+                clearAllBtn.addEventListener('click', function() {
+                    selectedRecipes.clear();
+                    localStorage.removeItem(STORAGE_KEY);
+                    document.querySelectorAll('.recipe-card').forEach(function(card) {
+                        var cb = card.querySelector('.recipe-select-checkbox');
+                        if (cb) cb.checked = false;
+                        card.classList.remove('selected');
+                    });
+                    updateFab();
+                    updateClearAll();
+                });
+
+                updateClearAll = function() {
+                    var show = indexWrapper.classList.contains('selecting') && selectedRecipes.size > 0;
+                    clearAllBtn.style.display = show ? '' : 'none';
+                };
+
+                selectToggle.addEventListener('click', function() {
+                    var active = indexWrapper.classList.toggle('selecting');
+                    selectToggle.setAttribute('aria-pressed', String(active));
+                    selectToggle.textContent = active ? 'Done' : 'Build Shopping List';
+                    selectToggle.classList.toggle('active', active);
+                    updateClearAll();
+                });
+
+                // Insert toggle + clear into header card (top-right corner)
+                var headerCard = indexWrapper.querySelector('.header-card');
+                if (headerCard) {
+                    headerCard.style.position = 'relative';
+                    var toggleGroup = document.createElement('div');
+                    toggleGroup.className = 'shopping-toggle-group';
+                    toggleGroup.appendChild(selectToggle);
+                    toggleGroup.appendChild(clearAllBtn);
+                    headerCard.appendChild(toggleGroup);
+                    updateClearAll();
+                }
+
+                // FAB (visible when selections exist, regardless of mode)
+                fab = document.createElement('a');
+                fab.href = 'shopping-list.html';
+                fab.className = 'shopping-fab';
+                fab.setAttribute('aria-label', 'View shopping list');
+                fabCount = document.createElement('span');
+                fabCount.className = 'shopping-fab-count';
+                fab.appendChild(fabCount);
+                indexWrapper.appendChild(fab);
+                updateFab();
+            }
         })
         .catch(function() {
             input.placeholder = 'Search coming soon...';
@@ -184,6 +316,7 @@
 
         a.appendChild(content);
         a.appendChild(chevron);
+        if (recipe.url) addCheckbox(a, recipe.url);
         return a;
     }
 

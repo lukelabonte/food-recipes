@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping List</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+    <script src="shopping-list.js" defer></script>
+</head>
+<body>
+    <div class="shopping-list">
+        <div class="card header-card">
+            <h1>Shopping List</h1>
+            <p class="subtitle" id="shopping-recipe-count"></p>
+        </div>
+        <div class="shopping-actions">
+            <a href="index.html" class="shopping-action-link">&larr; Back to Recipes</a>
+            <button class="shopping-action-btn" id="shopping-clear">Clear List</button>
+        </div>
+        <div id="shopping-list-content"></div>
+        <div id="shopping-list-empty" style="display:none;">
+            <div class="shopping-empty-state">
+                <p>No recipes selected yet.</p>
+                <a href="index.html" class="shopping-empty-link">Browse recipes to get started</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
