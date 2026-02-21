@@ -123,7 +123,7 @@
         });
     }
 
-    fetch('recipes.json')
+    fetch('assets/recipes.json')
         .then(function(r) { return r.json(); })
         .then(function(recipes) {
             fuse = new Fuse(recipes, {

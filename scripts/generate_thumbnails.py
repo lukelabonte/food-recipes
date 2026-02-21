@@ -212,8 +212,8 @@ def format_category(dirname):
 
 
 def main():
-    repo_root = os.path.dirname(os.path.abspath(__file__))
-    output_dir = os.path.join(repo_root, "og-images")
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    output_dir = os.path.join(repo_root, "assets", "thumbnails")
     os.makedirs(output_dir, exist_ok=True)
 
     regular = find_font(bold=False)
@@ -234,7 +234,7 @@ def main():
     generate_index_image(os.path.join(output_dir, "index.png"), fonts)
 
     # Recipe images
-    skip = {".git", ".github", "docs", "og-images", "fonts"}
+    skip = {".git", ".github", "docs", "assets", "scripts", "fonts"}
     count = 0
 
     for entry in sorted(os.listdir(repo_root)):

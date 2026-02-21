@@ -30,16 +30,16 @@ jobs:
         run: pip install Pillow
 
       - name: Generate search index
-        run: python3 generate_search_index.py
+        run: python3 scripts/generate_search_index.py
 
-      - name: Generate OG images
-        run: python3 generate_og_images.py
+      - name: Generate thumbnails
+        run: python3 scripts/generate_thumbnails.py
 
       - name: Commit generated files if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add recipes.json og-images/
+          git add assets/recipes.json assets/thumbnails/
           if ! git diff --staged --quiet; then
             git commit -m "Update generated files [skip ci]"
             git push

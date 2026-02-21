@@ -156,8 +156,8 @@ def parse_time_minutes(time_str):
 
 
 def main():
-    repo_root = os.path.dirname(os.path.abspath(__file__))
-    skip_dirs = {".git", "docs"}
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    skip_dirs = {".git", "docs", "assets", "scripts"}
     recipes = []
 
     for entry in sorted(os.listdir(repo_root)):
@@ -193,12 +193,12 @@ def main():
 
     recipes.sort(key=lambda r: r["title"])
 
-    output_path = os.path.join(repo_root, "recipes.json")
+    output_path = os.path.join(repo_root, "assets", "recipes.json")
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(recipes, f, indent=2, ensure_ascii=False)
         f.write("\n")
 
-    print(f"Generated recipes.json with {len(recipes)} recipes")
+    print(f"Generated assets/recipes.json with {len(recipes)} recipes")
 
 
 if __name__ == "__main__":

@@ -298,7 +298,7 @@
 
     // --- Fetch and render ---
 
-    fetch('recipes.json')
+    fetch('assets/recipes.json')
         .then(function(r) { return r.json(); })
         .then(function(allRecipes) {
             var recipes = allRecipes.filter(function(r) {
