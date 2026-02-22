@@ -1329,6 +1329,8 @@ html[data-theme="light"] .status-error { background: #fdf0f0; border-color: #f0c
    =========================== */
 
 @media print {
+    @page { size: portrait; margin: 0.5in; }
+
     :root,
     html[data-theme="dark"],
     html[data-theme="light"] {
@@ -1481,18 +1483,38 @@ html[data-theme="light"] .status-error { background: #fdf0f0; border-color: #f0c
     .shopping-list-btn { display: none; }
     .shopping-list-count-link { display: none !important; }
 
-    /* Shopping list page */
+    /* Shopping list page — minimal plain list, hide checked items */
     .shopping-list { max-width: 100% !important; }
-    .shopping-action-btn { display: none; }
-    .shopping-recipe-list { margin-bottom: 0.5rem; }
-    .shopping-recipe-tag { font-size: 0.6rem; padding: 0.15rem 0.5rem; }
-    .shopping-recipe-remove { display: none; }
-    .section-completed { opacity: 1; }
-    .shopping-section { box-shadow: none; border: 1px solid #ddd; border-radius: 0; }
-    .shopping-section-header { padding: 0.5rem 0.75rem; }
+    .shopping-list .header-card {
+        box-shadow: none; border: none; padding: 0.2rem 0; margin-bottom: 0;
+    }
+    .shopping-list .header-card h1 { font-size: 1rem; margin: 0; }
+    .shopping-list .header-card .subtitle { font-size: 0.75rem; margin-top: 0.1rem; }
+    .shopping-actions { display: none; }
+    .shopping-recipe-list { display: none; }
+    #shopping-list-content {
+        column-count: 2; column-gap: 1.5rem;
+    }
+    .shopping-item.checked { display: none; }
+    .section-completed { display: none; }
+    .shopping-section {
+        box-shadow: none; border: none; border-radius: 0;
+        padding: 0; margin-bottom: 0.3rem;
+        break-inside: avoid;
+    }
+    .shopping-section-header {
+        padding: 0 0 0.15rem; border-bottom: 1px solid #ccc;
+        margin-bottom: 0.15rem;
+    }
     .shopping-section-chevron { display: none; }
     .shopping-section-check-all { display: none; }
-    .shopping-item { padding: 0.3rem 0; }
-    .shopping-item-text { font-size: 0.85rem; }
-    .shopping-item.checked .shopping-item-text { text-decoration: line-through; color: #999; }
+    .shopping-section-count { display: none; }
+    .shopping-section-list { padding: 0; }
+    .shopping-item {
+        padding: 0.1rem 0; border: none;
+    }
+    .shopping-checkbox { display: none; }
+    .shopping-item-label { padding: 0; }
+    .shopping-item-text { font-size: 0.8rem; }
+    .shopping-item-sources { font-size: 0.65rem; }
 }
