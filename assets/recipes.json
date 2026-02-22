@@ -69,6 +69,28 @@
     "url": "desserts/double-chocolate-cookies.html"
   },
   {
+    "title": "Gochujang Chicken",
+    "description": "Crispy air fryer chicken thighs with a sweet-spicy gochujang glaze that caramelizes into something dangerously good.",
+    "category": "Main Dishes",
+    "time": "25 min",
+    "timeMinutes": 25,
+    "servings": "4",
+    "method": "Air Fryer",
+    "ingredients": [
+      "1 tablespoon brown sugar",
+      "1 tablespoon gochujang",
+      "1 tablespoon olive oil",
+      "1 teaspoon baking powder",
+      "1 teaspoon black pepper",
+      "1 teaspoon sesame oil",
+      "2 teaspoons garlic powder",
+      "4 bone-in, skin-on chicken thighs, patted dry",
+      "½ teaspoon salt"
+    ],
+    "addedBy": "Ernesto",
+    "url": "main-dishes/gochujang-chicken.html"
+  },
+  {
     "title": "Jamie's Minestrone Soup",
     "description": "A hearty, vegetable-loaded Italian soup that gets better the longer it simmers.",
     "category": "Soups and Stews",
