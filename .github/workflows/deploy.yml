@@ -21,6 +21,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -32,6 +34,9 @@ jobs:
       - name: Generate search index
         run: python3 scripts/generate_search_index.py
 
+      - name: Generate index page
+        run: python3 scripts/generate_index.py
+
       - name: Generate thumbnails
         run: python3 scripts/generate_thumbnails.py
 
@@ -39,7 +44,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/recipes.json assets/thumbnails/
+          git add assets/recipes.json index.html assets/thumbnails/
           if ! git diff --staged --quiet; then
             git commit -m "Update generated files [skip ci]"
             git push
