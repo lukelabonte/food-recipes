@@ -203,6 +203,7 @@ ${nutritionItems.join('\n')}
     <meta property="og:image:height" content="630">
     <meta property="og:url" content="${ogPageUrl}">
     <script src="../assets/recipe.js" defer></script>
+    <script src="../assets/theme.js" defer></script>
 </head>
 <body>
     <div class="recipe">

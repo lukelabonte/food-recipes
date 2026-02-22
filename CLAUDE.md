@@ -239,7 +239,18 @@ All colors are managed through CSS custom properties (design tokens) defined in 
 - **Weight card** has its own blue-tinted palette handled with inline dark overrides (not tokens)
 - **SVG icons** in data URIs use `mask-image` + `background-color: var(--color-*)` instead of embedded `stroke` colors
 - HTML pages with inline `<style>` blocks (`admin.html`, `upload.html`, `request-access.html`) use the same tokens — they inherit from `assets/style.css`
-- **Dev theme toggle:** `python3 scripts/serve.py` injects a floating button (bottom-right) to cycle System/Light/Dark. Uses `html[data-theme]` attribute overrides — never deployed to production
+
+## Theme Toggle
+
+Hidden easter egg: triple-tap any `<h1>` title to cycle between System / Light / Dark themes.
+
+- `assets/theme.js` handles triple-tap detection (3 clicks within 500ms on any `h1`), theme cycling, and toast notification
+- CSS uses `html[data-theme="light"]` and `html[data-theme="dark"]` attribute overrides in `assets/style.css` (specificity 0,1,1 beats `:root` media query 0,1,0)
+- Toast uses inline styles referencing CSS custom property tokens — no extra CSS needed
+- Choice persists via `localStorage('theme')`; removing the key or setting `'system'` returns to OS preference
+- Component-level dark overrides (`.recipe-nav`, `.weight-card`, `.weight-list li`, `.status-success`, `.status-error`) are mirrored for both `html[data-theme]` selectors
+- Print always forces light mode regardless of theme override (print media query includes `html[data-theme]` selectors)
+- Respects `prefers-reduced-motion` (skips fade animation)
 
 ## Change Impact Checklist
 
@@ -263,4 +274,5 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | Step tracking CSS (`.step-active`, `.step-done`) | `assets/recipe.js` step tracking IIFE, print styles, reduced-motion overrides |
 | Any recipe HTML convention | `docs/claude-web-instructions.md` AND `worker/src/template.js` — keep in sync so both pipelines generate correct markup |
 | Admin API endpoints (worker) | `admin.html` API calls — endpoint paths, request/response shapes, header names |
-| Color tokens (`assets/style.css` `:root`) | All pages (inherit tokens), `admin.html` / `upload.html` / `request-access.html` inline styles, dark mode media query |
+| Color tokens (`assets/style.css` `:root`) | All pages (inherit tokens), `admin.html` / `upload.html` / `request-access.html` inline styles, dark mode media query, `html[data-theme]` overrides |
+| Adding a new HTML page | Add `<script src="assets/theme.js" defer>` (or `../assets/theme.js` for recipe pages) in `<head>` |

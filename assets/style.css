@@ -43,6 +43,40 @@
     }
 }
 
+/* Manual theme overrides — specificity 0,1,1 beats :root (0,1,0) in media query */
+html[data-theme="light"] {
+    --color-bg: #faf8f5;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f0ece6;
+    --color-text: #3d3d3d;
+    --color-text-muted: #999999;
+    --color-accent: #9a7b5b;
+    --color-accent-hover: #7a5f43;
+    --color-accent-bg: #f5f0ea;
+    --color-border: #e0d6c8;
+    --color-shadow: rgba(0, 0, 0, 0.06);
+    --color-accent-focus: rgba(154, 123, 91, 0.12);
+    --color-success: #3a7d3a;
+    --color-error: #c44444;
+    color-scheme: light;
+}
+html[data-theme="dark"] {
+    --color-bg: #1c1a17;
+    --color-surface: #2a2725;
+    --color-surface-alt: #332f2b;
+    --color-text: #e8e4df;
+    --color-text-muted: #888888;
+    --color-accent: #c4a882;
+    --color-accent-hover: #d4bc9a;
+    --color-accent-bg: #3b3632;
+    --color-border: #4a4540;
+    --color-shadow: rgba(0, 0, 0, 0.4);
+    --color-accent-focus: rgba(196, 168, 130, 0.15);
+    --color-success: #6abf6a;
+    --color-error: #e06060;
+    color-scheme: dark;
+}
+
 /* ===========================
    Our Recipes — Shared Styles
    =========================== */
@@ -319,6 +353,8 @@ li { margin-bottom: 0.3rem; }
         background: rgba(42, 39, 37, 0.85);
     }
 }
+html[data-theme="dark"] .recipe-nav { background: rgba(42, 39, 37, 0.85); }
+html[data-theme="light"] .recipe-nav { background: rgba(255, 255, 255, 0.75); }
 .recipe-nav::-webkit-scrollbar { display: none; }
 .recipe-nav-pill {
     flex-shrink: 0;
@@ -642,6 +678,8 @@ li { margin-bottom: 0.3rem; }
         border-color: #2d3d4d;
     }
 }
+html[data-theme="dark"] .weight-card { background: #1e2a36; border-color: #2d3d4d; }
+html[data-theme="light"] .weight-card { background: #eef3f9; border-color: #d6e0ed; }
 .weight-list {
     list-style: none;
     padding-left: 0;
@@ -670,6 +708,8 @@ li { margin-bottom: 0.3rem; }
         background: rgba(255, 255, 255, 0.08);
     }
 }
+html[data-theme="dark"] .weight-list li { background: rgba(255, 255, 255, 0.08); }
+html[data-theme="light"] .weight-list li { background: rgba(255, 255, 255, 0.7); }
 .weight-list li strong {
     font-size: 0.62rem;
     font-weight: 500;
@@ -1182,6 +1222,10 @@ li { margin-bottom: 0.3rem; }
         border-color: #4a2d2d;
     }
 }
+html[data-theme="dark"] .status-success { background: #1a2e1a; border-color: #2d4a2d; }
+html[data-theme="dark"] .status-error { background: #2e1a1a; border-color: #4a2d2d; }
+html[data-theme="light"] .status-success { background: #f0f9f0; border-color: #c8e6c8; }
+html[data-theme="light"] .status-error { background: #fdf0f0; border-color: #f0c8c8; }
 
 /* ===========================
    Responsive — iPad / larger phones
@@ -1253,7 +1297,9 @@ li { margin-bottom: 0.3rem; }
    =========================== */
 
 @media print {
-    :root {
+    :root,
+    html[data-theme="dark"],
+    html[data-theme="light"] {
         --color-bg: #faf8f5;
         --color-surface: #ffffff;
         --color-surface-alt: #f0ece6;
@@ -1267,6 +1313,7 @@ li { margin-bottom: 0.3rem; }
         --color-accent-focus: rgba(154, 123, 91, 0.12);
         --color-success: #3a7d3a;
         --color-error: #c44444;
+        color-scheme: light;
     }
 
     body { background: #fff; padding: 0; margin: 0; color: #000; }

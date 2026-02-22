@@ -249,6 +249,8 @@
         @media (prefers-color-scheme: dark) {
             .admin-btn-remove:hover:not(:disabled) { background: #2e1a1a; }
         }
+        html[data-theme="dark"] .admin-btn-remove:hover:not(:disabled) { background: #2e1a1a; }
+        html[data-theme="light"] .admin-btn-remove:hover:not(:disabled) { background: #fdf0f0; }
 
         /* Inline confirmation */
         .admin-confirm {
@@ -266,6 +268,8 @@
         @media (prefers-color-scheme: dark) {
             .admin-confirm { background: #2e1a1a; }
         }
+        html[data-theme="dark"] .admin-confirm { background: #2e1a1a; }
+        html[data-theme="light"] .admin-confirm { background: #fdf0f0; }
         .admin-confirm-text { flex: 1; }
         .admin-confirm-yes {
             background: var(--color-error);
@@ -327,6 +331,7 @@
             body { display: none; }
         }
     </style>
+    <script src="assets/theme.js" defer></script>
 </head>
 <body>
     <div class="admin-page">
