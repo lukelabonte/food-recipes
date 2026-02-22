@@ -1290,7 +1290,56 @@ html[data-theme="light"] .status-error { background: #fdf0f0; border-color: #f0c
     .shopping-action-btn { transition: none; }
     .shopping-section-header { transition: none; }
     .steps-card li { transition: none; }
+    .theme-toggle { transition: none; }
 }
+
+/* ===========================
+   Page footer (theme toggle row)
+   =========================== */
+
+.page-footer {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0.25rem 0;
+}
+.page-footer > :first-child { justify-self: start; }
+.page-footer > :last-child { justify-self: end; }
+
+/* Override default back-link centering when inside footer */
+.page-footer .back-link {
+    display: inline;
+    text-align: left;
+    padding: 0;
+}
+
+.footer-contributor {
+    justify-self: center;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+}
+
+/* Non-recipe pages: just the toggle, right-aligned */
+.page-footer-end {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.25rem 0;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.35rem;
+    border-radius: 8px;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+}
+.theme-toggle:hover { color: var(--color-text); }
+.theme-toggle svg { display: block; }
 
 /* ===========================
    Print — force light mode
@@ -1431,6 +1480,8 @@ html[data-theme="light"] .status-error { background: #fdf0f0; border-color: #f0c
     .scale-print-note.visible { display: block; }
     .nav-bar { display: none; }
     .recipe-attribution { display: none; }
+    .page-footer { display: none; }
+    .theme-toggle { display: none; }
 
     /* Index page */
     .category-section summary { border-bottom-color: #ccc; }

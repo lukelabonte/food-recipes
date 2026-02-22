@@ -63,8 +63,8 @@ Every recipe page follows this structure:
 7. Tips card (optional): `.tips-card`
 8. Nutrition card: `.nutrition-list`
 9. Weight card: `.weight-card`
-10. Attribution: `<p class="recipe-attribution">` (relocated to header card by `assets/recipe.js`)
-11. Back link
+10. Attribution: `<p class="recipe-attribution">` (source link relocated to header by `recipe.js`; contributor moved to page footer by `theme.js`)
+11. Page footer: back link + contributor + theme toggle (built by `theme.js`)
 
 ## Category Emoji Map
 
@@ -186,9 +186,12 @@ Recipe pages automatically keep the device screen on so it doesn't dim or lock w
 
 ## Attribution
 
-Recipe attribution uses `<p class="recipe-attribution">` at the bottom of the HTML (before the back link). At load time, `assets/recipe.js` relocates this into the header card and removes the original element.
+Recipe attribution uses `<p class="recipe-attribution">` at the bottom of the HTML (before the back link). Two scripts process it at load time:
 
-Three scenarios:
+1. `assets/recipe.js` (runs first): If a source link `<a>` exists, moves "Adapted from X" to the header card and strips the source parts from the attribution, leaving only the `.contributor` span. For contributor-only recipes, does nothing.
+2. `assets/theme.js` (runs second): Moves the `.contributor` text into the `.page-footer` row (centered) and removes the `.recipe-attribution` element.
+
+Three HTML scenarios:
 - **Source + contributor:** `<p class="recipe-attribution">Source: <a href="..." target="_blank" rel="noopener">Site Name</a><span class="contributor"> · By Name</span></p>`
 - **Contributor only:** `<p class="recipe-attribution"><span class="contributor">By Name</span></p>`
 - **No attribution:** omit the element entirely
@@ -254,15 +257,21 @@ All colors are managed through CSS custom properties (design tokens) defined in 
 
 ## Theme Toggle
 
-Hidden easter egg: triple-tap any `<h1>` title to cycle between System / Light / Dark themes.
+A sun/moon icon in the page footer toggles between Light and Dark themes.
 
-- `assets/theme.js` handles triple-tap detection (3 clicks within 500ms on any `h1`), theme cycling, and toast notification
+- `assets/theme.js` injects a `.page-footer` row at the bottom of every page with the theme toggle button
+- **Recipe pages:** 3-column grid footer — back link (left), contributor name (center), theme icon (right)
+- **Non-recipe pages:** right-aligned theme icon only (`.page-footer-end`)
+- Icon swaps between sun (shown in dark mode → tap to go light) and moon (shown in light mode → tap to go dark)
+- Simple light/dark toggle — no "system" option. If nothing saved in `localStorage`, defaults to OS preference
+- `recipe.js` preserves the `.contributor` span when relocating source links to the header (theme.js runs second and moves it into the footer)
+- Toast notification shows mode name + emoji on each toggle
 - CSS uses `html[data-theme="light"]` and `html[data-theme="dark"]` attribute overrides in `assets/style.css` (specificity 0,1,1 beats `:root` media query 0,1,0)
-- Toast uses inline styles referencing CSS custom property tokens — no extra CSS needed
-- Choice persists via `localStorage('theme')`; removing the key or setting `'system'` returns to OS preference
+- Choice persists via `localStorage('theme')`; removing the key returns to OS preference
+- Icon updates automatically when OS preference changes (via `matchMedia` listener)
 - Component-level dark overrides (`.recipe-nav`, `.weight-card`, `.weight-list li`, `.status-success`, `.status-error`) are mirrored for both `html[data-theme]` selectors
-- Print always forces light mode regardless of theme override (print media query includes `html[data-theme]` selectors)
-- Respects `prefers-reduced-motion` (skips fade animation)
+- Print always forces light mode regardless of theme override; `.page-footer` hidden in print
+- Respects `prefers-reduced-motion` (skips toast fade animation)
 
 ## Change Impact Checklist
 

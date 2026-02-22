@@ -14,6 +14,7 @@ A family recipe collection — tried-and-true dishes from our kitchen to yours, 
 - **Screen stays on** — Recipe pages automatically keep your phone screen awake so it doesn't dim while you cook
 - **Substitution suggestions** — Tap ingredients to see alternatives with ratios and notes on flavor, texture, and calorie differences
 - **Nutrition info** — Every recipe includes nutrition data, labeled as "from source" or "estimated"
+- **Dark mode** — Tap the icon at the bottom of any page to switch between light, dark, and system themes
 - **Print-friendly** — Clean print layout for keeping a paper copy in the kitchen
 
 ## How Recipes Are Made

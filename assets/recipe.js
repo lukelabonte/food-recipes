@@ -117,7 +117,7 @@
     }
 
     // --- Source link relocation ---
-    // Move source footer into header card as a subtle "Adapted from" link
+    // Move source link into header card; keep contributor in attribution for footer use
 
     var sourceFooter = document.querySelector('.recipe-attribution');
     var headerCard = document.querySelector('.header-card');
@@ -133,7 +133,16 @@
             a.textContent = 'Adapted from ' + sourceLink.textContent;
             adapted.appendChild(a);
             headerCard.appendChild(adapted);
-            sourceFooter.remove();
+
+            // Preserve contributor for theme.js footer; remove only the source parts
+            var contributor = sourceFooter.querySelector('.contributor');
+            if (contributor) {
+                contributor.textContent = contributor.textContent.replace(/^\s*·\s*/, '');
+                sourceFooter.textContent = '';
+                sourceFooter.appendChild(contributor);
+            } else {
+                sourceFooter.remove();
+            }
         }
     }
 
