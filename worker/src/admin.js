@@ -17,31 +17,30 @@ export function verifyAdmin(request, adminSecret) {
 }
 
 /**
- * Generate a random 12-character alphanumeric passphrase.
- * @returns {string}
- */
-function generatePassphrase() {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    const bytes = new Uint8Array(12);
-    crypto.getRandomValues(bytes);
-    return Array.from(bytes, b => chars[b % chars.length]).join('');
-}
-
-/**
- * Create a new user with a generated passphrase.
- * POST /admin/users { displayName, email? }
+ * Create a new user with an admin-chosen passphrase.
+ * POST /admin/users { displayName, passphrase, email? }
  * If email is provided, sends a welcome email with the passphrase.
  */
 export async function createUser(request, env) {
     const body = await request.json();
-    const { displayName, email } = body;
+    const { displayName, passphrase, email } = body;
 
     if (!displayName) {
         return new Response(JSON.stringify({ error: 'displayName is required' }), { status: 400 });
     }
+    if (!passphrase || passphrase.trim().length < 3) {
+        return new Response(JSON.stringify({ error: 'passphrase is required (3+ characters)' }), { status: 400 });
+    }
 
-    const passphrase = generatePassphrase();
-    await env.KV.put(`auth:${passphrase}`, JSON.stringify({
+    const clean = passphrase.trim().toLowerCase();
+
+    // Check for duplicates
+    const existing = await env.KV.get(`auth:${clean}`, 'json');
+    if (existing) {
+        return new Response(JSON.stringify({ error: 'That passphrase is already in use' }), { status: 409 });
+    }
+
+    await env.KV.put(`auth:${clean}`, JSON.stringify({
         displayName,
         createdAt: new Date().toISOString()
     }));
@@ -50,14 +49,47 @@ export async function createUser(request, env) {
     let emailSent = false;
     if (email) {
         try {
-            const result = await sendWelcomeEmail(env, { email, displayName, passphrase });
+            const result = await sendWelcomeEmail(env, { email, displayName, passphrase: clean });
             emailSent = result && result.ok;
         } catch (e) {
             console.error('Welcome email failed:', e.message);
         }
     }
 
-    return new Response(JSON.stringify({ passphrase, displayName, emailSent }), { status: 201 });
+    return new Response(JSON.stringify({ passphrase: clean, displayName, emailSent }), { status: 201 });
+}
+
+/**
+ * Change a user's passphrase.
+ * PUT /admin/users/:passphrase { newPassphrase }
+ */
+export async function changePassphrase(kv, oldPassphrase, newPassphrase) {
+    const userData = await kv.get(`auth:${oldPassphrase}`, 'json');
+    if (!userData) {
+        return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
+    }
+
+    if (!newPassphrase || newPassphrase.trim().length < 3) {
+        return new Response(JSON.stringify({ error: 'New passphrase is required (3+ characters)' }), { status: 400 });
+    }
+
+    const clean = newPassphrase.trim().toLowerCase();
+    if (clean === oldPassphrase) {
+        return new Response(JSON.stringify({ error: 'New passphrase must be different' }), { status: 400 });
+    }
+
+    // Check for duplicates
+    const conflict = await kv.get(`auth:${clean}`, 'json');
+    if (conflict) {
+        return new Response(JSON.stringify({ error: 'That passphrase is already in use' }), { status: 409 });
+    }
+
+    // KV has no transactions. Write-then-delete means a partial failure could leave
+    // the user under both passphrases — safer than delete-first which risks data loss.
+    await kv.put(`auth:${clean}`, JSON.stringify(userData));
+    await kv.delete(`auth:${oldPassphrase}`);
+
+    return new Response(JSON.stringify({ passphrase: clean, displayName: userData.displayName }), { status: 200 });
 }
 
 /**

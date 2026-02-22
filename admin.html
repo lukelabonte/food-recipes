@@ -311,6 +311,32 @@
             padding: 1.5rem 0;
         }
 
+        /* Inline passphrase input row */
+        .admin-passphrase-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.6rem;
+            align-items: center;
+        }
+        .admin-passphrase-input {
+            flex: 1;
+            padding: 0.45rem 0.65rem;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+            color: var(--color-text);
+            background: var(--color-bg);
+            outline: none;
+            min-height: 44px;
+            -webkit-appearance: none;
+        }
+        .admin-passphrase-input:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-accent-focus);
+        }
+        .admin-passphrase-input::placeholder { color: var(--color-text-muted); }
+
         /* Fade-out for dismissed/removed cards */
         .admin-card-fading {
             opacity: 0;
@@ -548,22 +574,58 @@
             updateCounts();
         }
 
-        async function handleApprove(req, card, approveBtn, dismissBtn) {
-            approveBtn.disabled = true;
-            dismissBtn.disabled = true;
-            approveBtn.textContent = 'Approving\u2026';
+        function handleApprove(req, card, approveBtn, dismissBtn) {
+            // Toggle: if passphrase row already showing, remove it
+            const existing = card.querySelector('.admin-passphrase-row');
+            if (existing) { existing.remove(); return; }
+
+            // Show inline passphrase input
+            const row = el('div', 'admin-passphrase-row');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'admin-passphrase-input';
+            input.placeholder = 'Choose a passphrase\u2026';
+            input.autocomplete = 'off';
+            row.appendChild(input);
+
+            const confirmBtn = el('button', 'admin-btn admin-btn-approve', 'Confirm');
+            row.appendChild(confirmBtn);
+
+            const cancelBtn = el('button', 'admin-btn admin-btn-dismiss', 'Cancel');
+            cancelBtn.addEventListener('click', () => row.remove());
+            row.appendChild(cancelBtn);
+
+            confirmBtn.addEventListener('click', () => submitApproval(req, card, input, confirmBtn, cancelBtn, row));
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') submitApproval(req, card, input, confirmBtn, cancelBtn, row);
+            });
+
+            card.appendChild(row);
+            input.focus();
+        }
+
+        async function submitApproval(req, card, input, confirmBtn, cancelBtn, row) {
+            const passphrase = input.value.trim();
+            if (!passphrase) { input.focus(); return; }
+
+            confirmBtn.disabled = true;
+            cancelBtn.disabled = true;
+            input.disabled = true;
+            confirmBtn.textContent = 'Creating\u2026';
 
             try {
                 const userRes = await api('POST', '/admin/users', {
                     displayName: req.name,
+                    passphrase,
                     email: req.contact || undefined
                 });
 
                 if (userRes.status >= 400) {
                     showCardStatus(card, 'error', userRes.data.error || 'Failed to create user.');
-                    approveBtn.disabled = false;
-                    dismissBtn.disabled = false;
-                    approveBtn.textContent = 'Approve';
+                    confirmBtn.disabled = false;
+                    cancelBtn.disabled = false;
+                    input.disabled = false;
+                    confirmBtn.textContent = 'Confirm';
                     return;
                 }
 
@@ -571,8 +633,10 @@
                 await api('DELETE', '/admin/requests/' + encodeURIComponent(req.id));
 
                 // Show success
-                const passphrase = userRes.data.passphrase;
                 const emailSent = userRes.data.emailSent;
+                row.remove();
+                const oldButtons = card.querySelector('.admin-card-buttons');
+                if (oldButtons) oldButtons.remove();
 
                 function fadeOutCard() {
                     card.classList.add('admin-card-fading');
@@ -584,26 +648,10 @@
 
                 if (emailSent) {
                     showCardStatus(card, 'success', 'Approved! Passphrase sent to ' + (req.contact || 'email') + '.');
-                    // Auto-fade since nothing to copy
                     setTimeout(fadeOutCard, 3000);
                 } else {
-                    // Show passphrase with copy + dismiss buttons (no auto-fade)
-                    const statusDiv = el('div', 'admin-card-status status-success');
-                    statusDiv.appendChild(document.createTextNode('Approved! Passphrase: '));
-                    const code = el('code', 'admin-card-passphrase', passphrase);
-                    statusDiv.appendChild(code);
-                    statusDiv.appendChild(document.createTextNode(' '));
-                    const copyBtn = el('button', 'admin-btn admin-btn-copy', 'Copy');
-                    copyBtn.addEventListener('click', () => copyToClipboard(passphrase, copyBtn));
-                    statusDiv.appendChild(copyBtn);
-                    statusDiv.appendChild(document.createTextNode(' '));
-                    const doneBtn = el('button', 'admin-btn admin-btn-dismiss', 'Done');
-                    doneBtn.addEventListener('click', fadeOutCard);
-                    statusDiv.appendChild(doneBtn);
-                    // Remove old buttons
-                    const oldButtons = card.querySelector('.admin-card-buttons');
-                    if (oldButtons) oldButtons.remove();
-                    card.appendChild(statusDiv);
+                    showCardStatus(card, 'success', 'Approved! Copy the passphrase from the Users section below.');
+                    setTimeout(fadeOutCard, 4000);
                 }
 
                 // Refresh users
@@ -611,9 +659,10 @@
 
             } catch (err) {
                 showCardStatus(card, 'error', 'Network error. Please try again.');
-                approveBtn.disabled = false;
-                dismissBtn.disabled = false;
-                approveBtn.textContent = 'Approve';
+                confirmBtn.disabled = false;
+                cancelBtn.disabled = false;
+                input.disabled = false;
+                confirmBtn.textContent = 'Confirm';
             }
         }
 
@@ -681,6 +730,10 @@
                 copyBtn.addEventListener('click', () => copyToClipboard(user.passphrase, copyBtn));
                 buttons.appendChild(copyBtn);
 
+                const changeBtn = el('button', 'admin-btn admin-btn-copy', 'Change');
+                changeBtn.addEventListener('click', () => showChangePassphrase(user, card));
+                buttons.appendChild(changeBtn);
+
                 const removeBtn = el('button', 'admin-btn admin-btn-remove', 'Remove');
                 removeBtn.addEventListener('click', () => showRemoveConfirm(user, card));
                 buttons.appendChild(removeBtn);
@@ -728,6 +781,77 @@
             confirm.appendChild(cancelBtn);
 
             card.appendChild(confirm);
+        }
+
+        // ── Change Passphrase ───────────────────────
+
+        function showChangePassphrase(user, card) {
+            // Toggle existing input
+            const existing = card.querySelector('.admin-passphrase-row');
+            if (existing) { existing.remove(); return; }
+
+            const row = el('div', 'admin-passphrase-row');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'admin-passphrase-input';
+            input.placeholder = 'New passphrase\u2026';
+            input.autocomplete = 'off';
+            row.appendChild(input);
+
+            const saveBtn = el('button', 'admin-btn admin-btn-approve', 'Save');
+            row.appendChild(saveBtn);
+
+            const cancelBtn = el('button', 'admin-btn admin-btn-dismiss', 'Cancel');
+            cancelBtn.addEventListener('click', () => row.remove());
+            row.appendChild(cancelBtn);
+
+            async function doChange() {
+                const newPassphrase = input.value.trim();
+                if (!newPassphrase) { input.focus(); return; }
+
+                saveBtn.disabled = true;
+                cancelBtn.disabled = true;
+                input.disabled = true;
+                saveBtn.textContent = 'Saving\u2026';
+
+                try {
+                    const res = await api('PUT', '/admin/users/' + encodeURIComponent(user.passphrase), {
+                        newPassphrase
+                    });
+
+                    if (res.status >= 400) {
+                        showCardStatus(card, 'error', res.data.error || 'Failed to change passphrase.');
+                        saveBtn.disabled = false;
+                        cancelBtn.disabled = false;
+                        input.disabled = false;
+                        saveBtn.textContent = 'Save';
+                        return;
+                    }
+
+                    row.remove();
+                    showCardStatus(card, 'success', 'Passphrase changed!');
+
+                    // Refresh users to show updated passphrase
+                    setTimeout(() => {
+                        const status = card.querySelector('.admin-card-status');
+                        if (status) status.remove();
+                        api('GET', '/admin/users').then(r => renderUsers(r.data.users || []));
+                    }, 1500);
+
+                } catch {
+                    showCardStatus(card, 'error', 'Network error.');
+                    saveBtn.disabled = false;
+                    cancelBtn.disabled = false;
+                    input.disabled = false;
+                    saveBtn.textContent = 'Save';
+                }
+            }
+
+            saveBtn.addEventListener('click', doChange);
+            input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doChange(); });
+
+            card.appendChild(row);
+            input.focus();
         }
 
         // ── Clipboard ────────────────────────────────────

@@ -7,6 +7,7 @@
  *   POST   /request-access          Submit an access request (public)
  *   POST   /admin/users             Create a user (admin auth)
  *   DELETE /admin/users/:passphrase Delete a user (admin auth)
+ *   PUT    /admin/users/:passphrase Change a user's passphrase (admin auth)
  *   GET    /admin/users             List users (admin auth)
  *   GET    /admin/requests          List access requests (admin auth)
  *   DELETE /admin/requests/:id      Delete an access request (admin auth)
@@ -15,7 +16,7 @@
 
 import { handleUpload, getUploadStatus } from './upload.js';
 import { handleRequestAccess } from './request-access.js';
-import { verifyAdmin, createUser, deleteUser, listUsers, listRequests, deleteRequest } from './admin.js';
+import { verifyAdmin, createUser, deleteUser, changePassphrase, listUsers, listRequests, deleteRequest } from './admin.js';
 
 /**
  * Check if the request origin is allowed.
@@ -142,16 +143,29 @@ export default {
                 return withCors(response, origin);
             }
 
-            // DELETE /admin/users/:passphrase
-            const userDeleteMatch = matchRoute(pathname, '/admin/users/:passphrase');
-            if (method === 'DELETE' && userDeleteMatch) {
+            // DELETE or PUT /admin/users/:passphrase
+            const userMatch = matchRoute(pathname, '/admin/users/:passphrase');
+            if (method === 'DELETE' && userMatch) {
                 if (!verifyAdmin(request, env.ADMIN_SECRET)) {
                     return withCors(
                         new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403 }),
                         origin
                     );
                 }
-                response = await deleteUser(env.KV, userDeleteMatch.passphrase);
+                response = await deleteUser(env.KV, userMatch.passphrase);
+                return withCors(response, origin);
+            }
+
+            // PUT /admin/users/:passphrase — change passphrase
+            if (method === 'PUT' && userMatch) {
+                if (!verifyAdmin(request, env.ADMIN_SECRET)) {
+                    return withCors(
+                        new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403 }),
+                        origin
+                    );
+                }
+                const body = await request.json();
+                response = await changePassphrase(env.KV, userMatch.passphrase, body.newPassphrase);
                 return withCors(response, origin);
             }
 
