@@ -112,7 +112,7 @@ export default {
                         allowedOrigin
                     );
                 }
-                response = await createUser(request, env.KV);
+                response = await createUser(request, env);
                 return withCors(response, allowedOrigin);
             }
 

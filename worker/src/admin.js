@@ -3,6 +3,8 @@
  * All endpoints require X-Admin-Secret header matching ADMIN_SECRET env var.
  */
 
+import { sendWelcomeEmail } from './email.js';
+
 /**
  * Verify admin authentication.
  * @param {Request} request
@@ -27,23 +29,35 @@ function generatePassphrase() {
 
 /**
  * Create a new user with a generated passphrase.
- * POST /admin/users { displayName }
+ * POST /admin/users { displayName, email? }
+ * If email is provided, sends a welcome email with the passphrase.
  */
-export async function createUser(request, kv) {
+export async function createUser(request, env) {
     const body = await request.json();
-    const { displayName } = body;
+    const { displayName, email } = body;
 
     if (!displayName) {
         return new Response(JSON.stringify({ error: 'displayName is required' }), { status: 400 });
     }
 
     const passphrase = generatePassphrase();
-    await kv.put(`auth:${passphrase}`, JSON.stringify({
+    await env.KV.put(`auth:${passphrase}`, JSON.stringify({
         displayName,
         createdAt: new Date().toISOString()
     }));
 
-    return new Response(JSON.stringify({ passphrase, displayName }), { status: 201 });
+    // Send welcome email if email address provided
+    let emailSent = false;
+    if (email) {
+        try {
+            const result = await sendWelcomeEmail(env, { email, displayName, passphrase });
+            emailSent = result && result.ok;
+        } catch (e) {
+            console.error('Welcome email failed:', e.message);
+        }
+    }
+
+    return new Response(JSON.stringify({ passphrase, displayName, emailSent }), { status: 201 });
 }
 
 /**
