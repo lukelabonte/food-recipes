@@ -551,3 +551,34 @@
     minusBtn.addEventListener('click', function() { applyScale(currentServings - 1); });
     plusBtn.addEventListener('click', function() { applyScale(currentServings + 1); });
 })();
+
+// --- Step tracking ---
+// Tap a step to mark it as "current." Steps above dim as done.
+// Tap the same step again to clear.
+(function() {
+    var stepsOl = document.querySelector('.steps-card ol');
+    if (!stepsOl) return;
+
+    var steps = Array.prototype.slice.call(stepsOl.querySelectorAll(':scope > li'));
+    if (steps.length === 0) return;
+
+    var activeIndex = -1;
+
+    function setActive(index) {
+        if (index === activeIndex) {
+            // Tap same step → clear all
+            activeIndex = -1;
+        } else {
+            activeIndex = index;
+        }
+        steps.forEach(function(li, i) {
+            li.classList.toggle('step-done', activeIndex >= 0 && i < activeIndex);
+            li.classList.toggle('step-active', i === activeIndex);
+        });
+    }
+
+    steps.forEach(function(li, i) {
+        li.style.cursor = 'pointer';
+        li.addEventListener('click', function() { setActive(i); });
+    });
+})();

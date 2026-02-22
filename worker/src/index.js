@@ -99,7 +99,7 @@ export default {
 
             // POST /request-access
             if (method === 'POST' && pathname === '/request-access') {
-                response = await handleRequestAccess(request, env.KV);
+                response = await handleRequestAccess(request, env);
                 return withCors(response, allowedOrigin);
             }
 

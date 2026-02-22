@@ -310,6 +310,33 @@
                     toggleGroup.appendChild(clearAllBtn);
                     headerCard.appendChild(toggleGroup);
                     updateClearAll();
+
+                    // Upload button (top-left corner, mirrors shopping toggle)
+                    var uploadBtn = document.createElement('a');
+                    uploadBtn.href = 'upload.html';
+                    uploadBtn.className = 'upload-toggle';
+                    uploadBtn.setAttribute('aria-label', 'Upload a recipe');
+                    var uploadSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    uploadSvg.setAttribute('width', '18');
+                    uploadSvg.setAttribute('height', '18');
+                    uploadSvg.setAttribute('viewBox', '0 0 24 24');
+                    uploadSvg.setAttribute('fill', 'none');
+                    uploadSvg.setAttribute('stroke', 'currentColor');
+                    uploadSvg.setAttribute('stroke-width', '2');
+                    uploadSvg.setAttribute('stroke-linecap', 'round');
+                    uploadSvg.setAttribute('stroke-linejoin', 'round');
+                    var path1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path1.setAttribute('d', 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4');
+                    var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+                    poly.setAttribute('points', '17 8 12 3 7 8');
+                    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', '12'); line.setAttribute('y1', '3');
+                    line.setAttribute('x2', '12'); line.setAttribute('y2', '15');
+                    uploadSvg.appendChild(path1);
+                    uploadSvg.appendChild(poly);
+                    uploadSvg.appendChild(line);
+                    uploadBtn.appendChild(uploadSvg);
+                    headerCard.appendChild(uploadBtn);
                 }
 
                 // FAB (visible when selections exist, regardless of mode)

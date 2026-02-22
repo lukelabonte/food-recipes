@@ -75,19 +75,28 @@ function buildContent(text, urlContent, imageBase64, notes) {
     const parts = [];
 
     if (imageBase64) {
-        // Detect media type from base64 header or default to jpeg
+        // Detect media type from data URL header
         let mediaType = 'image/jpeg';
+        let data = imageBase64;
         if (imageBase64.startsWith('data:')) {
-            const match = imageBase64.match(/^data:(image\/\w+);base64,/);
+            const match = imageBase64.match(/^data:([^;]+);base64,/);
             if (match) {
                 mediaType = match[1];
-                imageBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+                data = imageBase64.replace(/^data:[^;]+;base64,/, '');
             }
         }
-        parts.push({
-            type: 'image',
-            source: { type: 'base64', media_type: mediaType, data: imageBase64 }
-        });
+
+        if (mediaType === 'application/pdf') {
+            parts.push({
+                type: 'document',
+                source: { type: 'base64', media_type: 'application/pdf', data }
+            });
+        } else {
+            parts.push({
+                type: 'image',
+                source: { type: 'base64', media_type: mediaType, data }
+            });
+        }
     }
 
     let textContent = EXTRACTION_PROMPT + '\n\n---\n\nRecipe text:\n' + text;

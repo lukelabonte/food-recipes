@@ -307,6 +307,7 @@ li { margin-bottom: 0.3rem; }
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
+    justify-content: center;
     background: #f7f5f2;
     border-radius: 8px;
     padding: 0.45rem 0.75rem;
@@ -497,6 +498,21 @@ li { margin-bottom: 0.3rem; }
     color: #c4a882;
     width: 1.8rem;
     text-align: center;
+}
+
+/* Step tracking — tap to mark current step */
+.steps-card li.step-active {
+    border-left-color: #9a7b5b;
+    background: #f5f0ea;
+}
+.steps-card li.step-active::before {
+    color: #7a5f43;
+}
+.steps-card li.step-done {
+    opacity: 0.4;
+}
+.steps-card li {
+    transition: opacity 0.15s ease, background 0.15s ease, border-left-color 0.15s ease;
 }
 
 /* ===========================
@@ -718,7 +734,6 @@ li { margin-bottom: 0.3rem; }
 }
 .recipe-card-meta {
     display: flex;
-    justify-content: space-between;
     align-items: baseline;
     font-size: 0.78rem;
     color: #bbb;
@@ -728,9 +743,10 @@ li { margin-bottom: 0.3rem; }
 .recipe-card-meta-left span { margin-right: 0.75rem; }
 .recipe-card-meta-left span:last-child { margin-right: 0; }
 .card-contributor {
-    color: #999;
+    color: #bbb;
     font-size: 0.82rem;
     white-space: nowrap;
+    margin-left: auto;
     margin-right: 0;
 }
 .recipe-card-chevron {
@@ -801,6 +817,26 @@ li { margin-bottom: 0.3rem; }
 .recipe-card.selected {
     box-shadow: 0 0 0 2px rgba(154, 123, 91, 0.25), 0 1px 3px rgba(0,0,0,0.04);
 }
+
+/* Upload button (top-left) */
+
+.upload-toggle {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: #bbb;
+    text-decoration: none;
+    border: 1px solid #e0d6c8;
+    border-radius: 50%;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+}
+.upload-toggle:hover { color: #999; border-color: #c4a882; }
 
 /* Shopping mode toggle */
 
@@ -1110,11 +1146,13 @@ li { margin-bottom: 0.3rem; }
     .header-card .source-link a { transition: none; }
     .time-filter-slider::-webkit-slider-thumb { transition: none; }
     .recipe-select-box { transition: none; }
+    .upload-toggle { transition: none; }
     .shopping-toggle { transition: none; }
     .shopping-clear-all { transition: none; }
     .shopping-fab { transition: none; }
     .shopping-action-btn { transition: none; }
     .shopping-section-header { transition: none; }
+    .steps-card li { transition: none; }
 }
 
 /* ===========================
@@ -1197,6 +1235,9 @@ li { margin-bottom: 0.3rem; }
         border-left-color: #999;
     }
     .steps-card li::before { color: #666; font-size: 0.85rem; left: 0.5rem; top: 0.2rem; }
+    .steps-card li.step-active,
+    .steps-card li.step-done { opacity: 1; background: none; border-left-color: #999; }
+    .steps-card li.step-active::before { color: #666; }
 
     /* Nutrition stat blocks — compact for print */
     .nutrition-list { gap: 0.25rem; }
@@ -1245,6 +1286,7 @@ li { margin-bottom: 0.3rem; }
     #search-results { display: none; }
     #no-results { display: none; }
     .recipe-select { display: none; }
+    .upload-toggle { display: none; }
     .shopping-toggle-group { display: none; }
     .shopping-fab { display: none !important; }
 

@@ -54,7 +54,7 @@ export async function handleUpload(request, env) {
     }));
 
     try {
-        // Convert image to base64 if provided
+        // Convert uploaded file (image or PDF) to base64 if provided
         let imageBase64 = null;
         if (imageFile && imageFile.size > 0) {
             const buffer = await imageFile.arrayBuffer();
