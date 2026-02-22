@@ -16,8 +16,8 @@ food-recipes/
 ├── upload.html                     # Recipe upload form (passphrase auth)
 ├── assets/                         # Site resources (not pages)
 │   ├── style.css                   # Shared stylesheet for all pages
-│   ├── recipe.js                   # Pill bar nav + substitution toggle + servings scaling
-│   ├── search.js                   # Fuse.js search + time filter + shopping list selection
+│   ├── recipe.js                   # Pill bar nav + substitution toggle + servings scaling + step tracking
+│   ├── search.js                   # Fuse.js search + time filter + shopping list selection + upload button
 │   ├── shopping-list.js            # Ingredient parser, smart merge, store sections, checklist UI
 │   ├── recipes.json                # AUTO-GENERATED — do not edit manually
 │   └── thumbnails/                 # AUTO-GENERATED — OG preview images
@@ -158,6 +158,18 @@ Recipe pages have a servings stepper (`[−] N [+]`) inside the ingredients card
 - Range quantities (e.g., "7–10 stalks") scale both endpoints
 - Stepper is hidden in print; a "Scaled: N servings" note prints instead
 
+## Step Tracking
+
+Recipe pages let users tap steps to track their progress while cooking.
+
+- `assets/recipe.js` adds click handlers to `.steps-card ol > li` elements at load time — no HTML changes needed
+- Tapping a step marks it as active (`.step-active` — warm brown highlight)
+- All previous steps are dimmed (`.step-done` — opacity: 0.4)
+- Tapping a dimmed step makes it the new active step
+- Tapping the active step clears all tracking state
+- Respects `prefers-reduced-motion` (disables transitions)
+- Print styles reset all step states to normal appearance
+
 ## Attribution
 
 Recipe attribution uses `<p class="recipe-attribution">` at the bottom of the HTML (before the back link). At load time, `assets/recipe.js` relocates this into the header card and removes the original element.
@@ -187,6 +199,7 @@ Each page has `og:image`, `og:image:width`, `og:image:height`, and `og:url` meta
 
 Trusted contributors can submit recipes via `upload.html`. A Cloudflare Worker processes submissions.
 
+- **Upload button:** `assets/search.js` injects a circle button (`.upload-toggle`) in the top-left of the index header card, linking to `upload.html`. Mirrors the shopping toggle style on the right.
 - **Auth:** Per-person passphrases stored in Cloudflare KV. Passphrase = identity (maps to display name).
 - **Pipeline:** Form submit → Worker authenticates → Sonnet 4.6 extracts structured JSON → `worker/src/template.js` renders HTML → Worker creates GitHub PR
 - **Admin:** REST endpoints on the Worker for managing users and access requests (protected by admin secret)
@@ -214,4 +227,5 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | Time-related fields | `scripts/generate_search_index.py` (`timeMinutes`), `assets/search.js` filter logic |
 | Ingredient data in `assets/recipes.json` | `assets/shopping-list.js` parser, `assets/search.js` card selectors |
 | Quantity parsing (fractions) | `assets/recipe.js` and `assets/shopping-list.js` both have copies of `parseLeadingQty` / `formatQty` |
+| Step tracking CSS (`.step-active`, `.step-done`) | `assets/recipe.js` step tracking IIFE, print styles, reduced-motion overrides |
 | Any recipe HTML convention | `docs/claude-web-instructions.md` AND `worker/src/template.js` — keep in sync so both pipelines generate correct markup |
