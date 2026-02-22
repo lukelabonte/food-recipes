@@ -216,8 +216,8 @@ Trusted contributors can submit recipes via `upload.html`. A Cloudflare Worker p
 `admin.html` provides a mobile-first dashboard for managing access requests and users, replacing curl-based admin workflows.
 
 - **Auth:** Password form stores admin secret in `sessionStorage` (clears on tab close). On load, tests secret with `GET /admin/requests` — shows dashboard on success, clears and shows auth gate on 403.
-- **Access Requests:** Always-visible section. Each card shows name, contact, message, relative date. Approve creates user via `POST /admin/users` (sends welcome email if contact is an email) then deletes request via `DELETE /admin/requests/:id`. Dismiss deletes request only. Cards fade out after action.
-- **Users:** Collapsible `<details>` section (closed by default). Each card shows display name, passphrase (monospace), date. Copy button uses `navigator.clipboard` with `prompt()` fallback. Remove shows inline confirmation before `DELETE /admin/users/:passphrase`.
+- **Access Requests:** Always-visible section. Each card shows name, email, message, relative date. Approve shows inline passphrase input — admin picks the passphrase, then `POST /admin/users` creates user (sends welcome email with passphrase) and `DELETE /admin/requests/:id` removes the request. Dismiss deletes request only. Cards fade out after action.
+- **Users:** Collapsible `<details>` section (closed by default). Each card shows display name, passphrase (monospace), date. Copy button uses `navigator.clipboard` with `prompt()` fallback. Change button shows inline input for new passphrase via `PUT /admin/users/:passphrase`. Remove shows inline confirmation before `DELETE /admin/users/:passphrase`.
 - **Security:** Page is public on GitHub Pages but all data requires `X-Admin-Secret` header. `<meta name="robots" content="noindex, nofollow">` prevents search indexing. No OG tags. `sessionStorage` never persists beyond the tab.
 - **No build dependencies:** Self-contained HTML with inline CSS and JS. Uses `assets/style.css` for base card/link styles only.
 

@@ -26,7 +26,11 @@ export async function handleRequestAccess(request, env) {
     const { name, contact, message } = body;
 
     if (!name || !contact) {
-        return new Response(JSON.stringify({ error: 'name and contact are required' }), { status: 400 });
+        return new Response(JSON.stringify({ error: 'name and email are required' }), { status: 400 });
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
+        return new Response(JSON.stringify({ error: 'A valid email address is required' }), { status: 400 });
     }
 
     const id = generateId();
