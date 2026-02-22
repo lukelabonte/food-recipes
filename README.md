@@ -27,7 +27,7 @@ Current contributors: **Eileen**, **Kari**, and **Bale**.
 
 ## How to Contribute
 
-Have a recipe to share? Visit the [upload page](https://copyandpastry.com/upload.html) to submit it. You'll need a passphrase to upload — request access on that page if you don't have one.
+Have a recipe to share? Visit the [upload page](https://copyandpastry.com/upload.html) to submit it. You'll need a passphrase to upload — [request access](https://copyandpastry.com/request-access.html) if you don't have one.
 
 Send your recipe in any format: a photo, a handwritten card, a URL, a video, plain text — whatever you've got.
 

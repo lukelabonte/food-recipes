@@ -14,6 +14,7 @@ food-recipes/
 ├── index.html                      # Recipe index with categories and fuzzy search
 ├── shopping-list.html              # Shopping list page (ingredient merge + checklist)
 ├── upload.html                     # Recipe upload form (passphrase auth)
+├── request-access.html             # Request a passphrase to contribute
 ├── assets/                         # Site resources (not pages)
 │   ├── style.css                   # Shared stylesheet for all pages
 │   ├── recipe.js                   # Pill bar nav + substitution toggle + servings scaling + step tracking
@@ -204,7 +205,7 @@ Trusted contributors can submit recipes via `upload.html`. A Cloudflare Worker p
 - **Pipeline:** Form submit → Worker authenticates → Sonnet 4.6 extracts structured JSON → `worker/src/template.js` renders HTML → Worker creates GitHub PR
 - **Admin:** REST endpoints on the Worker for managing users and access requests (protected by admin secret)
 - **Form fields:** passphrase, recipe text, optional URL, optional image, optional notes, optional "recipe from" override
-- **Request access:** Public form on upload page for anyone to request a passphrase
+- **Request access:** Separate page (`request-access.html`) for anyone to request a passphrase. Linked from `upload.html`.
 - **Worker source:** `worker/src/` — router, auth, extract, template, github, admin modules
 - **Secrets:** `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`, `ADMIN_SECRET` (set via `wrangler secret put`)
 

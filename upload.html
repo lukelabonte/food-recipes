@@ -182,8 +182,7 @@
         }
 
         /* Status feedback */
-        #upload-status,
-        #request-status {
+        #upload-status {
             margin-top: 0.75rem;
             padding: 0.65rem 0.85rem;
             border-radius: 10px;
@@ -191,8 +190,7 @@
             line-height: 1.45;
             display: none;
         }
-        #upload-status.visible,
-        #request-status.visible {
+        #upload-status.visible {
             display: block;
         }
         .status-success {
@@ -209,57 +207,6 @@
             background: #f5f3f0;
             color: #888;
             border: 1px solid #e0d6c8;
-        }
-
-        /* Section divider */
-        .section-divider {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 1.5rem 0;
-            padding: 0 0.25rem;
-        }
-        .section-divider::before,
-        .section-divider::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: #e0d6c8;
-        }
-        .section-divider span {
-            font-size: 0.72rem;
-            font-weight: 500;
-            color: #ccc;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            white-space: nowrap;
-        }
-
-        /* Request access card — slightly muted */
-        .request-card {
-            background: #faf8f5;
-            border: 1px solid #e8e4df;
-        }
-        .request-card h2 {
-            text-transform: none;
-            font-size: 1.05rem;
-            color: #5a5a5a;
-            letter-spacing: 0;
-        }
-        .request-card .subtitle {
-            font-size: 0.82rem;
-            color: #aaa;
-            margin-bottom: 1rem;
-        }
-        .request-card .submit-btn {
-            background: transparent;
-            color: #9a7b5b;
-            border: 1.5px solid #c4a882;
-        }
-        .request-card .submit-btn:hover {
-            background: #f5f0ea;
-            color: #7a5f43;
-            border-color: #9a7b5b;
         }
 
         /* Back link spacing */
@@ -296,6 +243,7 @@
 
         <div class="upload-actions">
             <a href="index.html" class="back-link" style="padding:0; font-size:0.9rem;">&larr; Back to Recipes</a>
+            <a href="request-access.html" style="font-size:0.88rem; color:#9a7b5b;">Don't have a passphrase?</a>
         </div>
 
         <!-- Upload form -->
@@ -342,35 +290,6 @@
 
             <button type="submit" class="submit-btn">Upload Recipe</button>
             <div id="upload-status"></div>
-        </form>
-
-        <!-- Section divider -->
-        <div class="section-divider">
-            <span>or</span>
-        </div>
-
-        <!-- Request access -->
-        <form id="request-form" class="card request-card" action="https://recipe-upload.lukelabonte.workers.dev/request-access" method="POST">
-            <h2>Request Access</h2>
-            <p class="subtitle">Want to contribute? Send a request and we'll get you set up.</p>
-
-            <div class="form-group">
-                <label class="form-label" for="req-name">Name</label>
-                <input class="form-input" type="text" id="req-name" name="name" required placeholder="Your name">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="req-contact">Email or contact</label>
-                <input class="form-input" type="text" id="req-contact" name="contact" required placeholder="How to reach you">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="req-message">Message <span class="optional">(optional)</span></label>
-                <textarea class="form-textarea" id="req-message" name="message" placeholder="Anything you'd like us to know..."></textarea>
-            </div>
-
-            <button type="submit" class="submit-btn">Send Request</button>
-            <div id="request-status"></div>
         </form>
 
         <a href="index.html" class="back-link">&larr; Back to Recipes</a>
@@ -452,44 +371,6 @@
             submitBtn.textContent = 'Upload Recipe';
         });
 
-        // Request access form
-        document.getElementById('request-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const status = document.getElementById('request-status');
-            const submitBtn = this.querySelector('.submit-btn');
-
-            status.className = 'status-processing visible';
-            status.textContent = 'Sending your request\u2026';
-            submitBtn.disabled = true;
-
-            try {
-                const response = await fetch(this.action, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: document.getElementById('req-name').value,
-                        contact: document.getElementById('req-contact').value,
-                        message: document.getElementById('req-message').value
-                    })
-                });
-                const data = await response.json();
-
-                if (response.ok) {
-                    status.className = 'status-success visible';
-                    status.textContent = '\u2713 Request sent! We\u2019ll be in touch.';
-                    this.reset();
-                } else {
-                    status.className = 'status-error visible';
-                    status.textContent = data.error || 'Something went wrong. Please try again.';
-                }
-            } catch (err) {
-                status.className = 'status-error visible';
-                status.textContent = 'Network error. Please check your connection and try again.';
-            }
-
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Send Request';
-        });
     </script>
 </body>
 </html>
