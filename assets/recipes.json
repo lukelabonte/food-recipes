@@ -181,6 +181,27 @@
     "url": "main-dishes/pailins-authentic-pad-thai.html"
   },
   {
+    "title": "Quick Pickled Red Onions",
+    "description": "Tangy, slightly sweet, and spiced with cinnamon and oregano. Put them on everything.",
+    "category": "Sauces and Dressings",
+    "time": "15 min",
+    "timeMinutes": 15,
+    "servings": "8",
+    "method": "Stovetop",
+    "ingredients": [
+      "2 bay leaves",
+      "2 cinnamon sticks",
+      "1 cup rice vinegar",
+      "2 cups water",
+      "1 teaspoon dried oregano",
+      "2 red onions, thinly sliced",
+      "2 teaspoons salt",
+      "1½ tablespoons sugar"
+    ],
+    "addedBy": "Ernesto",
+    "url": "sauces-and-dressings/quick-pickled-red-onions.html"
+  },
+  {
     "title": "Quick and Easy Chicken Noodle Soup",
     "description": "A simple, comforting shortcut soup for when you don't have time to make it from scratch.",
     "category": "Soups and Stews",
