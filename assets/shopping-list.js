@@ -10,6 +10,9 @@
     var selectedUrls = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]');
     var checkedItems = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
 
+    // recipes.json stores URLs with .html; index cards use extensionless clean URLs
+    function cleanUrl(url) { return url.replace(/\.html$/, ''); }
+
     // --- Clear list button ---
     if (clearBtn) {
         clearBtn.addEventListener('click', function() {
@@ -302,7 +305,7 @@
         .then(function(r) { return r.json(); })
         .then(function(allRecipes) {
             var recipes = allRecipes.filter(function(r) {
-                return selectedUrls.indexOf(r.url) !== -1;
+                return selectedUrls.indexOf(cleanUrl(r.url)) !== -1;
             });
 
             if (recipes.length === 0) {
@@ -358,7 +361,7 @@
             recipes.forEach(function(recipe) {
                 var tag = document.createElement('a');
                 tag.className = 'shopping-recipe-tag';
-                tag.href = recipe.url;
+                tag.href = cleanUrl(recipe.url);
                 tag.textContent = recipe.title;
                 tagRow.appendChild(tag);
             });

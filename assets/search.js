@@ -10,6 +10,9 @@
     // Bail out if elements aren't present (e.g., index.html not updated yet)
     if (!input || !defaultContent) return;
 
+    // recipes.json stores URLs with .html; DOM cards use extensionless clean URLs
+    function cleanUrl(url) { return url.replace(/\.html$/, ''); }
+
     // --- Shopping list selection state ---
     var STORAGE_KEY = 'shopping-list-recipes';
     var selectedRecipes = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
@@ -145,7 +148,7 @@
             var maxTime = 0;
             recipes.forEach(function(r) {
                 if (r.timeMinutes) {
-                    timeMap[r.url] = r.timeMinutes;
+                    timeMap[cleanUrl(r.url)] = r.timeMinutes;
                     if (r.timeMinutes < minTime) minTime = r.timeMinutes;
                     if (r.timeMinutes > maxTime) maxTime = r.timeMinutes;
                 }
@@ -154,7 +157,7 @@
             // Build contributor map
             var contributorMap = {};
             recipes.forEach(function(r) {
-                if (r.addedBy) contributorMap[r.url] = r.addedBy;
+                if (r.addedBy) contributorMap[cleanUrl(r.url)] = r.addedBy;
             });
 
             // Annotate existing static cards with data-time-minutes and contributor
@@ -358,7 +361,7 @@
 
     function buildCard(recipe) {
         var a = document.createElement('a');
-        a.href = recipe.url;
+        a.href = cleanUrl(recipe.url);
         a.className = 'recipe-card';
 
         if (recipe.timeMinutes) {
@@ -409,7 +412,7 @@
 
         a.appendChild(content);
         a.appendChild(chevron);
-        if (recipe.url) addCheckbox(a, recipe.url);
+        if (recipe.url) addCheckbox(a, cleanUrl(recipe.url));
         return a;
     }
 
