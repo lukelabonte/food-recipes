@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Garlic Bread</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>.recipe { max-width: 640px; margin: 0 auto; }</style>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥘</text></svg>">
+    <meta property="og:title" content="Simple Garlic Bread">
+    <meta property="og:description" content="Crispy, golden baguette slathered with fragrant garlic butter — a classic side that comes together in minutes and pairs perfectly with pasta, soup, or salad. 4 servings · 15 min.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://copyandpastry.com/assets/thumbnails/simple-garlic-bread.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://copyandpastry.com/side-dishes/simple-garlic-bread.html">
+    <script src="../assets/recipe.js" defer></script>
+</head>
+<body>
+    <div class="recipe">
+
+        <div class="nav-bar">
+            <a href="../index.html" class="back-link">← All Recipes</a>
+            <button class="print-btn" onclick="window.print()" aria-label="Print recipe">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18.25 7.28H5.75" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="card header-card">
+            <h1>Simple Garlic Bread</h1>
+            <p class="subtitle">Crispy, golden baguette slathered with fragrant garlic butter — a classic side that comes together in minutes and pairs perfectly with pasta, soup, or salad.</p>
+        </div>
+
+        <nav class="recipe-nav">
+            <a href="#overview" class="recipe-nav-pill">Overview</a>
+            <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
+            <a href="#steps" class="recipe-nav-pill">Steps</a>
+            <a href="#tips" class="recipe-nav-pill">Tips</a>
+            <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
+            <a href="#weight" class="recipe-nav-pill">Weight</a>
+        </nav>
+
+        <div class="card" id="overview">
+            <ul class="meta-list">
+                <li><strong>Prep</strong> 5 min</li>
+                <li><strong>Cook</strong> 10 min</li>
+                <li><strong>Total</strong> 15 min</li>
+                <li><strong>Servings</strong> 4</li>
+                <li><strong>Method</strong> Oven</li>
+            </ul>
+        </div>
+
+        <div class="card" id="ingredients">
+            <h2>Ingredients</h2>
+            <ul class="ingredient-list">
+                <li data-subs>1 baguette, sliced in half lengthwise <span class="ingredient-grams">(~250 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Ciabatta loaf — 1:1 by weight</span>
+                            <span class="sub-note">Slightly chewier crumb with a more open texture; absorbs butter well and delivers a similar golden crust.</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Italian bread loaf — 1:1 by weight</span>
+                            <span class="sub-note">Softer interior than a baguette; slightly lower calorie depending on brand, with a mild flavor that works well with garlic butter.</span>
+                        </li>
+                    </ul>
+                </li>
+                <li data-subs>4 tablespoons softened unsalted butter <span class="ingredient-grams">(~57 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Salted butter — 1:1</span>
+                            <span class="sub-note">Works seamlessly; simply omit the added pinch of salt to avoid over-salting.</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Vegan margarine (plant-based butter) — 1:1</span>
+                            <span class="sub-note">Keeps the dish dairy-free with a very similar flavor and texture; calorie content is roughly comparable.</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Olive oil — 1:1 by volume</span>
+                            <span class="sub-note">Slightly lower in saturated fat; produces a crispier, more rustic result with a fruitier flavor note. Brush on rather than spread.</span>
+                        </li>
+                    </ul>
+                </li>
+                <li data-subs>3 cloves garlic, minced <span class="ingredient-grams">(~9 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Garlic powder — ¾ teaspoon per 3 cloves</span>
+                            <span class="sub-note">Convenient pantry swap with a mellower, slightly sweeter garlic flavor; mixes smoothly into the butter with no raw bite.</span>
+                        </li>
+                    </ul>
+                </li>
+                <li data-subs>1 pinch of salt <span class="ingredient-grams">(~1 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Flaky sea salt — 1:1 pinch</span>
+                            <span class="sub-note">Adds a subtle crunch and slightly more complex mineral flavor when sprinkled on top just before baking.</span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card steps-card" id="steps">
+            <h2>Steps</h2>
+            <ol>
+                <li>Preheat your oven to 375°F (190°C). Line a baking sheet with foil for easy cleanup.</li>
+                <li>In a small bowl, combine the softened butter, minced garlic, and a pinch of salt. Mix thoroughly until the garlic is evenly distributed throughout the butter.</li>
+                <li>Slice the baguette in half lengthwise so you have two long flat pieces. Place them cut-side up on the prepared baking sheet.</li>
+                <li>Spread the garlic butter mixture evenly over the cut surface of both baguette halves, making sure to cover all the way to the edges so the crust gets golden and crisp.</li>
+                <li>Bake for 10 minutes, or until the bread is golden brown and the edges are lightly crisp. For extra color, switch the oven to broil for the final 1–2 minutes, watching closely to prevent burning.</li>
+                <li>Remove from the oven and let rest for 1–2 minutes. Slice each half into 4 pieces (yielding 8 pieces total) and serve immediately while warm.</li>
+            </ol>
+        </div>
+
+        <div class="card tips-card" id="tips">
+            <h2>Tips</h2>
+            <ul>
+                <li><strong>Soften Butter Quickly</strong> If you forgot to take the butter out ahead of time, cut it into small cubes and let it sit at room temperature for 10 minutes, or microwave in 5-second bursts until just soft but not melted.</li>
+                <li><strong>Go Fresh for Best Flavor</strong> Freshly minced garlic gives the most pungent, aromatic result. For a milder, sweeter garlic flavor, use a garlic press or roast the cloves beforehand.</li>
+                <li><strong>Broil for a Crispier Finish</strong> After the initial bake, a quick 1–2 minutes under the broiler adds deep golden color and a satisfying crunch. Keep a close eye on it — garlic bread can go from golden to burnt very quickly under the broiler.</li>
+                <li><strong>Make It Ahead</strong> You can assemble the buttered bread, wrap it tightly in foil, and refrigerate it for up to 24 hours before baking. Bake straight from the fridge — just add 2–3 extra minutes to the cook time.</li>
+            </ul>
+        </div>
+
+        <div class="card" id="nutrition">
+            <h2>Nutrition Facts</h2>
+            <ul class="nutrition-list">
+                <li data-macro="calories"><strong>Calories</strong> 210</li>
+                <li data-macro="protein"><strong>Protein</strong> 4 g</li>
+                <li data-macro="fat"><strong>Fat</strong> 12 g</li>
+                <li data-macro="carbs"><strong>Carbs</strong> 22 g</li>
+                <li><strong>Sat. Fat</strong> 7 g</li>
+                <li><strong>Cholesterol</strong> 30 mg</li>
+                <li><strong>Sodium</strong> 310 mg</li>
+                <li><strong>Potassium</strong> 55 mg</li>
+                <li><strong>Fiber</strong> 1 g</li>
+                <li><strong>Sugars</strong> 1 g</li>
+            </ul>
+            <p class="nutrition-source">Estimated from USDA data for baguette and unsalted butter; values are per serving (2 slices) &middot; Per serving (based on 4 servings)</p>
+        </div>
+
+        <div class="card weight-card" id="weight">
+            <h2>Weight Estimates</h2>
+            <ul class="weight-list">
+                <li><strong>Uncooked</strong> ~317 g</li>
+                <li><strong>Cooked</strong> ~290 g</li>
+                <li><strong>Per Serving</strong> ~73 g</li>
+            </ul>
+            <p class="method">A small amount of moisture evaporates from the bread's surface during baking, resulting in roughly 5–8% weight loss as the crust crisps up.</p>
+        </div>
+
+        <p class="recipe-attribution">
+            <span class="contributor">By Luke</span>
+        </p>
+
+        <a href="../index.html" class="back-link">← All Recipes</a>
+
+    </div>
+</body>
+</html>
