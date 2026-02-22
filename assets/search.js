@@ -313,7 +313,7 @@
 
                     // Upload button (top-left corner, mirrors shopping toggle)
                     var uploadBtn = document.createElement('a');
-                    uploadBtn.href = 'upload.html';
+                    uploadBtn.href = 'upload';
                     uploadBtn.className = 'upload-toggle';
                     uploadBtn.setAttribute('aria-label', 'Upload a recipe');
                     var uploadSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -341,7 +341,7 @@
 
                 // FAB (visible when selections exist, regardless of mode)
                 fab = document.createElement('a');
-                fab.href = 'shopping-list.html';
+                fab.href = 'shopping-list';
                 fab.className = 'shopping-fab';
                 fab.setAttribute('aria-label', 'View shopping list');
                 fabCount = document.createElement('span');

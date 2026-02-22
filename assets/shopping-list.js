@@ -15,7 +15,7 @@
         clearBtn.addEventListener('click', function() {
             localStorage.removeItem(RECIPES_KEY);
             localStorage.removeItem(CHECKED_KEY);
-            window.location.href = 'index.html';
+            window.location.href = '/';
         });
     }
 

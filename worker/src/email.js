@@ -81,7 +81,7 @@ export async function sendWelcomeEmail(env, { email, displayName, passphrase }) 
             `<h2>Welcome to Copy & Pastry, ${escapeHtml(displayName)}!</h2>`,
             `<p>You've been approved to upload recipes. Here's your passphrase:</p>`,
             `<p style="font-size: 1.3em; font-family: monospace; background: #f5f0ea; padding: 12px 16px; border-radius: 8px; display: inline-block;"><strong>${escapeHtml(passphrase)}</strong></p>`,
-            `<p>Use it on the <a href="https://copyandpastry.com/upload.html">upload page</a> to submit recipes.</p>`,
+            `<p>Use it on the <a href="https://copyandpastry.com/upload">upload page</a> to submit recipes.</p>`,
             `<p>Keep this passphrase private — it's your identity on the site.</p>`,
         ].join('\n')
     });
