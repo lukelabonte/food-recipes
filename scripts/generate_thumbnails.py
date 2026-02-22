@@ -64,7 +64,7 @@ CATEGORY_EMOJIS = {
     "soups-and-stews": "\U0001f372", # 🍲
 }
 
-SITE_BASE = "https://lukelabonte.github.io/food-recipes"
+SITE_BASE = "https://copyandpastry.com"
 
 
 # ---------------------------------------------------------------------------
