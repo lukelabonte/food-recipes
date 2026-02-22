@@ -107,21 +107,35 @@ The index page has a time range slider below the search bar. It filters recipe c
 
 ## Shopping List
 
-The index page lets users select recipes and generate a combined shopping list on a dedicated page (`shopping-list.html`).
+Users build a shopping list by adding recipes from the index page or individual recipe pages. The combined ingredient list lives on a dedicated page (`shopping-list.html`).
 
-- A "Build Shopping List" toggle in the index header card enters selection mode, showing checkboxes on recipe cards
-- Clicking anywhere on a card in selection mode toggles selection (links are intercepted)
-- A "Clear All" link appears in selection mode when items are selected
-- A floating "Shopping List (N)" button appears when ≥1 recipe is selected (regardless of mode)
+**Index page (per-card cart toggles):**
+- Each recipe card has a small cart button (`.card-cart-btn`) between the content and chevron
+- Tapping the button toggles the recipe in/out of the shopping list (no selection mode — each card is independent)
+- Active state uses a filled accent background (`color: #fff; background: var(--color-accent)`) for clear visibility in both themes
+- Cards with the same URL (e.g., "Recently Added" + category) stay in sync
+- An inline cart+count link (`.shopping-link`) appears in the header card when ≥1 recipe is in the list; positioned top-right
+- `assets/search.js` manages cart toggles, the shopping link, and localStorage writes
+
+**Recipe pages (cart toggle + count link):**
+- A cart toggle button (`.shopping-list-btn`) in the `.nav-bar` next to the print button, wrapped in `.nav-bar-actions` — adds/removes the current recipe with toast notifications
+- Active state matches index cards (filled accent background)
+- A count link (`.shopping-list-count-link`) appears after the cart button showing total recipes in list; links to the shopping list page
+- `assets/recipe.js` manages the toggle button, count link, and localStorage writes
+
+**Shopping list page:**
 - `assets/shopping-list.js` parses freeform ingredient strings, merges duplicates by name + unit, and categorizes by store section
 - Selected recipes stored in `localStorage['shopping-list-recipes']`; checked-off items in `localStorage['shopping-list-checked']`
 - Smart merge: same ingredient + same unit → summed quantities with source recipe attribution
 - ~8 store sections via keyword matching: Produce, Meat & Seafood, Dairy & Eggs, Baking, Spices & Seasonings, Canned & Jarred, Pasta & Grains, Other
 - Each section has a "Check All" / "Uncheck All" toggle; rows are tappable (label wraps checkbox)
+- Fully-checked sections automatically sink to the bottom and dim (`.section-completed` at opacity 0.6); unchecking an item restores the section to its original position
+- Recipe pills show recipe name + X remove button; clicking X removes the recipe and re-renders the page; removing the last recipe shows empty state
+- `renderPage()` function re-reads localStorage and rebuilds the entire shopping list UI (called on X click and initial load)
 - Prep instructions (cut, chopped, soaked, etc.) are stripped for shopping-friendly display
 - Quantity parsing and fraction display reuse patterns from `assets/recipe.js` (duplicated, not shared — separate pages)
 - Checklist state persists across browser sessions (designed for use at the store)
-- Hidden when printing (selection UI); shopping list page is print-friendly
+- Hidden when printing (cart buttons, shopping link, count link, X buttons); shopping list page is print-friendly
 
 ## Substitutions
 
@@ -216,7 +230,7 @@ Each page has `og:image`, `og:image:width`, `og:image:height`, and `og:url` meta
 
 Trusted contributors can submit recipes via `upload.html`. A Cloudflare Worker processes submissions.
 
-- **Upload button:** `assets/search.js` injects a circle button (`.upload-toggle`) in the top-left of the index header card, linking to `upload.html`. Mirrors the shopping toggle style on the right.
+- **Upload button:** `assets/search.js` injects a circle button (`.upload-toggle`) in the top-left of the index header card, linking to `upload.html`.
 - **Auth:** Per-person passphrases stored in Cloudflare KV. Passphrase = identity (maps to display name).
 - **Pipeline:** Form submit → Worker authenticates → Sonnet 4.6 extracts structured JSON → `worker/src/template.js` renders HTML → Worker creates GitHub PR
 - **Admin:** REST endpoints on the Worker for managing users and access requests (protected by admin secret)
@@ -296,4 +310,5 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | Any recipe HTML convention | `docs/claude-web-instructions.md` AND `worker/src/template.js` — keep in sync so both pipelines generate correct markup |
 | Admin API endpoints (worker) | `admin.html` API calls — endpoint paths, request/response shapes, header names |
 | Color tokens (`assets/style.css` `:root`) | All pages (inherit tokens), `admin.html` / `upload.html` / `request-access.html` inline styles, dark mode media query, `html[data-theme]` overrides |
+| Shopping list localStorage keys | `assets/search.js` (per-card cart toggles), `assets/shopping-list.js` (rendering), `assets/recipe.js` (cart toggle + count link) — all three read/write `shopping-list-recipes` |
 | Adding a new HTML page | Add `<script src="assets/theme.js" defer>` (or `../assets/theme.js` for recipe pages) in `<head>` |

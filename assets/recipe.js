@@ -592,6 +592,147 @@
     });
 })();
 
+// --- Shopping list toggle (add/remove recipe from shopping list) ---
+(function() {
+    var navBar = document.querySelector('.nav-bar');
+    if (!navBar) return;
+
+    var STORAGE_KEY = 'shopping-list-recipes';
+    var pathname = window.location.pathname;
+    // Strip leading slash and trailing .html to get clean URL matching search.js format
+    var cleanUrl = pathname.replace(/^\//, '').replace(/\.html$/, '');
+    if (!cleanUrl) return;
+
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function isInList() {
+        var urls = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        return urls.indexOf(cleanUrl) !== -1;
+    }
+
+    function makeCartIcon() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('stroke-width', '1.5');
+        svg.setAttribute('stroke', 'currentColor');
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('stroke-linejoin', 'round');
+        path.setAttribute('d', 'M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z');
+        svg.appendChild(path);
+        return svg;
+    }
+
+    function getListCount() {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length;
+    }
+
+    function updateButton() {
+        var inList = isInList();
+        btn.classList.toggle('active', inList);
+        btn.setAttribute('aria-label', inList ? 'Remove from shopping list' : 'Add to shopping list');
+        while (btn.firstChild) btn.removeChild(btn.firstChild);
+        btn.appendChild(makeCartIcon());
+
+        // Update count link visibility and text
+        if (countLink) {
+            var count = getListCount();
+            countLink.textContent = String(count);
+            countLink.style.display = count > 0 ? 'flex' : 'none';
+        }
+    }
+
+    function showToast(message) {
+        var existing = document.getElementById('shopping-toast');
+        if (existing) existing.remove();
+
+        var toast = document.createElement('div');
+        toast.id = 'shopping-toast';
+        toast.textContent = message;
+
+        var s = toast.style;
+        s.position = 'fixed';
+        s.bottom = '2rem';
+        s.left = '50%';
+        s.transform = 'translateX(-50%)';
+        s.background = 'var(--color-surface)';
+        s.color = 'var(--color-text)';
+        s.border = '1px solid var(--color-border)';
+        s.borderRadius = '999px';
+        s.padding = '0.5rem 1rem';
+        s.fontSize = '0.85rem';
+        s.fontWeight = '600';
+        s.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        s.boxShadow = '0 4px 12px var(--color-shadow)';
+        s.zIndex = '99999';
+        s.pointerEvents = 'none';
+        s.whiteSpace = 'nowrap';
+        s.opacity = prefersReducedMotion ? '1' : '0';
+        s.transition = prefersReducedMotion ? 'none' : 'opacity 0.25s ease';
+
+        document.body.appendChild(toast);
+
+        if (!prefersReducedMotion) {
+            toast.offsetHeight; // force reflow
+            s.opacity = '1';
+        }
+
+        setTimeout(function() {
+            if (!prefersReducedMotion) {
+                s.opacity = '0';
+                setTimeout(function() { toast.remove(); }, 250);
+            } else {
+                toast.remove();
+            }
+        }, 1500);
+    }
+
+    // Create shopping list button
+    var btn = document.createElement('button');
+    btn.className = 'shopping-list-btn';
+
+    // Create count link (shows total recipes in shopping list, links to shopping list page)
+    var countLink = document.createElement('a');
+    countLink.className = 'shopping-list-count-link';
+    countLink.href = '../shopping-list';
+    countLink.setAttribute('aria-label', 'View shopping list');
+    var initialCount = getListCount();
+    countLink.textContent = String(initialCount);
+    countLink.style.display = initialCount > 0 ? 'flex' : 'none';
+
+    updateButton();
+
+    btn.addEventListener('click', function() {
+        var urls = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        var idx = urls.indexOf(cleanUrl);
+        if (idx !== -1) {
+            urls.splice(idx, 1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(urls));
+            showToast('\uD83D\uDED2 Removed from shopping list');
+        } else {
+            urls.push(cleanUrl);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(urls));
+            showToast('\uD83D\uDED2 Added to shopping list');
+        }
+        updateButton();
+    });
+
+    // Wrap print button + shopping button + count link in nav-bar-actions
+    var printBtn = navBar.querySelector('.print-btn');
+    if (printBtn) {
+        var actions = document.createElement('div');
+        actions.className = 'nav-bar-actions';
+        navBar.insertBefore(actions, printBtn);
+        actions.appendChild(printBtn);
+        actions.appendChild(btn);
+        actions.appendChild(countLink);
+    } else {
+        navBar.appendChild(btn);
+        navBar.appendChild(countLink);
+    }
+})();
+
 // --- Wake Lock (keep screen on while cooking) ---
 // Uses the Screen Wake Lock API to prevent the device from sleeping on recipe pages.
 // Progressive enhancement: silently does nothing on unsupported browsers.

@@ -8,7 +8,7 @@ A family recipe collection — tried-and-true dishes from our kitchen to yours, 
 
 - **Fuzzy search** — Find recipes by name, description, or ingredients. Typo-tolerant, so "chiken" still finds Chicken Noodle Soup
 - **Time filter** — Slide to filter recipes by total cooking time when you're short on time
-- **Shopping list** — Select multiple recipes, get a merged ingredient list organized by store section. Check items off as you shop — your progress saves between visits
+- **Shopping list** — Tap the cart icon on any recipe card to add it to your list, from the index or individual recipe pages. Get a merged ingredient list organized by store section. Check items off as you shop — completed sections sink to the bottom. Remove recipes from the list with the X on each pill. Your progress saves between visits
 - **Servings scaling** — Adjust the serving count and watch every ingredient, gram weight, and weight estimate update in place
 - **Step tracking** — Tap a step to highlight where you are. Previous steps dim so you never lose your place
 - **Screen stays on** — Recipe pages automatically keep your phone screen awake so it doesn't dim while you cook

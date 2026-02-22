@@ -7,8 +7,8 @@
     var clearBtn = document.getElementById('shopping-clear');
     if (!container) return;
 
-    var selectedUrls = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]');
-    var checkedItems = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
+    // Module-level recipe data (set after fetch)
+    var allRecipes = null;
 
     // recipes.json stores URLs with .html; index cards use extensionless clean URLs
     function cleanUrl(url) { return url.replace(/\.html$/, ''); }
@@ -22,15 +22,11 @@
         });
     }
 
-    if (selectedUrls.length === 0) {
-        showEmpty();
-        return;
-    }
-
     function showEmpty() {
         container.style.display = 'none';
         if (emptyState) emptyState.style.display = 'block';
         if (clearBtn) clearBtn.style.display = 'none';
+        if (recipeCountEl) recipeCountEl.textContent = '';
     }
 
     // --- Quantity parsing (duplicated from recipe.js — no bundler) ---
@@ -135,9 +131,6 @@
     }
 
     // Strip prep instructions for shopping-friendly display.
-    // "garlic chives, cut into 2-inch pieces" → "garlic chives"
-    // "rice noodles, soaked in room-temperature water for 1 hour" → "rice noodles"
-    // "pressed tofu, cut into small pieces" → "pressed tofu"
     function stripPrepText(str) {
         return str
             .replace(/,\s*(cut |chopped|diced|minced|sliced|peeled|trimmed|soaked|grated|shredded|crushed|julienned|halved|quartered|melted|softened|divided|sifted|beaten|whisked|thawed|room[- ]temperature|at room temp).*$/i, '')
@@ -299,187 +292,280 @@
         return span;
     }
 
-    // --- Fetch and render ---
+    // --- Section reordering (completed sections sink to bottom) ---
+
+    function reorderSections() {
+        var sections = container.querySelectorAll('.shopping-section');
+        if (sections.length === 0) return;
+
+        var sectionArr = Array.prototype.slice.call(sections);
+        sectionArr.forEach(function(sectionEl) {
+            var checkboxes = sectionEl.querySelectorAll('.shopping-checkbox');
+            var allChecked = checkboxes.length > 0 && Array.prototype.every.call(checkboxes, function(cb) {
+                return cb.checked;
+            });
+            sectionEl.classList.toggle('section-completed', allChecked);
+        });
+
+        // Sort: unchecked first (original order), then checked (original order)
+        sectionArr.sort(function(a, b) {
+            var aCompleted = a.classList.contains('section-completed') ? 1 : 0;
+            var bCompleted = b.classList.contains('section-completed') ? 1 : 0;
+            if (aCompleted !== bCompleted) return aCompleted - bCompleted;
+            var aOrder = parseInt(a.getAttribute('data-section-order'), 10);
+            var bOrder = parseInt(b.getAttribute('data-section-order'), 10);
+            return aOrder - bOrder;
+        });
+
+        sectionArr.forEach(function(sectionEl) {
+            container.appendChild(sectionEl);
+        });
+    }
+
+    // --- Render page (re-reads localStorage and rebuilds UI) ---
+
+    function renderPage() {
+        var selectedUrls = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]');
+        var checkedItems = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
+
+        // Clear container
+        container.textContent = '';
+        container.style.display = '';
+
+        if (selectedUrls.length === 0 || !allRecipes) {
+            showEmpty();
+            return;
+        }
+
+        var recipes = allRecipes.filter(function(r) {
+            return selectedUrls.indexOf(cleanUrl(r.url)) !== -1;
+        });
+
+        if (recipes.length === 0) {
+            showEmpty();
+            return;
+        }
+
+        if (emptyState) emptyState.style.display = 'none';
+        if (clearBtn) clearBtn.style.display = '';
+
+        // Update recipe count
+        if (recipeCountEl) {
+            recipeCountEl.textContent = recipes.length + (recipes.length === 1 ? ' recipe' : ' recipes');
+        }
+
+        // Parse all ingredients
+        var allParsed = [];
+        recipes.forEach(function(recipe) {
+            if (!recipe.ingredients) return;
+            var ingList = Array.isArray(recipe.ingredients)
+                ? recipe.ingredients
+                : recipe.ingredients.split('\n');
+            ingList.forEach(function(line) {
+                var trimmed = line.trim();
+                if (!trimmed) return;
+                var parsed = parseIngredient(trimmed);
+                parsed.source = recipe.title;
+                allParsed.push(parsed);
+            });
+        });
+
+        // Merge duplicates
+        var merged = mergeIngredients(allParsed);
+
+        // Group by store section
+        var sections = {};
+        STORE_SECTIONS.forEach(function(s) { sections[s.name] = []; });
+        merged.forEach(function(item) {
+            var sectionName = categorizeIngredient(item.name || item.raw);
+            sections[sectionName].push(item);
+        });
+
+        // Sort items within each section alphabetically
+        Object.keys(sections).forEach(function(name) {
+            sections[name].sort(function(a, b) {
+                var nameA = (a.displayName || a.raw).toLowerCase();
+                var nameB = (b.displayName || b.raw).toLowerCase();
+                return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+            });
+        });
+
+        // Render recipe tag pills with X to remove
+        var tagRow = document.createElement('div');
+        tagRow.className = 'shopping-recipe-list';
+        recipes.forEach(function(recipe) {
+            var tag = document.createElement('span');
+            tag.className = 'shopping-recipe-tag';
+
+            var link = document.createElement('a');
+            link.className = 'shopping-recipe-tag-link';
+            link.href = cleanUrl(recipe.url);
+            link.textContent = recipe.title;
+
+            var removeBtn = document.createElement('button');
+            removeBtn.className = 'shopping-recipe-remove';
+            removeBtn.setAttribute('aria-label', 'Remove ' + recipe.title);
+            removeBtn.textContent = '\u00d7';
+            removeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var urls = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]');
+                var recipeCleanUrl = cleanUrl(recipe.url);
+                urls = urls.filter(function(u) { return u !== recipeCleanUrl; });
+                if (urls.length === 0) {
+                    localStorage.removeItem(RECIPES_KEY);
+                    localStorage.removeItem(CHECKED_KEY);
+                    container.textContent = '';
+                    showEmpty();
+                } else {
+                    localStorage.setItem(RECIPES_KEY, JSON.stringify(urls));
+                    renderPage();
+                }
+            });
+
+            tag.appendChild(link);
+            tag.appendChild(removeBtn);
+            tagRow.appendChild(tag);
+        });
+        container.appendChild(tagRow);
+
+        // Render store sections
+        var sectionOrder = 0;
+        STORE_SECTIONS.forEach(function(section) {
+            var items = sections[section.name];
+            if (items.length === 0) return;
+
+            var sectionEl = document.createElement('div');
+            sectionEl.className = 'shopping-section';
+            sectionEl.setAttribute('data-section-order', sectionOrder++);
+
+            var header = document.createElement('button');
+            header.className = 'shopping-section-header';
+            header.setAttribute('aria-expanded', 'true');
+            header.appendChild(makeSpan('shopping-section-icon', section.icon));
+            header.appendChild(makeSpan('shopping-section-name', section.name));
+
+            // "Check All" / "Uncheck All" button per section
+            var checkAllBtn = document.createElement('button');
+            checkAllBtn.type = 'button';
+            checkAllBtn.className = 'shopping-section-check-all';
+            checkAllBtn.textContent = 'Check All';
+            header.appendChild(checkAllBtn);
+
+            header.appendChild(makeSpan('shopping-section-count', String(items.length)));
+            var chevron = makeSpan('shopping-section-chevron', '\u25BE');
+            header.appendChild(chevron);
+
+            var list = document.createElement('ul');
+            list.className = 'shopping-section-list';
+
+            // Track checkboxes in this section for "Check All"
+            var sectionCheckboxes = [];
+
+            items.forEach(function(item) {
+                var li = document.createElement('li');
+                li.className = 'shopping-item';
+                var key = item.key;
+
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'shopping-checkbox';
+                checkbox.checked = !!checkedItems[key];
+                if (checkbox.checked) li.classList.add('checked');
+
+                // Use a <label> wrapper so the entire row is tappable
+                var label = document.createElement('label');
+                label.className = 'shopping-item-label';
+
+                var detail = document.createElement('div');
+                detail.className = 'shopping-item-detail';
+
+                var textSpan = document.createElement('span');
+                textSpan.className = 'shopping-item-text';
+                textSpan.textContent = formatItemDisplay(item);
+                detail.appendChild(textSpan);
+
+                // Source attribution — always show which recipe(s) need this ingredient
+                if (item.sources && item.sources.length > 0) {
+                    var sourceSpan = document.createElement('div');
+                    sourceSpan.className = 'shopping-item-sources';
+                    sourceSpan.textContent = item.sources.join(', ');
+                    detail.appendChild(sourceSpan);
+                }
+
+                label.appendChild(checkbox);
+                label.appendChild(detail);
+                li.appendChild(label);
+
+                sectionCheckboxes.push({ checkbox: checkbox, li: li, key: key });
+
+                checkbox.addEventListener('change', function() {
+                    li.classList.toggle('checked', checkbox.checked);
+                    checkedItems = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
+                    if (checkbox.checked) checkedItems[key] = true;
+                    else delete checkedItems[key];
+                    localStorage.setItem(CHECKED_KEY, JSON.stringify(checkedItems));
+                    updateCheckAllLabel();
+                    reorderSections();
+                });
+
+                list.appendChild(li);
+            });
+
+            // Update "Check All" / "Uncheck All" label based on state
+            function updateCheckAllLabel() {
+                var allChecked = sectionCheckboxes.every(function(s) { return s.checkbox.checked; });
+                checkAllBtn.textContent = allChecked ? 'Uncheck All' : 'Check All';
+            }
+            updateCheckAllLabel();
+
+            // Handle "Check All" click — stop propagation so section doesn't collapse
+            checkAllBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var allChecked = sectionCheckboxes.every(function(s) { return s.checkbox.checked; });
+                var newState = !allChecked;
+                checkedItems = JSON.parse(localStorage.getItem(CHECKED_KEY) || '{}');
+                sectionCheckboxes.forEach(function(s) {
+                    s.checkbox.checked = newState;
+                    s.li.classList.toggle('checked', newState);
+                    if (newState) checkedItems[s.key] = true;
+                    else delete checkedItems[s.key];
+                });
+                localStorage.setItem(CHECKED_KEY, JSON.stringify(checkedItems));
+                updateCheckAllLabel();
+                reorderSections();
+            });
+
+            // Collapsible section toggle
+            header.addEventListener('click', function() {
+                var expanded = header.getAttribute('aria-expanded') === 'true';
+                header.setAttribute('aria-expanded', String(!expanded));
+                list.style.display = expanded ? 'none' : '';
+                chevron.textContent = expanded ? '\u25B8' : '\u25BE';
+            });
+
+            sectionEl.appendChild(header);
+            sectionEl.appendChild(list);
+            container.appendChild(sectionEl);
+        });
+
+        // Apply initial section ordering (restore any completed sections)
+        reorderSections();
+    }
+
+    // --- Fetch and initial render ---
 
     fetch('assets/recipes.json')
         .then(function(r) { return r.json(); })
-        .then(function(allRecipes) {
-            var recipes = allRecipes.filter(function(r) {
-                return selectedUrls.indexOf(cleanUrl(r.url)) !== -1;
-            });
+        .then(function(data) {
+            allRecipes = data;
 
-            if (recipes.length === 0) {
+            var selectedUrls = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]');
+            if (selectedUrls.length === 0) {
                 showEmpty();
                 return;
             }
 
-            // Update recipe count
-            if (recipeCountEl) {
-                recipeCountEl.textContent = recipes.length + (recipes.length === 1 ? ' recipe' : ' recipes');
-            }
-
-            // Parse all ingredients
-            var allParsed = [];
-            recipes.forEach(function(recipe) {
-                if (!recipe.ingredients) return;
-                // recipes.json stores ingredients as an array of strings
-                var ingList = Array.isArray(recipe.ingredients)
-                    ? recipe.ingredients
-                    : recipe.ingredients.split('\n');
-                ingList.forEach(function(line) {
-                    var trimmed = line.trim();
-                    if (!trimmed) return;
-                    var parsed = parseIngredient(trimmed);
-                    parsed.source = recipe.title;
-                    allParsed.push(parsed);
-                });
-            });
-
-            // Merge duplicates
-            var merged = mergeIngredients(allParsed);
-
-            // Group by store section
-            var sections = {};
-            STORE_SECTIONS.forEach(function(s) { sections[s.name] = []; });
-            merged.forEach(function(item) {
-                var sectionName = categorizeIngredient(item.name || item.raw);
-                sections[sectionName].push(item);
-            });
-
-            // Sort items within each section alphabetically
-            Object.keys(sections).forEach(function(name) {
-                sections[name].sort(function(a, b) {
-                    var nameA = (a.displayName || a.raw).toLowerCase();
-                    var nameB = (b.displayName || b.raw).toLowerCase();
-                    return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-                });
-            });
-
-            // Render recipe tag pills (linked to recipe pages)
-            var tagRow = document.createElement('div');
-            tagRow.className = 'shopping-recipe-list';
-            recipes.forEach(function(recipe) {
-                var tag = document.createElement('a');
-                tag.className = 'shopping-recipe-tag';
-                tag.href = cleanUrl(recipe.url);
-                tag.textContent = recipe.title;
-                tagRow.appendChild(tag);
-            });
-            container.appendChild(tagRow);
-
-            // Render store sections
-            STORE_SECTIONS.forEach(function(section) {
-                var items = sections[section.name];
-                if (items.length === 0) return;
-
-                var sectionEl = document.createElement('div');
-                sectionEl.className = 'shopping-section';
-
-                var header = document.createElement('button');
-                header.className = 'shopping-section-header';
-                header.setAttribute('aria-expanded', 'true');
-                header.appendChild(makeSpan('shopping-section-icon', section.icon));
-                header.appendChild(makeSpan('shopping-section-name', section.name));
-
-                // "Check All" / "Uncheck All" button per section
-                var checkAllBtn = document.createElement('button');
-                checkAllBtn.type = 'button';
-                checkAllBtn.className = 'shopping-section-check-all';
-                checkAllBtn.textContent = 'Check All';
-                header.appendChild(checkAllBtn);
-
-                header.appendChild(makeSpan('shopping-section-count', String(items.length)));
-                var chevron = makeSpan('shopping-section-chevron', '\u25BE');
-                header.appendChild(chevron);
-
-                var list = document.createElement('ul');
-                list.className = 'shopping-section-list';
-
-                // Track checkboxes in this section for "Check All"
-                var sectionCheckboxes = [];
-
-                items.forEach(function(item) {
-                    var li = document.createElement('li');
-                    li.className = 'shopping-item';
-                    var key = item.key;
-
-                    var checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.className = 'shopping-checkbox';
-                    checkbox.checked = !!checkedItems[key];
-                    if (checkbox.checked) li.classList.add('checked');
-
-                    // Use a <label> wrapper so the entire row is tappable
-                    var label = document.createElement('label');
-                    label.className = 'shopping-item-label';
-
-                    var detail = document.createElement('div');
-                    detail.className = 'shopping-item-detail';
-
-                    var textSpan = document.createElement('span');
-                    textSpan.className = 'shopping-item-text';
-                    textSpan.textContent = formatItemDisplay(item);
-                    detail.appendChild(textSpan);
-
-                    // Source attribution — always show which recipe(s) need this ingredient
-                    if (item.sources && item.sources.length > 0) {
-                        var sourceSpan = document.createElement('div');
-                        sourceSpan.className = 'shopping-item-sources';
-                        sourceSpan.textContent = item.sources.join(', ');
-                        detail.appendChild(sourceSpan);
-                    }
-
-                    label.appendChild(checkbox);
-                    label.appendChild(detail);
-                    li.appendChild(label);
-
-                    sectionCheckboxes.push({ checkbox: checkbox, li: li, key: key });
-
-                    checkbox.addEventListener('change', function() {
-                        li.classList.toggle('checked', checkbox.checked);
-                        if (checkbox.checked) checkedItems[key] = true;
-                        else delete checkedItems[key];
-                        localStorage.setItem(CHECKED_KEY, JSON.stringify(checkedItems));
-                        updateCheckAllLabel();
-                    });
-
-                    list.appendChild(li);
-                });
-
-                // Update "Check All" / "Uncheck All" label based on state
-                function updateCheckAllLabel() {
-                    var allChecked = sectionCheckboxes.every(function(s) { return s.checkbox.checked; });
-                    checkAllBtn.textContent = allChecked ? 'Uncheck All' : 'Check All';
-                }
-                updateCheckAllLabel();
-
-                // Handle "Check All" click — stop propagation so section doesn't collapse
-                checkAllBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    var allChecked = sectionCheckboxes.every(function(s) { return s.checkbox.checked; });
-                    var newState = !allChecked;
-                    sectionCheckboxes.forEach(function(s) {
-                        s.checkbox.checked = newState;
-                        s.li.classList.toggle('checked', newState);
-                        if (newState) checkedItems[s.key] = true;
-                        else delete checkedItems[s.key];
-                    });
-                    localStorage.setItem(CHECKED_KEY, JSON.stringify(checkedItems));
-                    updateCheckAllLabel();
-                });
-
-                // Collapsible section toggle
-                header.addEventListener('click', function() {
-                    var expanded = header.getAttribute('aria-expanded') === 'true';
-                    header.setAttribute('aria-expanded', String(!expanded));
-                    list.style.display = expanded ? 'none' : '';
-                    chevron.textContent = expanded ? '\u25B8' : '\u25BE';
-                });
-
-                sectionEl.appendChild(header);
-                sectionEl.appendChild(list);
-                container.appendChild(sectionEl);
-            });
+            renderPage();
         })
         .catch(function() {
             showEmpty();

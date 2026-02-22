@@ -13,67 +13,67 @@
     // recipes.json stores URLs with .html; DOM cards use extensionless clean URLs
     function cleanUrl(url) { return url.replace(/\.html$/, ''); }
 
-    // --- Shopping list selection state ---
+    // --- Shopping list state ---
     var STORAGE_KEY = 'shopping-list-recipes';
     var selectedRecipes = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-    var fab, fabCount;
-    var updateClearAll = function() {}; // set once toggle is built
+    var shoppingLink, shoppingLinkCount;
 
-    function addCheckbox(card, url) {
-        var label = document.createElement('label');
-        label.className = 'recipe-select';
-        label.setAttribute('aria-label', 'Add to shopping list');
-
-        var checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'recipe-select-checkbox';
-        checkbox.checked = selectedRecipes.has(url);
-
-        var box = document.createElement('span');
-        box.className = 'recipe-select-box';
-
-        label.appendChild(checkbox);
-        label.appendChild(box);
-
-        // Prevent click from navigating the parent <a> tag
-        label.addEventListener('click', function(e) { e.stopPropagation(); });
-        label.addEventListener('mousedown', function(e) { e.stopPropagation(); });
-        checkbox.addEventListener('change', function() {
-            toggleRecipe(url, checkbox.checked);
-        });
-
-        // In selection mode, clicking anywhere on the card toggles the checkbox
-        card.addEventListener('click', function(e) {
-            if (!card.closest('.selecting')) return; // browse mode — let link navigate
-            e.preventDefault();
-            checkbox.checked = !checkbox.checked;
-            toggleRecipe(url, checkbox.checked);
-        });
-
-        card.insertBefore(label, card.firstChild);
-        if (checkbox.checked) card.classList.add('selected');
+    function makeCartIcon() {
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('stroke-width', '1.5');
+        svg.setAttribute('stroke', 'currentColor');
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('stroke-linejoin', 'round');
+        path.setAttribute('d', 'M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z');
+        svg.appendChild(path);
+        return svg;
     }
 
-    function toggleRecipe(url, checked) {
-        if (checked) selectedRecipes.add(url);
+    function addCartToggle(card, url) {
+        var btn = document.createElement('button');
+        btn.className = 'card-cart-btn';
+        if (selectedRecipes.has(url)) btn.classList.add('active');
+        btn.setAttribute('aria-label', selectedRecipes.has(url) ? 'Remove from shopping list' : 'Add to shopping list');
+        btn.appendChild(makeCartIcon());
+
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var inList = selectedRecipes.has(url);
+            toggleRecipe(url, !inList);
+        });
+
+        // Append to the meta row (after contributor)
+        var meta = card.querySelector('.recipe-card-meta');
+        if (meta) {
+            meta.appendChild(btn);
+        }
+    }
+
+    function toggleRecipe(url, add) {
+        if (add) selectedRecipes.add(url);
         else selectedRecipes.delete(url);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(selectedRecipes)));
 
         // Sync all cards with this URL (same recipe appears in "Recently Added" + category)
         document.querySelectorAll('.recipe-card[href="' + url + '"]').forEach(function(card) {
-            var cb = card.querySelector('.recipe-select-checkbox');
-            if (cb) cb.checked = checked;
-            card.classList.toggle('selected', checked);
+            var cartBtn = card.querySelector('.card-cart-btn');
+            if (cartBtn) {
+                cartBtn.classList.toggle('active', add);
+                cartBtn.setAttribute('aria-label', add ? 'Remove from shopping list' : 'Add to shopping list');
+            }
         });
-        updateFab();
-        updateClearAll();
+        updateShoppingLink();
     }
 
-    function updateFab() {
-        if (!fab) return;
+    function updateShoppingLink() {
+        if (!shoppingLink) return;
         var count = selectedRecipes.size;
-        fab.classList.toggle('visible', count > 0);
-        fabCount.textContent = count > 0 ? 'Shopping List (' + count + ')' : '';
+        shoppingLink.classList.toggle('visible', count > 0);
+        shoppingLinkCount.textContent = String(count);
     }
 
     function formatTime(minutes) {
@@ -225,96 +225,20 @@
                 }
             }
 
-            // --- Shopping list: inject checkboxes + toggle + FAB ---
+            // --- Shopping list: per-card cart toggles + shopping link ---
             var indexWrapper = document.querySelector('.index');
             if (indexWrapper) {
-                // Inject checkboxes on all static cards (hidden until shopping mode)
+                // Add cart toggle to all static cards
                 document.querySelectorAll('#default-content .recipe-card').forEach(function(card) {
                     var href = card.getAttribute('href');
-                    if (href) addCheckbox(card, href);
+                    if (href) addCartToggle(card, href);
                 });
 
-                // Shopping mode toggle (cart icon)
-                function makeCartIcon() {
-                    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                    svg.setAttribute('fill', 'none');
-                    svg.setAttribute('viewBox', '0 0 24 24');
-                    svg.setAttribute('stroke-width', '1.5');
-                    svg.setAttribute('stroke', 'currentColor');
-                    svg.setAttribute('width', '20');
-                    svg.setAttribute('height', '20');
-                    var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.setAttribute('stroke-linecap', 'round');
-                    path.setAttribute('stroke-linejoin', 'round');
-                    path.setAttribute('d', 'M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z');
-                    svg.appendChild(path);
-                    return svg;
-                }
-                var selectToggle = document.createElement('button');
-                selectToggle.className = 'shopping-toggle';
-                selectToggle.setAttribute('aria-pressed', 'false');
-                selectToggle.setAttribute('aria-label', 'Build shopping list');
-                selectToggle.appendChild(makeCartIcon());
-
-                // Clear all button (visible in selection mode when items selected)
-                var clearAllBtn = document.createElement('button');
-                clearAllBtn.className = 'shopping-clear-all';
-                clearAllBtn.textContent = 'Clear All';
-
-                clearAllBtn.addEventListener('click', function() {
-                    selectedRecipes.clear();
-                    localStorage.removeItem(STORAGE_KEY);
-                    document.querySelectorAll('.recipe-card').forEach(function(card) {
-                        var cb = card.querySelector('.recipe-select-checkbox');
-                        if (cb) cb.checked = false;
-                        card.classList.remove('selected');
-                    });
-                    updateFab();
-                    updateClearAll();
-                });
-
-                updateClearAll = function() {
-                    var show = indexWrapper.classList.contains('selecting') && selectedRecipes.size > 0;
-                    clearAllBtn.style.display = show ? '' : 'none';
-                };
-
-                function makeCheckIcon() {
-                    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                    svg.setAttribute('fill', 'none');
-                    svg.setAttribute('viewBox', '0 0 24 24');
-                    svg.setAttribute('stroke-width', '1.5');
-                    svg.setAttribute('stroke', 'currentColor');
-                    svg.setAttribute('width', '20');
-                    svg.setAttribute('height', '20');
-                    var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.setAttribute('stroke-linecap', 'round');
-                    path.setAttribute('stroke-linejoin', 'round');
-                    path.setAttribute('d', 'm4.5 12.75 6 6 9-13.5');
-                    svg.appendChild(path);
-                    return svg;
-                }
-
-                selectToggle.addEventListener('click', function() {
-                    var active = indexWrapper.classList.toggle('selecting');
-                    selectToggle.setAttribute('aria-pressed', String(active));
-                    selectToggle.setAttribute('aria-label', active ? 'Done selecting' : 'Build shopping list');
-                    selectToggle.replaceChildren(active ? makeCheckIcon() : makeCartIcon());
-                    selectToggle.classList.toggle('active', active);
-                    updateClearAll();
-                });
-
-                // Insert toggle + clear into header card (top-right corner)
                 var headerCard = indexWrapper.querySelector('.header-card');
                 if (headerCard) {
                     headerCard.style.position = 'relative';
-                    var toggleGroup = document.createElement('div');
-                    toggleGroup.className = 'shopping-toggle-group';
-                    toggleGroup.appendChild(selectToggle);
-                    toggleGroup.appendChild(clearAllBtn);
-                    headerCard.appendChild(toggleGroup);
-                    updateClearAll();
 
-                    // Upload button (top-left corner, mirrors shopping toggle)
+                    // Upload button (top-left corner)
                     var uploadBtn = document.createElement('a');
                     uploadBtn.href = 'upload';
                     uploadBtn.className = 'upload-toggle';
@@ -340,18 +264,31 @@
                     uploadSvg.appendChild(line);
                     uploadBtn.appendChild(uploadSvg);
                     headerCard.appendChild(uploadBtn);
-                }
 
-                // FAB (visible when selections exist, regardless of mode)
-                fab = document.createElement('a');
-                fab.href = 'shopping-list';
-                fab.className = 'shopping-fab';
-                fab.setAttribute('aria-label', 'View shopping list');
-                fabCount = document.createElement('span');
-                fabCount.className = 'shopping-fab-count';
-                fab.appendChild(fabCount);
-                indexWrapper.appendChild(fab);
-                updateFab();
+                    // Inline shopping link (visible when selections exist)
+                    shoppingLink = document.createElement('a');
+                    shoppingLink.href = 'shopping-list';
+                    shoppingLink.className = 'shopping-link';
+                    shoppingLink.setAttribute('aria-label', 'View shopping list');
+                    var cartSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    cartSvg.setAttribute('fill', 'none');
+                    cartSvg.setAttribute('viewBox', '0 0 24 24');
+                    cartSvg.setAttribute('stroke-width', '1.5');
+                    cartSvg.setAttribute('stroke', 'currentColor');
+                    cartSvg.setAttribute('width', '16');
+                    cartSvg.setAttribute('height', '16');
+                    var cartPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    cartPath.setAttribute('stroke-linecap', 'round');
+                    cartPath.setAttribute('stroke-linejoin', 'round');
+                    cartPath.setAttribute('d', 'M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z');
+                    cartSvg.appendChild(cartPath);
+                    shoppingLink.appendChild(cartSvg);
+                    shoppingLinkCount = document.createElement('span');
+                    shoppingLinkCount.className = 'shopping-link-count';
+                    shoppingLink.appendChild(shoppingLinkCount);
+                    headerCard.appendChild(shoppingLink);
+                    updateShoppingLink();
+                }
             }
         })
         .catch(function() {
@@ -412,7 +349,7 @@
 
         a.appendChild(content);
         a.appendChild(chevron);
-        if (recipe.url) addCheckbox(a, cleanUrl(recipe.url));
+        if (recipe.url) addCartToggle(a, cleanUrl(recipe.url));
         return a;
     }
 
