@@ -11,6 +11,7 @@ A family recipe collection — tried-and-true dishes from our kitchen to yours, 
 - **Shopping list** — Select multiple recipes, get a merged ingredient list organized by store section. Check items off as you shop — your progress saves between visits
 - **Servings scaling** — Adjust the serving count and watch every ingredient, gram weight, and weight estimate update in place
 - **Step tracking** — Tap a step to highlight where you are. Previous steps dim so you never lose your place
+- **Screen stays on** — Recipe pages automatically keep your phone screen awake so it doesn't dim while you cook
 - **Substitution suggestions** — Tap ingredients to see alternatives with ratios and notes on flavor, texture, and calorie differences
 - **Nutrition info** — Every recipe includes nutrition data, labeled as "from source" or "estimated"
 - **Print-friendly** — Clean print layout for keeping a paper copy in the kitchen

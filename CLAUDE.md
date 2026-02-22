@@ -173,6 +173,17 @@ Recipe pages let users tap steps to track their progress while cooking.
 - Respects `prefers-reduced-motion` (disables transitions)
 - Print styles reset all step states to normal appearance
 
+## Wake Lock
+
+Recipe pages automatically keep the device screen on so it doesn't dim or lock while cooking.
+
+- `assets/recipe.js` uses the Screen Wake Lock API (`navigator.wakeLock.request('screen')`) on page load — no HTML changes needed
+- Progressive enhancement: silently does nothing on unsupported browsers (Firefox, older Safari < 16.4)
+- Shows a brief toast ("🔒 Screen stays on") on first activation, auto-dismisses after 1.5s (same pattern as theme toggle toast)
+- Browser automatically releases the lock when the tab becomes hidden; a `visibilitychange` listener re-acquires it when the user returns (no repeat toast)
+- Gracefully handles rejection (battery saver mode, low battery, permissions)
+- Respects `prefers-reduced-motion` (skips toast fade animation)
+
 ## Attribution
 
 Recipe attribution uses `<p class="recipe-attribution">` at the bottom of the HTML (before the back link). At load time, `assets/recipe.js` relocates this into the header card and removes the original element.

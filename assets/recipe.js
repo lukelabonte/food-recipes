@@ -582,3 +582,79 @@
         li.addEventListener('click', function() { setActive(i); });
     });
 })();
+
+// --- Wake Lock (keep screen on while cooking) ---
+// Uses the Screen Wake Lock API to prevent the device from sleeping on recipe pages.
+// Progressive enhancement: silently does nothing on unsupported browsers.
+(function() {
+    if (!('wakeLock' in navigator)) return;
+
+    var sentinel = null;
+    var toastShown = false;
+
+    function requestWakeLock() {
+        navigator.wakeLock.request('screen').then(function(s) {
+            sentinel = s;
+            s.addEventListener('release', function() { sentinel = null; });
+            if (!toastShown) {
+                toastShown = true;
+                showToast();
+            }
+        }).catch(function() {
+            // Silently fail — battery saver, low battery, permissions, etc.
+        });
+    }
+
+    function showToast() {
+        var toast = document.createElement('div');
+        toast.id = 'wakelock-toast';
+        toast.textContent = '\uD83D\uDD12 Screen stays on';
+
+        var s = toast.style;
+        s.position = 'fixed';
+        s.bottom = '2rem';
+        s.left = '50%';
+        s.transform = 'translateX(-50%)';
+        s.background = 'var(--color-surface)';
+        s.color = 'var(--color-text)';
+        s.border = '1px solid var(--color-border)';
+        s.borderRadius = '999px';
+        s.padding = '0.5rem 1rem';
+        s.fontSize = '0.85rem';
+        s.fontWeight = '600';
+        s.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        s.boxShadow = '0 4px 12px var(--color-shadow)';
+        s.zIndex = '99999';
+        s.pointerEvents = 'none';
+        s.whiteSpace = 'nowrap';
+
+        var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        s.opacity = reduceMotion ? '1' : '0';
+        s.transition = reduceMotion ? 'none' : 'opacity 0.25s ease';
+
+        document.body.appendChild(toast);
+
+        if (!reduceMotion) {
+            toast.offsetHeight; // force reflow
+            s.opacity = '1';
+        }
+
+        setTimeout(function() {
+            if (!reduceMotion) {
+                s.opacity = '0';
+                setTimeout(function() { toast.remove(); }, 250);
+            } else {
+                toast.remove();
+            }
+        }, 1500);
+    }
+
+    requestWakeLock();
+
+    // Re-acquire when returning to the tab (browser releases on visibility change)
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible' && !sentinel) {
+            requestWakeLock();
+        }
+    });
+})();
