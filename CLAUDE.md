@@ -226,8 +226,8 @@ All colors are managed through CSS custom properties (design tokens) defined in 
 
 ### Token inventory
 
-**Themed tokens (12)** — change between light/dark:
-`--color-bg`, `--color-surface`, `--color-surface-alt`, `--color-text`, `--color-text-muted`, `--color-accent`, `--color-accent-hover`, `--color-accent-bg`, `--color-border`, `--color-shadow`, `--color-success`, `--color-error`
+**Themed tokens (13)** — change between light/dark:
+`--color-bg`, `--color-surface`, `--color-surface-alt`, `--color-text`, `--color-text-muted`, `--color-accent`, `--color-accent-hover`, `--color-accent-bg`, `--color-border`, `--color-shadow`, `--color-accent-focus`, `--color-success`, `--color-error`
 
 **Fixed tokens (4)** — same in both modes:
 `--color-macro-calories`, `--color-macro-protein`, `--color-macro-fat`, `--color-macro-carbs`
@@ -239,6 +239,7 @@ All colors are managed through CSS custom properties (design tokens) defined in 
 - **Weight card** has its own blue-tinted palette handled with inline dark overrides (not tokens)
 - **SVG icons** in data URIs use `mask-image` + `background-color: var(--color-*)` instead of embedded `stroke` colors
 - HTML pages with inline `<style>` blocks (`admin.html`, `upload.html`, `request-access.html`) use the same tokens — they inherit from `assets/style.css`
+- **Dev theme toggle:** `python3 scripts/serve.py` injects a floating button (bottom-right) to cycle System/Light/Dark. Uses `html[data-theme]` attribute overrides — never deployed to production
 
 ## Change Impact Checklist
 
