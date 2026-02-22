@@ -40,6 +40,7 @@ export async function notifyAdminOfRequest(env, { requestId, name, contact, mess
     if (!env.RESEND_API_KEY || !env.ADMIN_EMAIL) return;
 
     const from = env.FROM_EMAIL || 'Copy & Pastry <onboarding@resend.dev>';
+    const siteBase = env.ALLOWED_ORIGIN || 'https://copyandpastry.com';
     const result = await sendEmail(env.RESEND_API_KEY, {
         from,
         to: env.ADMIN_EMAIL,
@@ -49,15 +50,9 @@ export async function notifyAdminOfRequest(env, { requestId, name, contact, mess
             `<p><strong>Name:</strong> ${escapeHtml(name)}</p>`,
             `<p><strong>Contact:</strong> ${escapeHtml(contact)}</p>`,
             message ? `<p><strong>Message:</strong> ${escapeHtml(message)}</p>` : '',
-            `<p><strong>Request ID:</strong> <code>${requestId}</code></p>`,
             `<p><strong>Submitted:</strong> ${createdAt}</p>`,
             `<hr>`,
-            `<p>To approve, create a user:</p>`,
-            `<pre>curl -X POST \\
-  -H "X-Admin-Secret: $ADMIN_SECRET" \\
-  -H "Content-Type: application/json" \\
-  -d '{"displayName": "${escapeHtml(name)}", "email": "${escapeHtml(contact)}"}' \\
-  https://recipe-upload.lukelabonte.workers.dev/admin/users</pre>`,
+            `<p><a href="${siteBase}/admin" style="display:inline-block;padding:10px 20px;background:#8b6f4e;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Review in Admin Dashboard</a></p>`,
         ].join('\n')
     });
 

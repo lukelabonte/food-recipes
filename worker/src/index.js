@@ -18,6 +18,19 @@ import { handleRequestAccess } from './request-access.js';
 import { verifyAdmin, createUser, deleteUser, listUsers, listRequests, deleteRequest } from './admin.js';
 
 /**
+ * Check if the request origin is allowed.
+ * Allows the configured ALLOWED_ORIGIN plus localhost for local development.
+ */
+function resolveOrigin(request, allowedOrigin) {
+    const origin = request.headers.get('Origin');
+    if (!origin) return allowedOrigin;
+    if (origin === allowedOrigin) return origin;
+    // Allow localhost for local development
+    if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) return origin;
+    return allowedOrigin;
+}
+
+/**
  * Add CORS headers to a response.
  */
 function corsHeaders(origin) {
@@ -69,6 +82,7 @@ function matchRoute(pathname, pattern) {
 export default {
     async fetch(request, env) {
         const allowedOrigin = env.ALLOWED_ORIGIN || '*';
+        const origin = resolveOrigin(request, allowedOrigin);
         const url = new URL(request.url);
         const { pathname } = url;
         const method = request.method;
@@ -77,7 +91,7 @@ export default {
         if (method === 'OPTIONS') {
             return new Response(null, {
                 status: 204,
-                headers: corsHeaders(allowedOrigin)
+                headers: corsHeaders(origin)
             });
         }
 
@@ -87,20 +101,20 @@ export default {
             // POST /upload
             if (method === 'POST' && pathname === '/upload') {
                 response = await handleUpload(request, env);
-                return withCors(response, allowedOrigin);
+                return withCors(response, origin);
             }
 
             // GET /upload/status/:id
             const statusMatch = matchRoute(pathname, '/upload/status/:id');
             if (method === 'GET' && statusMatch) {
                 response = await getUploadStatus(request, env, statusMatch.id);
-                return withCors(response, allowedOrigin);
+                return withCors(response, origin);
             }
 
             // POST /request-access
             if (method === 'POST' && pathname === '/request-access') {
                 response = await handleRequestAccess(request, env);
-                return withCors(response, allowedOrigin);
+                return withCors(response, origin);
             }
 
             // --- Admin routes ---
@@ -109,11 +123,11 @@ export default {
                 if (!verifyAdmin(request, env.ADMIN_SECRET)) {
                     return withCors(
                         new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403 }),
-                        allowedOrigin
+                        origin
                     );
                 }
                 response = await createUser(request, env);
-                return withCors(response, allowedOrigin);
+                return withCors(response, origin);
             }
 
             // GET /admin/users
@@ -121,11 +135,11 @@ export default {
                 if (!verifyAdmin(request, env.ADMIN_SECRET)) {
                     return withCors(
                         new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403 }),
-                        allowedOrigin
+                        origin
                     );
                 }
                 response = await listUsers(env.KV);
-                return withCors(response, allowedOrigin);
+                return withCors(response, origin);
             }
 
             // DELETE /admin/users/:passphrase
@@ -134,11 +148,11 @@ export default {
                 if (!verifyAdmin(request, env.ADMIN_SECRET)) {
                     return withCors(
                         new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403 }),
-                        allowedOrigin
+                        origin
                     );
                 }
                 response = await deleteUser(env.KV, userDeleteMatch.passphrase);
-                return withCors(response, allowedOrigin);
+                return withCors(response, origin);
             }
 
             // GET /admin/requests
@@ -146,11 +160,11 @@ export default {
                 if (!verifyAdmin(request, env.ADMIN_SECRET)) {
                     return withCors(
                         new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403 }),
-                        allowedOrigin
+                        origin
                     );
                 }
                 response = await listRequests(env.KV);
-                return withCors(response, allowedOrigin);
+                return withCors(response, origin);
             }
 
             // DELETE /admin/requests/:id
@@ -159,23 +173,23 @@ export default {
                 if (!verifyAdmin(request, env.ADMIN_SECRET)) {
                     return withCors(
                         new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403 }),
-                        allowedOrigin
+                        origin
                     );
                 }
                 response = await deleteRequest(env.KV, requestDeleteMatch.id);
-                return withCors(response, allowedOrigin);
+                return withCors(response, origin);
             }
 
             // 404
             return withCors(
                 new Response(JSON.stringify({ error: 'Not found' }), { status: 404 }),
-                allowedOrigin
+                origin
             );
 
         } catch (error) {
             return withCors(
                 new Response(JSON.stringify({ error: 'Internal server error', message: error.message }), { status: 500 }),
-                allowedOrigin
+                origin
             );
         }
     }

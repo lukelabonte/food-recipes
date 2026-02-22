@@ -457,11 +457,13 @@
             this.querySelector('.submit-btn').disabled = true;
 
             sessionStorage.setItem(SESSION_KEY, secret);
-            const ok = await tryAuth();
-            if (!ok) {
+            const result = await tryAuth();
+            if (result !== true) {
                 sessionStorage.removeItem(SESSION_KEY);
                 authStatus.className = 'admin-status status-error visible';
-                authStatus.textContent = 'Invalid admin secret.';
+                authStatus.textContent = result === 'network-error'
+                    ? 'Could not reach the server. Check your connection or try again.'
+                    : 'Invalid admin secret.';
                 this.querySelector('.submit-btn').disabled = false;
             }
         });
@@ -473,15 +475,19 @@
                 if (res.status >= 400) return false;
                 showDashboard(res.data.requests || []);
                 return true;
-            } catch {
-                return false;
+            } catch (err) {
+                // CORS or network errors surface as TypeError from fetch
+                if (err && err.message) {
+                    console.error('Auth check failed:', err.message);
+                }
+                return 'network-error';
             }
         }
 
         // Check for existing session on load
         if (getSecret()) {
-            tryAuth().then(ok => {
-                if (!ok) sessionStorage.removeItem(SESSION_KEY);
+            tryAuth().then(result => {
+                if (result !== true) sessionStorage.removeItem(SESSION_KEY);
             });
         }
 
