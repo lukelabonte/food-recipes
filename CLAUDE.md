@@ -15,6 +15,7 @@ food-recipes/
 ├── shopping-list.html              # Shopping list page (ingredient merge + checklist)
 ├── upload.html                     # Recipe upload form (passphrase auth)
 ├── request-access.html             # Request a passphrase to contribute
+├── admin.html                      # Admin dashboard (auth-gated, manages requests + users)
 ├── assets/                         # Site resources (not pages)
 │   ├── style.css                   # Shared stylesheet for all pages
 │   ├── recipe.js                   # Pill bar nav + substitution toggle + servings scaling + step tracking
@@ -209,6 +210,16 @@ Trusted contributors can submit recipes via `upload.html`. A Cloudflare Worker p
 - **Worker source:** `worker/src/` — router, auth, extract, template, github, admin modules
 - **Secrets:** `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`, `ADMIN_SECRET` (set via `wrangler secret put`)
 
+## Admin Page
+
+`admin.html` provides a mobile-first dashboard for managing access requests and users, replacing curl-based admin workflows.
+
+- **Auth:** Password form stores admin secret in `sessionStorage` (clears on tab close). On load, tests secret with `GET /admin/requests` — shows dashboard on success, clears and shows auth gate on 403.
+- **Access Requests:** Always-visible section. Each card shows name, contact, message, relative date. Approve creates user via `POST /admin/users` (sends welcome email if contact is an email) then deletes request via `DELETE /admin/requests/:id`. Dismiss deletes request only. Cards fade out after action.
+- **Users:** Collapsible `<details>` section (closed by default). Each card shows display name, passphrase (monospace), date. Copy button uses `navigator.clipboard` with `prompt()` fallback. Remove shows inline confirmation before `DELETE /admin/users/:passphrase`.
+- **Security:** Page is public on GitHub Pages but all data requires `X-Admin-Secret` header. `<meta name="robots" content="noindex, nofollow">` prevents search indexing. No OG tags. `sessionStorage` never persists beyond the tab.
+- **No build dependencies:** Self-contained HTML with inline CSS and JS. Uses `assets/style.css` for base card/link styles only.
+
 ## Change Impact Checklist
 
 Recipe HTML files are parsed by multiple systems. When making changes, verify these downstream effects:
@@ -230,3 +241,4 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | Quantity parsing (fractions) | `assets/recipe.js` and `assets/shopping-list.js` both have copies of `parseLeadingQty` / `formatQty` |
 | Step tracking CSS (`.step-active`, `.step-done`) | `assets/recipe.js` step tracking IIFE, print styles, reduced-motion overrides |
 | Any recipe HTML convention | `docs/claude-web-instructions.md` AND `worker/src/template.js` — keep in sync so both pipelines generate correct markup |
+| Admin API endpoints (worker) | `admin.html` API calls — endpoint paths, request/response shapes, header names |
