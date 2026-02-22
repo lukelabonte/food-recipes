@@ -138,6 +138,7 @@ li { margin-bottom: 0.3rem; }
 .header-card .source-link {
     font-size: 0.75rem;
     margin-top: 0.2rem;
+    color: var(--color-text-muted);
 }
 .header-card .source-link a {
     color: var(--color-text-muted);
@@ -1368,8 +1369,8 @@ html[data-theme="light"] .status-error { background: #fdf0f0; border-color: #f0c
     h2 { font-size: 0.95rem; margin: 0.2rem 0 0.3rem; }
     .header-card { padding: 0.4rem 0.75rem; margin-bottom: 0; }
     .header-card .subtitle { color: #555; font-size: 0.8rem; margin-top: 0.15rem; }
-    .header-card .source-link { font-size: 0.65rem; margin-top: 0.1rem; }
-    .header-card .source-link a { color: #888; }
+    .header-card .source-link { font-size: 0.65rem; margin-top: 0.1rem; color: var(--color-text-muted); }
+    .header-card .source-link a { color: var(--color-text-muted); }
 
     /* Overview stat blocks — compact for print */
     .meta-list { gap: 0.3rem; }

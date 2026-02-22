@@ -117,21 +117,29 @@
     }
 
     // --- Source link relocation ---
-    // Move source link into header card; keep contributor in attribution for footer use
+    // Move source link (or linkless source name) into header card; keep contributor for footer
 
     var sourceFooter = document.querySelector('.recipe-attribution');
     var headerCard = document.querySelector('.header-card');
     if (sourceFooter && headerCard) {
         var sourceLink = sourceFooter.querySelector('a');
-        if (sourceLink) {
+        var sourceName = !sourceLink && sourceFooter.querySelector('.source-name');
+
+        if (sourceLink || sourceName) {
             var adapted = document.createElement('p');
             adapted.className = 'source-link';
-            var a = document.createElement('a');
-            a.href = sourceLink.href;
-            a.target = '_blank';
-            a.rel = 'noopener';
-            a.textContent = 'Adapted from ' + sourceLink.textContent;
-            adapted.appendChild(a);
+
+            if (sourceLink) {
+                var a = document.createElement('a');
+                a.href = sourceLink.href;
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.textContent = 'Adapted from ' + sourceLink.textContent;
+                adapted.appendChild(a);
+            } else {
+                adapted.textContent = 'Adapted from ' + sourceName.textContent;
+            }
+
             headerCard.appendChild(adapted);
 
             // Preserve contributor for theme.js footer; remove only the source parts

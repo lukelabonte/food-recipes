@@ -174,6 +174,12 @@ ${nutritionItems.join('\n')}
             Source: <a href="${esc(recipe.sourceUrl)}" target="_blank" rel="noopener">${esc(recipe.sourceName)}</a>
             <span class="contributor"> &middot; By ${esc(meta.contributor)}</span>
         </p>`;
+    } else if (recipe.sourceName) {
+        attribution = `
+        <p class="recipe-attribution">
+            Source: <span class="source-name">${esc(recipe.sourceName)}</span>
+            <span class="contributor"> &middot; By ${esc(meta.contributor)}</span>
+        </p>`;
     } else {
         attribution = `
         <p class="recipe-attribution">

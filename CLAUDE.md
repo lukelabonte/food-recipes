@@ -202,11 +202,12 @@ Recipe pages automatically keep the device screen on so it doesn't dim or lock w
 
 Recipe attribution uses `<p class="recipe-attribution">` at the bottom of the HTML (before the back link). Two scripts process it at load time:
 
-1. `assets/recipe.js` (runs first): If a source link `<a>` exists, moves "Adapted from X" to the header card and strips the source parts from the attribution, leaving only the `.contributor` span. For contributor-only recipes, does nothing.
+1. `assets/recipe.js` (runs first): If a source link `<a>` or linkless source `<span class="source-name">` exists, moves "Adapted from X" to the header card (linked or plain text) and strips the source parts from the attribution, leaving only the `.contributor` span. For contributor-only recipes, does nothing.
 2. `assets/theme.js` (runs second): Moves the `.contributor` text into the `.page-footer` row (centered) and removes the `.recipe-attribution` element.
 
-Three HTML scenarios:
-- **Source + contributor:** `<p class="recipe-attribution">Source: <a href="..." target="_blank" rel="noopener">Site Name</a><span class="contributor"> · By Name</span></p>`
+Four HTML scenarios:
+- **Source (linked) + contributor:** `<p class="recipe-attribution">Source: <a href="..." target="_blank" rel="noopener">Site Name</a><span class="contributor"> · By Name</span></p>`
+- **Source (no link) + contributor:** `<p class="recipe-attribution">Source: <span class="source-name">TikTok</span><span class="contributor"> · By Name</span></p>`
 - **Contributor only:** `<p class="recipe-attribution"><span class="contributor">By Name</span></p>`
 - **No attribution:** omit the element entirely
 
