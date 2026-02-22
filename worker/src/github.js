@@ -15,12 +15,19 @@ async function githubFetch(token, path, options = {}) {
             'Authorization': `Bearer ${token}`,
             'Accept': 'application/vnd.github+json',
             'X-GitHub-Api-Version': '2022-11-28',
+            'User-Agent': 'RecipeUploadWorker/1.0',
             'Content-Type': 'application/json',
             ...options.headers
         }
     });
 
-    const body = await response.json();
+    const text = await response.text();
+    let body;
+    try {
+        body = JSON.parse(text);
+    } catch (e) {
+        throw new Error(`GitHub API non-JSON response (${response.status}) for ${path}: ${text.substring(0, 300)}`);
+    }
     if (!response.ok) {
         throw new Error(`GitHub API error (${response.status}): ${JSON.stringify(body)}`);
     }

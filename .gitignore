@@ -20,3 +20,6 @@ Thumbs.db
 __pycache__/
 *.pyc
 .venv/
+
+# Cloudflare Wrangler
+.wrangler/

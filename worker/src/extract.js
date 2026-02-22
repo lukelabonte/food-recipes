@@ -141,18 +141,24 @@ export async function extractRecipe(apiKey, { text, urlContent, imageBase64, not
             'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-            model: 'claude-sonnet-4-6-20250514',
+            model: 'claude-sonnet-4-6',
             max_tokens: 4096,
             messages: [{ role: 'user', content }]
         })
     });
 
+    const responseText = await response.text();
+
     if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(`Anthropic API error (${response.status}): ${errorBody}`);
+        throw new Error(`Anthropic API error (${response.status}): ${responseText.substring(0, 500)}`);
     }
 
-    const result = await response.json();
+    let result;
+    try {
+        result = JSON.parse(responseText);
+    } catch (e) {
+        throw new Error(`Anthropic API returned non-JSON (${response.status}): ${responseText.substring(0, 300)}`);
+    }
     const jsonString = extractJsonFromResponse(result);
 
     try {

@@ -299,7 +299,7 @@
         </div>
 
         <!-- Upload form -->
-        <form id="upload-form" class="card" action="https://recipe-upload.YOUR_DOMAIN.workers.dev/upload" method="POST" enctype="multipart/form-data">
+        <form id="upload-form" class="card" action="https://recipe-upload.lukelabonte.workers.dev/upload" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label class="form-label" for="passphrase">Passphrase</label>
                 <input class="form-input" type="text" id="passphrase" name="passphrase" required autocomplete="off" placeholder="Enter your passphrase">
@@ -307,7 +307,7 @@
 
             <div class="form-group">
                 <label class="form-label" for="recipe">Recipe</label>
-                <textarea class="form-textarea recipe-input" id="recipe" name="recipe" required placeholder="Paste your recipe, type it out, or describe it..."></textarea>
+                <textarea class="form-textarea recipe-input" id="recipe" name="text" required placeholder="Paste your recipe, type it out, or describe it..."></textarea>
             </div>
 
             <div class="form-group">
@@ -337,7 +337,7 @@
 
             <div class="form-group">
                 <label class="form-label" for="recipe-from">Recipe from <span class="optional">(optional)</span></label>
-                <input class="form-input" type="text" id="recipe-from" name="recipe_from" placeholder="Defaults to your name">
+                <input class="form-input" type="text" id="recipe-from" name="recipeFrom" placeholder="Defaults to your name">
             </div>
 
             <button type="submit" class="submit-btn">Upload Recipe</button>
@@ -350,7 +350,7 @@
         </div>
 
         <!-- Request access -->
-        <form id="request-form" class="card request-card" action="https://recipe-upload.YOUR_DOMAIN.workers.dev/request-access" method="POST">
+        <form id="request-form" class="card request-card" action="https://recipe-upload.lukelabonte.workers.dev/request-access" method="POST">
             <h2>Request Access</h2>
             <p class="subtitle">Want to contribute? Send a request and we'll get you set up.</p>
 
@@ -404,21 +404,91 @@
             fileLabel.classList.remove('has-file');
         }
 
-        // Upload form — placeholder until Worker is deployed
-        document.getElementById('upload-form').addEventListener('submit', function(e) {
+        // Upload form
+        document.getElementById('upload-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const status = document.getElementById('upload-status');
-            status.className = 'status-error visible';
-            status.textContent = 'Worker not yet deployed. Form submission will be enabled once the backend is ready.';
+            const submitBtn = this.querySelector('.submit-btn');
+
+            status.className = 'status-processing visible';
+            status.textContent = 'Uploading and processing your recipe\u2026 This may take a minute.';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing\u2026';
+
+            try {
+                const formData = new FormData(this);
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (response.ok && data.status === 'complete') {
+                    status.className = 'status-success visible';
+                    status.textContent = '';
+                    status.appendChild(document.createTextNode('\u2713 '));
+                    const strong = document.createElement('strong');
+                    strong.textContent = data.title;
+                    status.appendChild(strong);
+                    status.appendChild(document.createTextNode(' uploaded! '));
+                    const link = document.createElement('a');
+                    link.href = data.prUrl;
+                    link.target = '_blank';
+                    link.rel = 'noopener';
+                    link.textContent = 'View PR \u2192';
+                    status.appendChild(link);
+                    this.reset();
+                    resetFileInput();
+                } else {
+                    status.className = 'status-error visible';
+                    status.textContent = data.error || 'Something went wrong. Please try again.';
+                }
+            } catch (err) {
+                status.className = 'status-error visible';
+                status.textContent = 'Network error. Please check your connection and try again.';
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Upload Recipe';
         });
 
-        // Request access form — placeholder
-        document.getElementById('request-form').addEventListener('submit', function(e) {
+        // Request access form
+        document.getElementById('request-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const status = document.getElementById('request-status');
-            if (!status) return;
-            status.className = 'status-error visible';
-            status.textContent = 'Worker not yet deployed. Request submission will be enabled once the backend is ready.';
+            const submitBtn = this.querySelector('.submit-btn');
+
+            status.className = 'status-processing visible';
+            status.textContent = 'Sending your request\u2026';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('req-name').value,
+                        contact: document.getElementById('req-contact').value,
+                        message: document.getElementById('req-message').value
+                    })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    status.className = 'status-success visible';
+                    status.textContent = '\u2713 Request sent! We\u2019ll be in touch.';
+                    this.reset();
+                } else {
+                    status.className = 'status-error visible';
+                    status.textContent = data.error || 'Something went wrong. Please try again.';
+                }
+            } catch (err) {
+                status.className = 'status-error visible';
+                status.textContent = 'Network error. Please check your connection and try again.';
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Request';
         });
     </script>
 </body>
