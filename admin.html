@@ -25,27 +25,27 @@
             display: block;
             font-size: 0.9rem;
             font-weight: 600;
-            color: #3d3d3d;
+            color: var(--color-text);
             margin-bottom: 0.35rem;
         }
         .form-input {
             width: 100%;
             padding: 0.65rem 0.85rem;
-            border: 1px solid #e0d6c8;
+            border: 1px solid var(--color-border);
             border-radius: 10px;
             font-size: 0.95rem;
             font-family: inherit;
-            color: #3d3d3d;
-            background: #faf8f5;
+            color: var(--color-text);
+            background: var(--color-bg);
             outline: none;
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
             -webkit-appearance: none;
             min-height: 44px;
         }
-        .form-input::placeholder { color: #c4b8a8; }
+        .form-input::placeholder { color: var(--color-text-muted); }
         .form-input:focus {
-            border-color: #9a7b5b;
-            box-shadow: 0 0 0 3px rgba(154, 123, 91, 0.12);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-accent-focus);
         }
         .submit-btn {
             display: inline-flex;
@@ -53,7 +53,7 @@
             justify-content: center;
             width: 100%;
             padding: 0.75rem 1.5rem;
-            background: #9a7b5b;
+            background: var(--color-accent);
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -65,7 +65,7 @@
             min-height: 48px;
             -webkit-tap-highlight-color: rgba(0,0,0,0.05);
         }
-        .submit-btn:hover { background: #7a5f43; }
+        .submit-btn:hover { background: var(--color-accent-hover); }
         .submit-btn:active { opacity: 0.85; }
 
         /* Status feedback */
@@ -78,21 +78,7 @@
             display: none;
         }
         .admin-status.visible { display: block; }
-        .status-success {
-            background: #f0f9f0;
-            color: #3a7d3a;
-            border: 1px solid #c8e6c8;
-        }
-        .status-error {
-            background: #fdf0f0;
-            color: #c44;
-            border: 1px solid #f0c8c8;
-        }
-        .status-processing {
-            background: #f5f3f0;
-            color: #888;
-            border: 1px solid #e0d6c8;
-        }
+        /* .status-success, .status-error, .status-processing defined in shared style.css */
 
         /* Actions row */
         .admin-actions {
@@ -109,12 +95,12 @@
             background: none;
             border: none;
             font-size: 0.9rem;
-            color: #9a7b5b;
+            color: var(--color-accent);
             cursor: pointer;
             font-family: inherit;
             padding: 0;
         }
-        .admin-sign-out:hover { color: #7a5f43; }
+        .admin-sign-out:hover { color: var(--color-accent-hover); }
 
         /* Section header with count */
         .admin-section-header {
@@ -135,8 +121,8 @@
             height: 1.4rem;
             padding: 0 0.4rem;
             border-radius: 99px;
-            background: #f0ece6;
-            color: #9a7b5b;
+            background: var(--color-surface-alt);
+            color: var(--color-accent);
             font-size: 0.75rem;
             font-weight: 600;
         }
@@ -158,7 +144,7 @@
         .admin-section-toggle::after {
             content: '\25B8';
             font-size: 0.85rem;
-            color: #bbb;
+            color: var(--color-text-muted);
             transition: transform 0.15s ease;
         }
         .admin-collapsible[open] .admin-section-toggle::after {
@@ -171,36 +157,36 @@
         /* Request / user cards */
         .admin-card {
             padding: 0.85rem 0;
-            border-bottom: 1px solid #f0ece6;
+            border-bottom: 1px solid var(--color-surface-alt);
             transition: opacity 0.3s ease;
         }
         .admin-card:last-child { border-bottom: none; }
         .admin-card-name {
             font-weight: 600;
-            color: #3d3d3d;
+            color: var(--color-text);
             font-size: 0.95rem;
         }
         .admin-card-contact {
-            color: #9a7b5b;
+            color: var(--color-accent);
             font-size: 0.85rem;
             margin-top: 0.15rem;
         }
         .admin-card-message {
-            color: #999;
+            color: var(--color-text-muted);
             font-style: italic;
             font-size: 0.85rem;
             margin-top: 0.3rem;
             line-height: 1.4;
         }
         .admin-card-date {
-            color: #ccc;
+            color: var(--color-text-muted);
             font-size: 0.78rem;
             margin-top: 0.25rem;
         }
         .admin-card-passphrase {
             font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
             font-size: 0.82rem;
-            color: #888;
+            color: var(--color-text-muted);
             margin-top: 0.15rem;
         }
 
@@ -233,33 +219,36 @@
             cursor: not-allowed;
         }
         .admin-btn-approve {
-            background: #9a7b5b;
+            background: var(--color-accent);
             color: #fff;
             flex: 1;
         }
-        .admin-btn-approve:hover:not(:disabled) { background: #7a5f43; }
+        .admin-btn-approve:hover:not(:disabled) { background: var(--color-accent-hover); }
         .admin-btn-dismiss {
-            background: #f0ece6;
-            color: #888;
+            background: var(--color-surface-alt);
+            color: var(--color-text-muted);
         }
-        .admin-btn-dismiss:hover:not(:disabled) { background: #e6dfd5; color: #666; }
+        .admin-btn-dismiss:hover:not(:disabled) { background: var(--color-border); color: var(--color-text); }
         .admin-btn-copy {
-            background: #f0ece6;
-            color: #9a7b5b;
+            background: var(--color-surface-alt);
+            color: var(--color-accent);
             font-size: 0.78rem;
             padding: 0.3rem 0.6rem;
             min-height: 36px;
         }
-        .admin-btn-copy:hover:not(:disabled) { background: #e6dfd5; }
+        .admin-btn-copy:hover:not(:disabled) { background: var(--color-border); }
         .admin-btn-remove {
             background: none;
-            color: #c44;
-            border: 1px solid #f0c8c8;
+            color: var(--color-error);
+            border: 1px solid var(--color-error);
             font-size: 0.78rem;
             padding: 0.3rem 0.6rem;
             min-height: 36px;
         }
         .admin-btn-remove:hover:not(:disabled) { background: #fdf0f0; }
+        @media (prefers-color-scheme: dark) {
+            .admin-btn-remove:hover:not(:disabled) { background: #2e1a1a; }
+        }
 
         /* Inline confirmation */
         .admin-confirm {
@@ -269,14 +258,17 @@
             margin-top: 0.5rem;
             padding: 0.5rem 0.65rem;
             background: #fdf0f0;
-            border: 1px solid #f0c8c8;
+            border: 1px solid var(--color-error);
             border-radius: 8px;
             font-size: 0.82rem;
-            color: #c44;
+            color: var(--color-error);
+        }
+        @media (prefers-color-scheme: dark) {
+            .admin-confirm { background: #2e1a1a; }
         }
         .admin-confirm-text { flex: 1; }
         .admin-confirm-yes {
-            background: #c44;
+            background: var(--color-error);
             color: #fff;
             border: none;
             border-radius: 6px;
@@ -290,7 +282,7 @@
         .admin-confirm-cancel {
             background: none;
             border: none;
-            color: #999;
+            color: var(--color-text-muted);
             font-size: 0.78rem;
             font-family: inherit;
             cursor: pointer;
@@ -310,7 +302,7 @@
         /* Empty state */
         .admin-empty {
             text-align: center;
-            color: #ccc;
+            color: var(--color-text-muted);
             font-size: 0.88rem;
             padding: 1.5rem 0;
         }

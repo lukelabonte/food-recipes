@@ -220,6 +220,26 @@ Trusted contributors can submit recipes via `upload.html`. A Cloudflare Worker p
 - **Security:** Page is public on GitHub Pages but all data requires `X-Admin-Secret` header. `<meta name="robots" content="noindex, nofollow">` prevents search indexing. No OG tags. `sessionStorage` never persists beyond the tab.
 - **No build dependencies:** Self-contained HTML with inline CSS and JS. Uses `assets/style.css` for base card/link styles only.
 
+## Color System
+
+All colors are managed through CSS custom properties (design tokens) defined in `assets/style.css` at the `:root` level. Dark mode is automatic via `@media (prefers-color-scheme: dark)`.
+
+### Token inventory
+
+**Themed tokens (12)** — change between light/dark:
+`--color-bg`, `--color-surface`, `--color-surface-alt`, `--color-text`, `--color-text-muted`, `--color-accent`, `--color-accent-hover`, `--color-accent-bg`, `--color-border`, `--color-shadow`, `--color-success`, `--color-error`
+
+**Fixed tokens (4)** — same in both modes:
+`--color-macro-calories`, `--color-macro-protein`, `--color-macro-fat`, `--color-macro-carbs`
+
+### Rules
+- **Never hardcode colors** in CSS or inline styles — always use `var(--color-*)` tokens
+- **Print forces light mode** via `@media print { :root { ... } }` so printed pages are always light
+- **Status backgrounds** (success/error) are hardcoded light/dark pairs in the dark mode media query (not separate tokens)
+- **Weight card** has its own blue-tinted palette handled with inline dark overrides (not tokens)
+- **SVG icons** in data URIs use `mask-image` + `background-color: var(--color-*)` instead of embedded `stroke` colors
+- HTML pages with inline `<style>` blocks (`admin.html`, `upload.html`, `request-access.html`) use the same tokens — they inherit from `assets/style.css`
+
 ## Change Impact Checklist
 
 Recipe HTML files are parsed by multiple systems. When making changes, verify these downstream effects:
@@ -242,3 +262,4 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | Step tracking CSS (`.step-active`, `.step-done`) | `assets/recipe.js` step tracking IIFE, print styles, reduced-motion overrides |
 | Any recipe HTML convention | `docs/claude-web-instructions.md` AND `worker/src/template.js` — keep in sync so both pipelines generate correct markup |
 | Admin API endpoints (worker) | `admin.html` API calls — endpoint paths, request/response shapes, header names |
+| Color tokens (`assets/style.css` `:root`) | All pages (inherit tokens), `admin.html` / `upload.html` / `request-access.html` inline styles, dark mode media query |
