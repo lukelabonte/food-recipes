@@ -7,7 +7,7 @@
  *   POST   /request-access          Submit an access request (public)
  *   POST   /admin/users             Create a user (admin auth)
  *   DELETE /admin/users/:passphrase Delete a user (admin auth)
- *   PUT    /admin/users/:passphrase Change a user's passphrase (admin auth)
+ *   PUT    /admin/users/:passphrase Update a user's passphrase/name (admin auth)
  *   GET    /admin/users             List users (admin auth)
  *   GET    /admin/requests          List access requests (admin auth)
  *   DELETE /admin/requests/:id      Delete an access request (admin auth)
@@ -16,7 +16,7 @@
 
 import { handleUpload, getUploadStatus } from './upload.js';
 import { handleRequestAccess } from './request-access.js';
-import { verifyAdmin, createUser, deleteUser, changePassphrase, listUsers, listRequests, deleteRequest } from './admin.js';
+import { verifyAdmin, createUser, deleteUser, updateUser, listUsers, listRequests, deleteRequest } from './admin.js';
 
 /**
  * Check if the request origin is allowed.
@@ -156,7 +156,7 @@ export default {
                 return withCors(response, origin);
             }
 
-            // PUT /admin/users/:passphrase — change passphrase
+            // PUT /admin/users/:passphrase — update user (passphrase and/or display name)
             if (method === 'PUT' && userMatch) {
                 if (!verifyAdmin(request, env.ADMIN_SECRET)) {
                     return withCors(
@@ -165,7 +165,7 @@ export default {
                     );
                 }
                 const body = await request.json();
-                response = await changePassphrase(env.KV, userMatch.passphrase, body.newPassphrase);
+                response = await updateUser(env.KV, userMatch.passphrase, body);
                 return withCors(response, origin);
             }
 

@@ -60,36 +60,55 @@ export async function createUser(request, env) {
 }
 
 /**
- * Change a user's passphrase.
- * PUT /admin/users/:passphrase { newPassphrase }
+ * Update a user's passphrase and/or display name.
+ * PUT /admin/users/:passphrase { newPassphrase?, newDisplayName? }
  */
-export async function changePassphrase(kv, oldPassphrase, newPassphrase) {
+export async function updateUser(kv, oldPassphrase, updates) {
+    const { newPassphrase, newDisplayName } = updates;
     const userData = await kv.get(`auth:${oldPassphrase}`, 'json');
     if (!userData) {
         return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
     }
 
-    if (!newPassphrase || newPassphrase.trim().length < 3) {
-        return new Response(JSON.stringify({ error: 'New passphrase is required (3+ characters)' }), { status: 400 });
+    if (!newPassphrase && !newDisplayName) {
+        return new Response(JSON.stringify({ error: 'Nothing to update' }), { status: 400 });
     }
 
-    const clean = newPassphrase.trim().toLowerCase();
-    if (clean === oldPassphrase) {
-        return new Response(JSON.stringify({ error: 'New passphrase must be different' }), { status: 400 });
+    // Update display name if provided
+    if (newDisplayName) {
+        if (newDisplayName.trim().length < 1) {
+            return new Response(JSON.stringify({ error: 'Display name cannot be empty' }), { status: 400 });
+        }
+        userData.displayName = newDisplayName.trim();
     }
 
-    // Check for duplicates
-    const conflict = await kv.get(`auth:${clean}`, 'json');
-    if (conflict) {
-        return new Response(JSON.stringify({ error: 'That passphrase is already in use' }), { status: 409 });
+    // If passphrase is changing, do the key rename
+    if (newPassphrase) {
+        if (newPassphrase.trim().length < 3) {
+            return new Response(JSON.stringify({ error: 'New passphrase is required (3+ characters)' }), { status: 400 });
+        }
+
+        const clean = newPassphrase.trim().toLowerCase();
+        if (clean === oldPassphrase) {
+            return new Response(JSON.stringify({ error: 'New passphrase must be different' }), { status: 400 });
+        }
+
+        const conflict = await kv.get(`auth:${clean}`, 'json');
+        if (conflict) {
+            return new Response(JSON.stringify({ error: 'That passphrase is already in use' }), { status: 409 });
+        }
+
+        // KV has no transactions. Write-then-delete means a partial failure could leave
+        // the user under both passphrases — safer than delete-first which risks data loss.
+        await kv.put(`auth:${clean}`, JSON.stringify(userData));
+        await kv.delete(`auth:${oldPassphrase}`);
+
+        return new Response(JSON.stringify({ passphrase: clean, displayName: userData.displayName }), { status: 200 });
     }
 
-    // KV has no transactions. Write-then-delete means a partial failure could leave
-    // the user under both passphrases — safer than delete-first which risks data loss.
-    await kv.put(`auth:${clean}`, JSON.stringify(userData));
-    await kv.delete(`auth:${oldPassphrase}`);
-
-    return new Response(JSON.stringify({ passphrase: clean, displayName: userData.displayName }), { status: 200 });
+    // Name-only update: overwrite value at the same key
+    await kv.put(`auth:${oldPassphrase}`, JSON.stringify(userData));
+    return new Response(JSON.stringify({ passphrase: oldPassphrase, displayName: userData.displayName }), { status: 200 });
 }
 
 /**

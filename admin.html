@@ -730,6 +730,10 @@
                 copyBtn.addEventListener('click', () => copyToClipboard(user.passphrase, copyBtn));
                 buttons.appendChild(copyBtn);
 
+                const renameBtn = el('button', 'admin-btn admin-btn-copy', 'Rename');
+                renameBtn.addEventListener('click', () => showRename(user, card));
+                buttons.appendChild(renameBtn);
+
                 const changeBtn = el('button', 'admin-btn admin-btn-copy', 'Change');
                 changeBtn.addEventListener('click', () => showChangePassphrase(user, card));
                 buttons.appendChild(changeBtn);
@@ -783,14 +787,89 @@
             card.appendChild(confirm);
         }
 
+        // ── Rename User ─────────────────────────
+
+        function showRename(user, card) {
+            // Toggle existing input
+            const existing = card.querySelector('.admin-rename-row');
+            if (existing) { existing.remove(); return; }
+
+            const row = el('div', 'admin-passphrase-row admin-rename-row');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'admin-passphrase-input';
+            input.style.fontFamily = 'inherit';
+            input.placeholder = 'New name\u2026';
+            input.value = user.displayName;
+            input.autocomplete = 'off';
+            row.appendChild(input);
+
+            const saveBtn = el('button', 'admin-btn admin-btn-approve', 'Save');
+            row.appendChild(saveBtn);
+
+            const cancelBtn = el('button', 'admin-btn admin-btn-dismiss', 'Cancel');
+            cancelBtn.addEventListener('click', () => row.remove());
+            row.appendChild(cancelBtn);
+
+            async function doRename() {
+                const newName = input.value.trim();
+                if (!newName) { input.focus(); return; }
+                if (newName === user.displayName) { row.remove(); return; }
+
+                saveBtn.disabled = true;
+                cancelBtn.disabled = true;
+                input.disabled = true;
+                saveBtn.textContent = 'Saving\u2026';
+
+                try {
+                    const res = await api('PUT', '/admin/users/' + encodeURIComponent(user.passphrase), {
+                        newDisplayName: newName
+                    });
+
+                    if (res.status >= 400) {
+                        showCardStatus(card, 'error', res.data.error || 'Failed to rename.');
+                        saveBtn.disabled = false;
+                        cancelBtn.disabled = false;
+                        input.disabled = false;
+                        saveBtn.textContent = 'Save';
+                        return;
+                    }
+
+                    row.remove();
+                    showCardStatus(card, 'success', 'Renamed to ' + newName + '!');
+
+                    // Refresh users to show updated name
+                    setTimeout(() => {
+                        const status = card.querySelector('.admin-card-status');
+                        if (status) status.remove();
+                        api('GET', '/admin/users').then(r => renderUsers(r.data.users || []));
+                    }, 1500);
+
+                } catch {
+                    showCardStatus(card, 'error', 'Network error.');
+                    saveBtn.disabled = false;
+                    cancelBtn.disabled = false;
+                    input.disabled = false;
+                    saveBtn.textContent = 'Save';
+                }
+            }
+
+            saveBtn.addEventListener('click', doRename);
+            input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doRename(); });
+
+            card.appendChild(row);
+            input.focus();
+            input.select();
+        }
+
         // ── Change Passphrase ───────────────────────
 
         function showChangePassphrase(user, card) {
             // Toggle existing input
-            const existing = card.querySelector('.admin-passphrase-row');
+            const existing = card.querySelector('.admin-change-row');
             if (existing) { existing.remove(); return; }
 
-            const row = el('div', 'admin-passphrase-row');
+            const row = el('div', 'admin-passphrase-row admin-change-row');
             const input = document.createElement('input');
             input.type = 'text';
             input.className = 'admin-passphrase-input';
@@ -829,9 +908,13 @@
                     }
 
                     row.remove();
+                    // Update displayed passphrase immediately so admin can copy it
+                    const updatedPassphrase = res.data.passphrase;
+                    const passphraseEl = card.querySelector('.admin-card-passphrase');
+                    if (passphraseEl) passphraseEl.textContent = updatedPassphrase;
                     showCardStatus(card, 'success', 'Passphrase changed!');
 
-                    // Refresh users to show updated passphrase
+                    // Refresh users to sync all card data
                     setTimeout(() => {
                         const status = card.querySelector('.admin-card-status');
                         if (status) status.remove();
