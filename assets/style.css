@@ -147,6 +147,16 @@ li { margin-bottom: 0.3rem; }
 }
 .header-card .source-link a:hover { color: var(--color-accent); }
 
+/* Recipe — Hero photo */
+
+.recipe-hero {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 0.75rem 0 0.5rem;
+}
+
 /* ===========================
    Search
    =========================== */
@@ -896,6 +906,17 @@ html[data-theme="light"] .weight-list li { background: rgba(255, 255, 255, 0.7);
     flex-shrink: 0;
 }
 
+/* Index — Recipe card photo thumbnails */
+
+.recipe-card-photo {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    margin-right: 1rem;
+}
+
 /* ===========================
    Index — Per-card cart toggle (shopping list)
    =========================== */
@@ -1238,6 +1259,8 @@ html[data-theme="light"] .status-error { background: #fdf0f0; border-color: #f0c
     .stepper-btn { width: 32px; height: 32px; font-size: 1rem; }
     .stepper-value { font-size: 1rem; }
     .time-filter-slider::-webkit-slider-thumb { width: 22px; height: 22px; }
+    .recipe-hero { max-height: 360px; }
+    .recipe-card-photo { width: 88px; height: 88px; }
 }
 
 /* ===========================
@@ -1482,6 +1505,12 @@ html[data-theme="light"] .status-error { background: #fdf0f0; border-color: #f0c
     .shopping-link { display: none !important; }
     .shopping-list-btn { display: none; }
     .shopping-list-count-link { display: none !important; }
+
+    /* Recipe hero photo — hide in print */
+    .recipe-hero { display: none; }
+
+    /* Index photo thumbnails — hide in print */
+    .recipe-card-photo { display: none; }
 
     /* Shopping list page — minimal plain list, hide checked items */
     .shopping-list { max-width: 100% !important; }

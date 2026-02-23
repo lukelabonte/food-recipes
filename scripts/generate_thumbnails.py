@@ -27,6 +27,12 @@ CONTENT_LEFT = ACCENT_BAR_WIDTH + 60  # left margin for all text
 CONTENT_RIGHT = WIDTH - 60  # right margin
 CONTENT_WIDTH = CONTENT_RIGHT - CONTENT_LEFT  # available text width
 
+# Photo layout (when recipe has a photo)
+PHOTO_WIDTH = 480  # left ~40% of 1200px
+PHOTO_DIVIDER_WIDTH = 4
+PHOTO_CONTENT_LEFT = PHOTO_WIDTH + PHOTO_DIVIDER_WIDTH + 50
+PHOTO_CONTENT_WIDTH = CONTENT_RIGHT - PHOTO_CONTENT_LEFT
+
 # ---------------------------------------------------------------------------
 # Colors (matching site theme: warm cream, brown accents)
 # ---------------------------------------------------------------------------
@@ -318,7 +324,7 @@ def format_category(dirname):
 # ---------------------------------------------------------------------------
 def generate_recipe_image(
     title, subtitle, category, time_str, servings, contributor, source_name,
-    output_path, fonts
+    output_path, fonts, photo_path=None
 ):
     """Generate an OG card image for a single recipe.
 
@@ -335,16 +341,41 @@ def generate_recipe_image(
 
     accent = CATEGORY_ACCENTS.get(category, ACCENT_DEFAULT)
 
-    # -- Left accent bar (full height, with subtle inner highlight) ---------
-    draw.rectangle([0, 0, ACCENT_BAR_WIDTH, HEIGHT], fill=accent)
-    # Subtle lighter stripe on the right edge of the bar for depth
-    highlight = lighten(accent, 0.25)
-    draw.rectangle(
-        [ACCENT_BAR_WIDTH - 4, 0, ACCENT_BAR_WIDTH, HEIGHT], fill=highlight
-    )
-
-    # -- Subtle bottom border line ------------------------------------------
-    draw.rectangle([ACCENT_BAR_WIDTH, HEIGHT - 3, WIDTH, HEIGHT], fill=accent)
+    # -- Left region: photo or accent bar -----------------------------------
+    if photo_path and os.path.isfile(photo_path):
+        photo = Image.open(photo_path)
+        # Center-crop to fill PHOTO_WIDTH x HEIGHT
+        pw, ph = photo.size
+        target_ratio = PHOTO_WIDTH / HEIGHT
+        photo_ratio = pw / ph
+        if photo_ratio > target_ratio:
+            new_w = int(ph * target_ratio)
+            left = (pw - new_w) // 2
+            photo = photo.crop((left, 0, left + new_w, ph))
+        else:
+            new_h = int(pw / target_ratio)
+            top = (ph - new_h) // 2
+            photo = photo.crop((0, top, pw, top + new_h))
+        photo = photo.resize((PHOTO_WIDTH, HEIGHT), Image.LANCZOS)
+        img.paste(photo, (0, 0))
+        # Accent divider between photo and text
+        draw.rectangle(
+            [PHOTO_WIDTH, 0, PHOTO_WIDTH + PHOTO_DIVIDER_WIDTH, HEIGHT],
+            fill=accent,
+        )
+        content_left = PHOTO_CONTENT_LEFT
+        content_width = PHOTO_CONTENT_WIDTH
+    else:
+        # Accent bar (full height, with subtle inner highlight)
+        draw.rectangle([0, 0, ACCENT_BAR_WIDTH, HEIGHT], fill=accent)
+        highlight = lighten(accent, 0.25)
+        draw.rectangle(
+            [ACCENT_BAR_WIDTH - 4, 0, ACCENT_BAR_WIDTH, HEIGHT], fill=highlight
+        )
+        # Subtle bottom border line
+        draw.rectangle([ACCENT_BAR_WIDTH, HEIGHT - 3, WIDTH, HEIGHT], fill=accent)
+        content_left = CONTENT_LEFT
+        content_width = CONTENT_WIDTH
 
     # -- Category label -----------------------------------------------------
     emoji = CATEGORY_EMOJIS.get(category, "")
@@ -355,29 +386,29 @@ def generate_recipe_image(
     else:
         cat_text = cat_display
     y = 60
-    draw.text((CONTENT_LEFT, y), cat_text, fill=accent, font=fonts["category"])
+    draw.text((content_left, y), cat_text, fill=accent, font=fonts["category"])
     y += 44
 
     # -- Thin separator line under category ---------------------------------
     sep_y = y + 2
     draw.rectangle(
-        [CONTENT_LEFT, sep_y, CONTENT_LEFT + 60, sep_y + 2],
+        [content_left, sep_y, content_left + 60, sep_y + 2],
         fill=lighten(accent, 0.4),
     )
     y = sep_y + 20
 
     # -- Recipe title (large, bold) -----------------------------------------
     y = draw_left_text(
-        draw, CONTENT_LEFT, y, title, fonts["title"], TEXT_COLOR,
-        max_width=CONTENT_WIDTH, max_lines=2,
+        draw, content_left, y, title, fonts["title"], TEXT_COLOR,
+        max_width=content_width, max_lines=2,
     )
     y += 6
 
     # -- Subtitle / description (italic, warm gray) -------------------------
     if subtitle:
         y = draw_left_text(
-            draw, CONTENT_LEFT, y, subtitle, fonts["subtitle"], SUBTITLE_COLOR,
-            max_width=CONTENT_WIDTH, max_lines=3,
+            draw, content_left, y, subtitle, fonts["subtitle"], SUBTITLE_COLOR,
+            max_width=content_width, max_lines=3,
         )
 
     # -- Metadata line (bottom area) ----------------------------------------
@@ -392,7 +423,7 @@ def generate_recipe_image(
     if meta_parts:
         meta_text = "  \u00b7  ".join(meta_parts)
         draw.text(
-            (CONTENT_LEFT, meta_y), meta_text, fill=META_COLOR, font=fonts["meta"]
+            (content_left, meta_y), meta_text, fill=META_COLOR, font=fonts["meta"]
         )
 
     # Right side: contributor
@@ -411,7 +442,7 @@ def generate_recipe_image(
     if source_name:
         source_display = source_name.strip()
         draw.text(
-            (CONTENT_LEFT, bottom_y),
+            (content_left, bottom_y),
             source_display,
             fill=LIGHT_COLOR,
             font=fonts["brand"],
@@ -538,6 +569,9 @@ def main():
             parser = OGDataParser()
             parser.feed(html)
 
+            slug = fname.removesuffix(".html")
+            photo_path = os.path.join(repo_root, "assets", "photos", slug, "photo.webp")
+
             img_name = fname.replace(".html", ".png")
             generate_recipe_image(
                 title=parser.title,
@@ -549,6 +583,7 @@ def main():
                 source_name=parser.source_name,
                 output_path=os.path.join(output_dir, img_name),
                 fonts=fonts,
+                photo_path=photo_path,
             )
             count += 1
 

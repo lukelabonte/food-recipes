@@ -175,6 +175,7 @@ def parse_time_minutes(time_str):
 
 def main():
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    photos_dir = os.path.join(repo_root, "assets", "photos")
     skip_dirs = {".git", "docs", "assets", "scripts"}
     recipes = []
 
@@ -196,6 +197,10 @@ def main():
             parser = RecipeParser()
             parser.feed(html_content)
 
+            slug = filename.removesuffix(".html")
+            photo_file = os.path.join(photos_dir, slug, "photo.webp")
+            has_photo = os.path.isfile(photo_file)
+
             recipe = {
                 "title": parser.title,
                 "description": parser.subtitle or parser.description,
@@ -207,6 +212,8 @@ def main():
                 "ingredients": parser.ingredients,
                 "addedBy": parser.added_by,
                 "url": f"{entry}/{filename}",
+                "hasPhoto": has_photo,
+                "photoUrl": f"assets/photos/{slug}/photo.webp" if has_photo else None,
             }
             recipes.append(recipe)
 

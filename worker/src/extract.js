@@ -55,7 +55,8 @@ Schema:
     "method": "string — brief explanation of weight change during cooking"
   },
   "sourceUrl": "string or null — URL of original recipe if known",
-  "sourceName": "string or null — site name if from external source, e.g. 'Serious Eats'"
+  "sourceName": "string or null — site name if from external source, e.g. 'Serious Eats'",
+  "photoPrompt": "string — a vivid visual description for AI image generation. If an image was provided, describe what you see in it: colors, textures, char marks, glaze sheen, garnishes, serving vessel, arrangement. If no image, describe what the finished dish would look like based on the recipe. Focus on what makes this specific dish visually distinctive. Do NOT include lighting/camera instructions — just describe the food itself. 1-3 sentences."
 }
 
 Rules:

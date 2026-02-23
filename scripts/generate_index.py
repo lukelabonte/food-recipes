@@ -93,8 +93,13 @@ def render_card(recipe, indent):
     if recipe.get("method"):
         meta.append(f"{i3}<span>{esc(recipe['method'])}</span>")
 
+    photo_img = ""
+    if recipe.get("hasPhoto") and recipe.get("photoUrl"):
+        photo_img = f'{i1}<img class="recipe-card-photo" src="{esc(recipe["photoUrl"])}" alt="" loading="lazy">'
+
     lines = [
         f'{i0}<a href="{esc(url)}" class="recipe-card">',
+        *([photo_img] if photo_img else []),
         f"{i1}<div class=\"recipe-card-content\">",
         f"{i2}<div class=\"recipe-card-title\">{esc(recipe['title'])}</div>",
         f"{i2}<div class=\"recipe-card-desc\">{esc(recipe['description'])}</div>",

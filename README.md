@@ -6,6 +6,7 @@ A family recipe collection — tried-and-true dishes from our kitchen to yours, 
 
 ## Features
 
+- **Recipe photos** — AI-generated food photos on recipe pages and index cards, with source-image-guided generation for the most realistic results
 - **Fuzzy search** — Find recipes by name, description, or ingredients. Typo-tolerant, so "chiken" still finds Chicken Noodle Soup
 - **Time filter** — Slide to filter recipes by total cooking time when you're short on time
 - **Shopping list** — Tap the cart icon on any recipe card to add it to your list, from the index or individual recipe pages. Get a merged ingredient list organized by store section. Check items off as you shop — completed sections sink to the bottom. Remove recipes from the list with the X on each pill. Your progress saves between visits
@@ -48,4 +49,4 @@ Send your recipe in any format: a photo, a handwritten card, a URL, a video, pla
 
 ## Under the Hood
 
-Static site hosted on GitHub Pages with a custom domain. A Cloudflare Worker handles recipe uploads. The search index and link preview thumbnails are auto-generated on every deploy.
+Static site hosted on GitHub Pages with a custom domain. A Cloudflare Worker handles recipe uploads — both are auto-deployed on every push to main. Recipe photos, the search index, and link preview thumbnails are all auto-generated during deploy.

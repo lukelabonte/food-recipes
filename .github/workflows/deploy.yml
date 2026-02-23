@@ -24,12 +24,27 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Deploy Worker to Cloudflare
+        run: npm install && npx wrangler deploy
+        working-directory: worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install Python dependencies
         run: pip install Pillow
+
+      - name: Generate recipe photos
+        run: python3 scripts/generate_photos.py
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Generate search index
         run: python3 scripts/generate_search_index.py
@@ -44,7 +59,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/recipes.json index.html assets/thumbnails/
+          git add assets/recipes.json index.html assets/thumbnails/ assets/photos/
           if ! git diff --staged --quiet; then
             git commit -m "Update generated files [skip ci]"
             git push

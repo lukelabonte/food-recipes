@@ -225,6 +225,8 @@ ${nutritionItems.join('\n')}
 
         <div class="card header-card">
             <h1>${esc(recipe.title)}</h1>
+            <img class="recipe-hero" src="../assets/photos/${esc(slug)}/photo.webp"
+                 alt="${esc(recipe.title)}" width="800" height="600" loading="lazy">
             <p class="subtitle">${esc(recipe.subtitle)}</p>
         </div>
 

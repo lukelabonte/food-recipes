@@ -22,11 +22,14 @@ food-recipes/
 │   ├── search.js                   # Fuse.js search + time filter + shopping list selection + upload button
 │   ├── shopping-list.js            # Ingredient parser, smart merge, store sections, checklist UI
 │   ├── recipes.json                # AUTO-GENERATED — do not edit manually
-│   └── thumbnails/                 # AUTO-GENERATED — OG preview images
+│   ├── thumbnails/                 # AUTO-GENERATED — OG preview images
+│   └── photos/                     # Recipe photos (per-recipe directories)
+│       └── <slug>/                 # photo.webp + prompt.txt + optional source-N.ext
 ├── scripts/                        # Build scripts (not served by GitHub Pages)
 │   ├── generate_search_index.py    # Generates assets/recipes.json from recipe HTML files
 │   ├── generate_index.py           # Generates index.html from recipes.json + git dates
-│   └── generate_thumbnails.py      # Generates assets/thumbnails/ from recipe HTML files
+│   ├── generate_thumbnails.py      # Generates assets/thumbnails/ from recipe HTML files
+│   └── generate_photos.py          # Generates recipe photos via Cloudflare Workers AI
 ├── worker/                         # Cloudflare Worker for recipe upload processing
 │   ├── src/                        # Worker source (router, auth, extract, template, github, admin)
 │   ├── wrangler.toml               # Worker config
@@ -36,7 +39,7 @@ food-recipes/
 ├── CLAUDE.md                       # This file
 ├── README.md                       # Public-facing repo readme
 ├── .mcp.json                       # Cloudflare MCP config (gitignored)
-├── .github/workflows/deploy.yml    # Deploy: generates search index + index page + thumbnails, deploys to Pages
+├── .github/workflows/deploy.yml    # Deploy: Worker to Cloudflare, then generates photos + search index + index page + thumbnails, deploys to Pages
 └── <category>/                     # Recipe HTML files organized by category
     └── <recipe-name>.html
 ```
@@ -55,7 +58,7 @@ food-recipes/
 Every recipe page follows this structure:
 
 1. Nav bar: back link + print button
-2. Header card: title + subtitle + optional attribution (`.header-card`)
+2. Header card: title + hero photo (`.recipe-hero`) + subtitle + optional attribution (`.header-card`)
 3. Pill bar: `<nav class="recipe-nav">` — sticky section nav with anchor pills to each card section
 4. Overview card: prep, cook, total time, servings, cooking method (`.meta-list`)
 5. Ingredients card: bulleted list with gram weights (`.ingredient-list`), some with tappable substitutions via `data-subs` + `.sub-list`
@@ -218,6 +221,20 @@ Rules:
 - `scripts/generate_search_index.py` parses `.contributor` into the `addedBy` field in `assets/recipes.json`
 - `assets/search.js` displays contributors on index page cards (right-aligned) and includes `addedBy` in Fuse.js search keys
 
+## Photos
+
+Every recipe has a hero photo on its recipe page and a thumbnail on index cards.
+
+- **Storage:** `assets/photos/<slug>/photo.webp` — directory per recipe, named by HTML filename (without category prefix)
+- **Directory contents:** `photo.webp` (generated/final), `prompt.txt` (AI visual description), optional `source-N.ext` (original uploaded images)
+- **Photo assets created by both pipelines:** The Worker upload pipeline (`worker/src/extract.js` generates `photoPrompt`, `worker/src/github.js` commits `prompt.txt` + source image in the PR) and the Claude Web pipeline (`docs/claude-web-instructions.md` instructs manual creation of `prompt.txt` + source images). Both ensure `prompt.txt` exists before deploy generates the photo.
+- **Recipe page:** `<img class="recipe-hero" width="800" height="600">` inside `.header-card`, between `<h1>` and `.subtitle`. Include `width`/`height` to prevent CLS. Always present on all recipes.
+- **Index page:** `scripts/generate_index.py` adds `<img class="recipe-card-photo">` inside each card when `hasPhoto` is true in `recipes.json`. Photo appears as a small thumbnail on the left side of the card.
+- **OG thumbnails:** `scripts/generate_thumbnails.py` uses a split layout (photo left, text right) when available
+- **Generation:** `scripts/generate_photos.py` auto-discovers recipes and generates photos via Cloudflare Workers AI (Flux 2 Klein 4B). Uses `prompt.txt` + recipe title/description for richest prompts, falls back to auto-generated prompts from title/subtitle. Runs during deploy via `CLOUDFLARE_API_TOKEN` secret. Only processes recipes missing `photo.webp` (use `--force` to regenerate).
+- **Format:** WebP only, 800x600px (4:3), ~35-90KB
+- **Print:** Hero photo and index card thumbnails hidden
+
 ## Thumbnails (Link Previews)
 
 Each page has `og:image`, `og:image:width`, `og:image:height`, and `og:url` meta tags for rich link previews in iMessage, Slack, Discord, etc.
@@ -297,8 +314,8 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | HTML label text (e.g., `<strong>` in meta-list) | `scripts/generate_search_index.py` and `scripts/generate_thumbnails.py` parsers match the new labels |
 | CSS for screen layout | `@media print` block in `assets/style.css` — print styles may need parallel updates |
 | Recipe template structure (new/removed sections) | `assets/recipe.js` (pill bar, substitution toggles), `worker/src/template.js`, all existing recipe HTML files for consistency |
-| Adding a new recipe (manual) | Add `og:image`/`og:url` meta tags; `index.html` updates automatically on deploy |
-| Adding a new recipe (upload) | Worker handles everything — PR adds the HTML file; `index.html` updates automatically on deploy |
+| Adding a new recipe (manual) | Add `og:image`/`og:url` meta tags; create `assets/photos/<slug>/prompt.txt` + save source images; `index.html` and photos update automatically on deploy |
+| Adding a new recipe (upload) | Worker handles everything — PR adds the HTML file + `prompt.txt` + source image; `index.html` and photos update automatically on deploy |
 | Adding a new category | Category Emoji Map above, `CATEGORY_EMOJI` in `scripts/generate_index.py`, `CATEGORY_ACCENTS` in `scripts/generate_thumbnails.py`, `CATEGORY_EMOJI` in `worker/src/template.js` |
 | `index.html` structure | `scripts/generate_index.py` template, `assets/search.js` selectors (see Search section) |
 | Substitution markup | `assets/recipe.js` toggle logic, `worker/src/template.js`, print CSS `.sub-list` rules |
@@ -312,4 +329,5 @@ Recipe HTML files are parsed by multiple systems. When making changes, verify th
 | Admin API endpoints (worker) | `admin.html` API calls — endpoint paths, request/response shapes, header names |
 | Color tokens (`assets/style.css` `:root`) | All pages (inherit tokens), `admin.html` / `upload.html` / `request-access.html` inline styles, dark mode media query, `html[data-theme]` overrides |
 | Shopping list localStorage keys | `assets/search.js` (per-card cart toggles), `assets/shopping-list.js` (rendering), `assets/recipe.js` (cart toggle + count link) — all three read/write `shopping-list-recipes` |
+| Recipe photos (`assets/photos/`) | `scripts/generate_photos.py` (generation), `scripts/generate_search_index.py` (`hasPhoto`/`photoUrl`), `scripts/generate_index.py` (card thumbnail), `scripts/generate_thumbnails.py` (split layout), `assets/style.css` (`.recipe-card-photo`, `.recipe-hero`), `assets/search.js` (`buildCard()` thumbnail), recipe HTML files (`<img class="recipe-hero">`), `worker/src/template.js`, `worker/src/extract.js` (`photoPrompt` schema), `worker/src/github.js` (multi-file PR), `worker/src/upload.js` (passes photo data), `docs/claude-web-instructions.md` (Photo Assets section) |
 | Adding a new HTML page | Add `<script src="assets/theme.js" defer>` (or `../assets/theme.js` for recipe pages) in `<head>` |

@@ -104,14 +104,31 @@ export async function handleUpload(request, env) {
         const slug = slugify(recipeData.title);
         const html = renderRecipeHTML(recipeData, { contributor, slug });
 
-        // Create GitHub PR
+        // Prepare source image for the PR (strip data: prefix for GitHub blob API).
+        // Only actual images are saved as source photos — PDFs are for extraction only.
+        let sourceImageBase64 = null;
+        let sourceImageExt = null;
+        if (imageBase64) {
+            const match = imageBase64.match(/^data:image\/([^;]+);base64,(.+)$/s);
+            if (match) {
+                // Sanitize MIME subtype into a safe file extension
+                sourceImageExt = match[1].replace(/[^a-z0-9]/g, '');
+                if (sourceImageExt === 'jpeg') sourceImageExt = 'jpg';
+                sourceImageBase64 = match[2];
+            }
+        }
+
+        // Create GitHub PR with recipe HTML + photo assets
         const { prUrl, prNumber } = await createPR(env.GITHUB_TOKEN, env.GITHUB_REPO, {
             slug,
             category: recipeData.category,
             html,
             title: recipeData.title,
             contributor,
-            uploadId
+            uploadId,
+            photoPrompt: recipeData.photoPrompt || null,
+            sourceImageBase64,
+            sourceImageExt
         });
 
         // Update KV with success

@@ -16,7 +16,9 @@
       "2 tsp. vanilla"
     ],
     "addedBy": "Kari",
-    "url": "desserts/basic-vanilla-pudding.html"
+    "url": "desserts/basic-vanilla-pudding.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/basic-vanilla-pudding/photo.webp"
   },
   {
     "title": "Delicious Ham and Potato Soup",
@@ -40,7 +42,9 @@
       "2 cups milk"
     ],
     "addedBy": "Kari",
-    "url": "soups-and-stews/delicious-ham-and-potato-soup.html"
+    "url": "soups-and-stews/delicious-ham-and-potato-soup.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/delicious-ham-and-potato-soup/photo.webp"
   },
   {
     "title": "Double Chocolate Cookies",
@@ -66,7 +70,9 @@
       "½ tsp salt"
     ],
     "addedBy": "Eileen",
-    "url": "desserts/double-chocolate-cookies.html"
+    "url": "desserts/double-chocolate-cookies.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/double-chocolate-cookies/photo.webp"
   },
   {
     "title": "Gochujang Chicken",
@@ -88,7 +94,9 @@
       "½ teaspoon salt"
     ],
     "addedBy": "Ernesto",
-    "url": "main-dishes/gochujang-chicken.html"
+    "url": "main-dishes/gochujang-chicken.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/gochujang-chicken/photo.webp"
   },
   {
     "title": "Jamie's Minestrone Soup",
@@ -120,7 +128,9 @@
       "1 tablespoon olive oil, for drizzling"
     ],
     "addedBy": "Eileen",
-    "url": "soups-and-stews/jamies-minestrone-soup.html"
+    "url": "soups-and-stews/jamies-minestrone-soup.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/jamies-minestrone-soup/photo.webp"
   },
   {
     "title": "Mapo Tofu",
@@ -148,7 +158,9 @@
       "8 oz ground pork"
     ],
     "addedBy": "Bale",
-    "url": "main-dishes/mapo-tofu.html"
+    "url": "main-dishes/mapo-tofu.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/mapo-tofu/photo.webp"
   },
   {
     "title": "Pailin's Authentic Pad Thai",
@@ -178,7 +190,9 @@
       "Lime wedges for serving"
     ],
     "addedBy": "Bale",
-    "url": "main-dishes/pailins-authentic-pad-thai.html"
+    "url": "main-dishes/pailins-authentic-pad-thai.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/pailins-authentic-pad-thai/photo.webp"
   },
   {
     "title": "Quick Pickled Red Onions",
@@ -199,7 +213,9 @@
       "1½ tablespoons sugar"
     ],
     "addedBy": "Ernesto",
-    "url": "sauces-and-dressings/quick-pickled-red-onions.html"
+    "url": "sauces-and-dressings/quick-pickled-red-onions.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/quick-pickled-red-onions/photo.webp"
   },
   {
     "title": "Quick and Easy Chicken Noodle Soup",
@@ -223,7 +239,9 @@
       "Salt and ground black pepper to taste"
     ],
     "addedBy": "Eileen",
-    "url": "soups-and-stews/quick-and-easy-chicken-noodle-soup.html"
+    "url": "soups-and-stews/quick-and-easy-chicken-noodle-soup.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/quick-and-easy-chicken-noodle-soup/photo.webp"
   },
   {
     "title": "Speedy Taco Bake",
@@ -245,6 +263,8 @@
       "2 eggs"
     ],
     "addedBy": "Eileen",
-    "url": "main-dishes/speedy-taco-bake.html"
+    "url": "main-dishes/speedy-taco-bake.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/speedy-taco-bake/photo.webp"
   }
 ]

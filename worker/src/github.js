@@ -48,7 +48,25 @@ export function slugify(title) {
 }
 
 /**
- * Create a PR with the recipe HTML file on a new branch.
+ * Create a blob in the repo (for multi-file commits via Git Trees API).
+ * @param {string} token - GitHub PAT
+ * @param {string} repo - "owner/repo" format
+ * @param {string} content - File content (UTF-8 text or base64)
+ * @param {string} [encoding='utf-8'] - 'utf-8' for text, 'base64' for binary
+ * @returns {Promise<string>} Blob SHA
+ */
+async function createBlob(token, repo, content, encoding = 'utf-8') {
+    const blob = await githubFetch(token, `/repos/${repo}/git/blobs`, {
+        method: 'POST',
+        body: JSON.stringify({ content, encoding })
+    });
+    return blob.sha;
+}
+
+/**
+ * Create a PR with recipe files (HTML + prompt.txt + optional source image) on a new branch.
+ *
+ * Uses the Git Trees API to commit multiple files in a single commit.
  *
  * @param {string} token - GitHub PAT
  * @param {string} repo - "owner/repo" format
@@ -59,15 +77,23 @@ export function slugify(title) {
  * @param {string} params.title - Recipe title for PR
  * @param {string} params.contributor - Display name of uploader
  * @param {string} params.uploadId - Upload ID for traceability
+ * @param {string} [params.photoPrompt] - Visual description for AI photo generation
+ * @param {string} [params.sourceImageBase64] - Base64-encoded source image (without data: prefix)
+ * @param {string} [params.sourceImageExt] - File extension for source image (e.g., 'jpg', 'png')
  * @returns {Promise<{prUrl: string, prNumber: number}>}
  */
-export async function createPR(token, repo, { slug, category, html, title, contributor, uploadId }) {
+export async function createPR(token, repo, {
+    slug, category, html, title, contributor, uploadId,
+    photoPrompt, sourceImageBase64, sourceImageExt
+}) {
     const branch = `upload/${uploadId}`;
-    const filePath = `${category}/${slug}.html`;
+    const htmlPath = `${category}/${slug}.html`;
 
-    // 1. Get default branch SHA
+    // 1. Get default branch SHA and base tree
     const ref = await githubFetch(token, `/repos/${repo}/git/ref/heads/main`);
     const baseSha = ref.object.sha;
+    const baseCommit = await githubFetch(token, `/repos/${repo}/git/commits/${baseSha}`);
+    const baseTreeSha = baseCommit.tree.sha;
 
     // 2. Create branch
     await githubFetch(token, `/repos/${repo}/git/refs`, {
@@ -78,18 +104,56 @@ export async function createPR(token, repo, { slug, category, html, title, contr
         })
     });
 
-    // 3. Create file on the new branch
-    const contentBase64 = btoa(unescape(encodeURIComponent(html)));
-    await githubFetch(token, `/repos/${repo}/contents/${filePath}`, {
-        method: 'PUT',
+    // 3. Create blobs for all files
+    const htmlBlob = await createBlob(token, repo, html);
+
+    const treeItems = [
+        { path: htmlPath, mode: '100644', type: 'blob', sha: htmlBlob }
+    ];
+
+    if (photoPrompt) {
+        const promptBlob = await createBlob(token, repo, photoPrompt);
+        treeItems.push({
+            path: `assets/photos/${slug}/prompt.txt`,
+            mode: '100644', type: 'blob', sha: promptBlob
+        });
+    }
+
+    if (sourceImageBase64 && sourceImageExt) {
+        const imageBlob = await createBlob(token, repo, sourceImageBase64, 'base64');
+        treeItems.push({
+            path: `assets/photos/${slug}/source-1.${sourceImageExt}`,
+            mode: '100644', type: 'blob', sha: imageBlob
+        });
+    }
+
+    // 4. Create tree
+    const tree = await githubFetch(token, `/repos/${repo}/git/trees`, {
+        method: 'POST',
         body: JSON.stringify({
-            message: `Add ${title} recipe`,
-            content: contentBase64,
-            branch
+            base_tree: baseTreeSha,
+            tree: treeItems
         })
     });
 
-    // 4. Create PR
+    // 5. Create commit
+    const commit = await githubFetch(token, `/repos/${repo}/git/commits`, {
+        method: 'POST',
+        body: JSON.stringify({
+            message: `Add ${title} recipe`,
+            tree: tree.sha,
+            parents: [baseSha]
+        })
+    });
+
+    // 6. Update branch ref to point to new commit
+    await githubFetch(token, `/repos/${repo}/git/refs/heads/${branch}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ sha: commit.sha })
+    });
+
+    // 7. Create PR
+    const fileList = treeItems.map(f => `\`${f.path}\``).join(', ');
     const pr = await githubFetch(token, `/repos/${repo}/pulls`, {
         method: 'POST',
         body: JSON.stringify({
@@ -99,7 +163,7 @@ export async function createPR(token, repo, { slug, category, html, title, contr
                 '',
                 `- **Contributor:** ${contributor}`,
                 `- **Category:** ${category}`,
-                `- **File:** \`${filePath}\``,
+                `- **Files:** ${fileList}`,
                 `- **Upload ID:** \`${uploadId}\``,
                 '',
                 'This PR was automatically created by the recipe upload worker.'

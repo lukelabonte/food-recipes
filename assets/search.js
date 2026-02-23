@@ -347,6 +347,14 @@
         chevron.className = 'recipe-card-chevron';
         chevron.textContent = '\u203A';
 
+        if (recipe.hasPhoto && recipe.photoUrl) {
+            var photo = document.createElement('img');
+            photo.className = 'recipe-card-photo';
+            photo.src = recipe.photoUrl;
+            photo.alt = '';
+            photo.loading = 'lazy';
+            a.appendChild(photo);
+        }
         a.appendChild(content);
         a.appendChild(chevron);
         if (recipe.url) addCartToggle(a, cleanUrl(recipe.url));
