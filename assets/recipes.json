@@ -1,5 +1,29 @@
 [
   {
+    "title": "Almond Delight",
+    "description": "A hearty, savory casserole of browned breakfast sausage, wild rice, and toasted slivered almonds baked together with vegetables and chicken noodle soup mix for incredible depth of flavor. Cozy, crowd-pleasing, and surprisingly elegant.",
+    "category": "Main Dishes",
+    "time": "80 min",
+    "timeMinutes": 80,
+    "servings": "8",
+    "method": "Stovetop + Oven (Dutch Oven)",
+    "ingredients": [
+      "2 lbs ground breakfast sausage (Jimmy Dean recommended)",
+      "1 large onion, diced",
+      "2 celery stalks, finely diced or sliced (optional)",
+      "1 bell pepper, diced",
+      "2 packages dry chicken noodle soup mix",
+      "1 cup wild rice",
+      "0.5 cup white rice (or 1.5 cups white rice if not using wild rice)",
+      "1.5 cups slivered almonds",
+      "4 cups broth (chicken or vegetable broth recommended; water acceptable)"
+    ],
+    "addedBy": "Bale",
+    "url": "main-dishes/almond-delight.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/almond-delight/photo.webp"
+  },
+  {
     "title": "Basic Vanilla Pudding",
     "description": "Creamy, old-fashioned stovetop pudding made from scratch. Top it however you like.",
     "category": "Desserts",
