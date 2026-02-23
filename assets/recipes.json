@@ -266,5 +266,32 @@
     "url": "main-dishes/speedy-taco-bake.html",
     "hasPhoto": true,
     "photoUrl": "assets/photos/speedy-taco-bake/photo.webp"
+  },
+  {
+    "title": "White Chocolate Cranberry Oatmeal Cookies",
+    "description": "Chewy, hearty oatmeal cookies loaded with sweet white chocolate chips and tangy dried cranberries, warmly spiced with cinnamon and kissed with vanilla.",
+    "category": "Desserts",
+    "time": "27 min",
+    "timeMinutes": 27,
+    "servings": "30",
+    "method": "Oven",
+    "ingredients": [
+      "1 stick (1/2 cup) unsalted butter, softened",
+      "3/4 cup firmly packed brown sugar",
+      "1/2 cup granulated white sugar",
+      "2 large eggs",
+      "1 tablespoon pure vanilla extract",
+      "1 1/2 cups all-purpose flour",
+      "1 teaspoon ground cinnamon",
+      "1 teaspoon baking soda",
+      "1/2 teaspoon salt",
+      "2 1/2 cups Quaker old-fashioned rolled oats",
+      "1 cup dried cranberries (Craisins)",
+      "1 cup white chocolate chips"
+    ],
+    "addedBy": "Mack",
+    "url": "desserts/white-chocolate-cranberry-oatmeal-cookies.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/white-chocolate-cranberry-oatmeal-cookies/photo.webp"
   }
 ]
