@@ -167,71 +167,31 @@ class OGDataParser(HTMLParser):
 
 
 # ---------------------------------------------------------------------------
-# Font resolution
+# Font resolution — bundled Inter (assets/fonts/) for identical output
+# across macOS and CI.
 # ---------------------------------------------------------------------------
-def _find_font_file(style="regular"):
-    """Find a suitable font file across platforms.
+FONT_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "fonts"
+)
 
-    style: "regular", "bold", "medium", "italic"
-    Returns (path, ttc_index) or (None, 0).
-    """
-    # macOS: prefer Avenir Next (clean geometric sans, matches site feel)
-    mac_avenir_next = "/System/Library/Fonts/Avenir Next.ttc"
-    avenir_indices = {
-        "bold": 0,       # Avenir Next Bold
-        "demibold": 2,   # Avenir Next Demi Bold
-        "medium": 5,     # Avenir Next Medium
-        "regular": 7,    # Avenir Next Regular
-        "italic": 4,     # Avenir Next Italic
-        "heavy": 8,      # Avenir Next Heavy
-    }
-    if os.path.exists(mac_avenir_next):
-        idx = avenir_indices.get(style, avenir_indices["regular"])
-        return mac_avenir_next, idx
-
-    # macOS fallback: Arial Bold / Arial Regular
-    mac_fonts = {
-        "bold": "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-        "regular": "/System/Library/Fonts/Supplemental/Arial.ttf",
-        "italic": "/System/Library/Fonts/Supplemental/Arial Italic.ttf",
-        "medium": "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-        "demibold": "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-        "heavy": "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-    }
-    path = mac_fonts.get(style, mac_fonts["regular"])
-    if os.path.exists(path):
-        return path, 0
-
-    # Linux (GitHub Actions Ubuntu runner): DejaVu Sans
-    linux_map = {
-        "bold": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-        "regular": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "italic": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf",
-        "medium": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-        "demibold": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-        "heavy": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-    }
-    path = linux_map.get(style, linux_map["regular"])
-    if os.path.exists(path):
-        return path, 0
-
-    # Liberation Sans fallback
-    suffix = {"bold": "Bold", "italic": "Italic", "medium": "Bold"}.get(
-        style, "Regular"
-    )
-    lib_path = f"/usr/share/fonts/truetype/liberation/LiberationSans-{suffix}.ttf"
-    if os.path.exists(lib_path):
-        return lib_path, 0
-
-    return None, 0
+_INTER_FILES = {
+    "regular": "Inter-Regular.ttf",
+    "bold": "Inter-Bold.ttf",
+    "medium": "Inter-Medium.ttf",
+    "semibold": "Inter-SemiBold.ttf",
+    "demibold": "Inter-SemiBold.ttf",
+    "italic": "Inter-Italic.ttf",
+    "heavy": "Inter-Bold.ttf",
+}
 
 
 def load_font(style, size):
-    """Load a font at the given size with cross-platform fallback."""
-    path, index = _find_font_file(style)
-    if path:
-        return ImageFont.truetype(path, size, index=index)
-    # Last resort: Pillow's built-in bitmap font
+    """Load bundled Inter font at the given size."""
+    filename = _INTER_FILES.get(style, _INTER_FILES["regular"])
+    path = os.path.join(FONT_DIR, filename)
+    if os.path.exists(path):
+        return ImageFont.truetype(path, size)
+    # Fallback if font files are missing (shouldn't happen)
     return ImageFont.load_default()
 
 

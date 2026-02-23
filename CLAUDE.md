@@ -23,6 +23,7 @@ food-recipes/
 │   ├── shopping-list.js            # Ingredient parser, smart merge, store sections, checklist UI
 │   ├── recipes.json                # AUTO-GENERATED — do not edit manually
 │   ├── thumbnails/                 # AUTO-GENERATED — OG preview images
+│   ├── fonts/                      # Bundled Inter font (deterministic thumbnail rendering)
 │   └── photos/                     # Recipe photos (per-recipe directories)
 │       └── <slug>/                 # photo.webp + prompt.txt + optional source-N.ext
 ├── scripts/                        # Build scripts (not served by GitHub Pages)
