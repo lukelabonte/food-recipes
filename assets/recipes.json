@@ -45,6 +45,37 @@
     "photoUrl": "assets/photos/basic-vanilla-pudding/photo.webp"
   },
   {
+    "title": "Chicken Broccoli Rice Casserole",
+    "description": "Cheesy one-pot comfort with tender chicken, broccoli, and rice, all topped with a buttery Ritz cracker crunch.",
+    "category": "Main Dishes",
+    "time": "1 hr",
+    "timeMinutes": 60,
+    "servings": "6",
+    "method": "Stovetop + Oven",
+    "ingredients": [
+      "2 tablespoons butter",
+      "2 boneless, skinless chicken breasts or 2 cups diced rotisserie chicken",
+      "1 teaspoon Italian seasoning",
+      "Salt and pepper to taste",
+      "2½ cups chicken broth",
+      "1 tablespoon olive oil",
+      "1¼ cups white long grain rice, uncooked",
+      "2–3 cups fresh broccoli florets, uncooked",
+      "10.5 oz condensed cream of chicken soup",
+      "½ cup milk",
+      "½ cup sour cream",
+      "2 cups shredded cheddar cheese, separated",
+      "½ teaspoon dried thyme",
+      "½ teaspoon garlic powder",
+      "1 cup Ritz crackers, crushed",
+      "2 tablespoons melted butter"
+    ],
+    "addedBy": "Eileen",
+    "url": "main-dishes/chicken-broccoli-rice-casserole.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/chicken-broccoli-rice-casserole/photo.webp"
+  },
+  {
     "title": "Delicious Ham and Potato Soup",
     "description": "A cozy, creamy comfort bowl that comes together in under an hour.",
     "category": "Soups and Stews",
