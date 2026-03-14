@@ -188,6 +188,32 @@
     "photoUrl": "assets/photos/jamies-minestrone-soup/photo.webp"
   },
   {
+    "title": "LaBonte Chili",
+    "description": "A no-fuss family chili with two kinds of kidney beans and a kick from Lipton onion soup mix.",
+    "category": "Soups and Stews",
+    "time": "55 min",
+    "timeMinutes": 55,
+    "servings": "8",
+    "method": "Stovetop",
+    "ingredients": [
+      "1 lb ground beef",
+      "1 packet Lipton Onion Soup Mix",
+      "2 stalks celery, diced",
+      "½ cup onion, diced",
+      "1 large can (46 oz) tomato juice",
+      "2 cans (14.5 oz each) stewed or crushed tomatoes",
+      "1 can (15 oz) light kidney beans",
+      "1 can (15 oz) dark kidney beans",
+      "1 packet chili seasoning",
+      "Chili powder to taste",
+      "Salt and pepper to taste"
+    ],
+    "addedBy": "Eileen",
+    "url": "soups-and-stews/labonte-chili.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/labonte-chili/photo.webp"
+  },
+  {
     "title": "Mapo Tofu",
     "description": "The real-deal Sichuan classic — spicy, tongue-numbing, and absolutely not optional without rice.",
     "category": "Main Dishes",
