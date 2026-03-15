@@ -329,6 +329,25 @@
     "photoUrl": "assets/photos/pailins-authentic-pad-thai/photo.webp"
   },
   {
+    "title": "Peanut Butter Balls",
+    "description": "Four ingredients, no oven, and dangerously easy to make. Crunchy, sweet, and packed with peanut butter.",
+    "category": "Snacks",
+    "time": "45 min",
+    "timeMinutes": 45,
+    "servings": "24",
+    "method": "No bake",
+    "ingredients": [
+      "¾ cup honey",
+      "1½ cups powdered milk",
+      "3 cups peanut butter",
+      "3 cups Rice Krispies cereal"
+    ],
+    "addedBy": "Kathy",
+    "url": "snacks/peanut-butter-balls.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/peanut-butter-balls/photo.webp"
+  },
+  {
     "title": "Quick Pickled Red Onions",
     "description": "Tangy, slightly sweet, and spiced with cinnamon and oregano. Put them on everything.",
     "category": "Sauces and Dressings",
