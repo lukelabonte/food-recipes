@@ -297,6 +297,29 @@
     "photoUrl": "assets/photos/mapo-tofu/photo.webp"
   },
   {
+    "title": "Maria's Pepper Steak",
+    "description": "A sweet and savory stir-fry with tender flank steak, bell peppers, and a honey-soy glaze that's hard to mess up.",
+    "category": "Main Dishes",
+    "time": "45 min",
+    "timeMinutes": 45,
+    "servings": "6",
+    "method": "Stovetop",
+    "ingredients": [
+      "2 tablespoons olive oil",
+      "2 large bell peppers, sliced into thin strips",
+      "1 medium onion, chopped",
+      "2 cloves garlic, minced",
+      "⅓ cup soy sauce",
+      "⅓ cup honey",
+      "⅓ cup red wine vinegar",
+      "1½ pounds flank steak, cut into thin strips"
+    ],
+    "addedBy": "Eileen",
+    "url": "main-dishes/marias-pepper-steak.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/marias-pepper-steak/photo.webp"
+  },
+  {
     "title": "Pailin's Authentic Pad Thai",
     "description": "The real-deal Thai street food classic with tamarind, palm sugar, and all the proper bits.",
     "category": "Main Dishes",
