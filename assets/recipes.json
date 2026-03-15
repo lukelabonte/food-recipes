@@ -216,6 +216,31 @@
     "photoUrl": "assets/photos/jamies-minestrone-soup/photo.webp"
   },
   {
+    "title": "Kathy's Meatloaf",
+    "description": "Old-school comfort meatloaf held together with oatmeal, crushed saltines, and a packet of onion soup mix.",
+    "category": "Main Dishes",
+    "time": "1 hr 25 min",
+    "timeMinutes": 85,
+    "servings": "4",
+    "method": "Oven (350°F)",
+    "ingredients": [
+      "1 lb ground beef (hamburger)",
+      "1 egg",
+      "¼ cup milk",
+      "¼ cup ketchup",
+      "1 packet onion soup mix",
+      "Lawry's seasoning salt, a few shakes (optional)",
+      "¼ tsp black pepper",
+      "⅓ cup old-fashioned oatmeal",
+      "5 saltine crackers, crumbled",
+      "Small handful bread crumbs (optional)"
+    ],
+    "addedBy": "Kathy",
+    "url": "main-dishes/kathys-meatloaf.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/kathys-meatloaf/photo.webp"
+  },
+  {
     "title": "LaBonte Chili",
     "description": "A no-fuss family chili with two kinds of kidney beans and a kick from Lipton onion soup mix.",
     "category": "Soups and Stews",
