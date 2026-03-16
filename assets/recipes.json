@@ -45,6 +45,30 @@
     "photoUrl": "assets/photos/basic-vanilla-pudding/photo.webp"
   },
   {
+    "title": "Buttermilk Pancakes",
+    "description": "Light, fluffy, and ridiculously easy. The kind of pancakes that make weekday mornings feel like a lazy Sunday.",
+    "category": "Breakfast",
+    "time": "25 min",
+    "timeMinutes": 25,
+    "servings": "12",
+    "method": "Griddle",
+    "ingredients": [
+      "2 cups all-purpose flour",
+      "⅛ cup granulated sugar",
+      "1 tsp baking soda",
+      "1 tsp salt",
+      "½ tsp baking powder",
+      "2 large eggs",
+      "2 cups buttermilk",
+      "1 tsp vegetable oil",
+      "Butter and maple syrup, as desired"
+    ],
+    "addedBy": "Kari",
+    "url": "breakfast/buttermilk-pancakes.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/buttermilk-pancakes/photo.webp"
+  },
+  {
     "title": "Chicken Broccoli Rice Casserole",
     "description": "Cheesy one-pot comfort with tender chicken, broccoli, and rice, all topped with a buttery Ritz cracker crunch.",
     "category": "Main Dishes",
