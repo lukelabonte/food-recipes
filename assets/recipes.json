@@ -45,6 +45,31 @@
     "photoUrl": "assets/photos/basic-vanilla-pudding/photo.webp"
   },
   {
+    "title": "Blueberry Muffins",
+    "description": "Tender, sweet, and loaded with juicy berries. Topped with sparkly coarse sugar for that bakery-window magic.",
+    "category": "Breakfast",
+    "time": "30 min",
+    "timeMinutes": 30,
+    "servings": "12",
+    "method": "Oven",
+    "ingredients": [
+      "2 cups all-purpose flour",
+      "2 tsp baking powder",
+      "1 tsp salt",
+      "8 oz fresh blueberries",
+      "¾ cup granulated sugar",
+      "½ cup unsalted butter, melted",
+      "2 large eggs",
+      "2 tsp vanilla extract",
+      "¾ cup whole milk",
+      "Coarse sugar for topping"
+    ],
+    "addedBy": "Eileen",
+    "url": "breakfast/blueberry-muffins.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/blueberry-muffins/photo.webp"
+  },
+  {
     "title": "Buttermilk Pancakes",
     "description": "Light, fluffy, and ridiculously easy. The kind of pancakes that make weekday mornings feel like a lazy Sunday.",
     "category": "Breakfast",
