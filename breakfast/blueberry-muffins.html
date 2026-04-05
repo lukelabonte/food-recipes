@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueberry Muffins</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>.recipe { max-width: 640px; margin: 0 auto; }</style>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>">
+    <meta property="og:title" content="Blueberry Muffins">
+    <meta property="og:description" content="Bakery-style blueberry muffins with a tender crumb and sparkly sugar top. 12 muffins · 30 min.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://copyandpastry.com/assets/thumbnails/blueberry-muffins.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://copyandpastry.com/breakfast/blueberry-muffins">
+    <script src="../assets/recipe.js" defer></script>
+    <script src="../assets/theme.js" defer></script>
+</head>
+<body>
+    <div class="recipe">
+
+        <div class="nav-bar">
+            <a href="../" class="back-link">← All Recipes</a>
+            <button class="print-btn" onclick="window.print()" aria-label="Print recipe">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18.25 7.28H5.75" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="card header-card">
+            <h1>Blueberry Muffins</h1>
+            <p class="subtitle">Tender, sweet, and loaded with juicy berries. Topped with sparkly coarse sugar for that bakery-window magic.</p>
+        </div>
+
+        <nav class="recipe-nav">
+            <a href="#overview" class="recipe-nav-pill">Overview</a>
+            <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
+            <a href="#steps" class="recipe-nav-pill">Steps</a>
+            <a href="#tips" class="recipe-nav-pill">Tips</a>
+            <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
+            <a href="#weight" class="recipe-nav-pill">Weight</a>
+        </nav>
+
+        <div class="card" id="overview">
+            <ul class="meta-list">
+                <li><strong>Prep</strong> 10 min</li>
+                <li><strong>Cook</strong> 20 min</li>
+                <li><strong>Total</strong> 30 min</li>
+                <li><strong>Servings</strong> 12</li>
+                <li><strong>Method</strong> Oven</li>
+            </ul>
+        </div>
+
+        <div class="card" id="ingredients">
+            <h2>Ingredients</h2>
+            <ul class="ingredient-list">
+                <li data-subs>2 cups all-purpose flour <span class="ingredient-grams">(240 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">White whole wheat flour — 1:1</span>
+                            <span class="sub-note">Slightly denser texture, nuttier flavor; higher fiber</span>
+                        </li>
+                    </ul>
+                </li>
+                <li>2 tsp baking powder <span class="ingredient-grams">(10 g)</span></li>
+                <li>1 tsp salt <span class="ingredient-grams">(6 g)</span></li>
+                <li>8 oz fresh blueberries <span class="ingredient-grams">(227 g)</span></li>
+                <li>¾ cup granulated sugar <span class="ingredient-grams">(150 g)</span></li>
+                <li data-subs>½ cup unsalted butter, melted <span class="ingredient-grams">(113 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Vegetable oil — ½ cup</span>
+                            <span class="sub-note">Keeps muffins softer longer; less buttery flavor</span>
+                        </li>
+                    </ul>
+                </li>
+                <li>2 large eggs <span class="ingredient-grams">(100 g)</span></li>
+                <li>2 tsp vanilla extract <span class="ingredient-grams">(8 g)</span></li>
+                <li data-subs>¾ cup whole milk <span class="ingredient-grams">(183 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">2% milk — ¾ cup</span>
+                            <span class="sub-note">Works in a pinch; slightly less rich crumb; lower calorie</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">½ cup milk + ¼ cup sour cream — stirred together</span>
+                            <span class="sub-note">Even more tender crumb with a subtle tang; similar calorie</span>
+                        </li>
+                    </ul>
+                </li>
+                <li>Coarse sugar for topping</li>
+            </ul>
+        </div>
+
+        <div class="card steps-card" id="steps">
+            <h2>Steps</h2>
+            <ol>
+                <li>Preheat the oven to 400°F. Line a 12-cup muffin pan with paper liners.</li>
+                <li>In a medium bowl, whisk together the flour, baking powder, and salt. Set aside.</li>
+                <li>In a small bowl, toss the blueberries with about a tablespoon of the dry mixture. This helps prevent them from sinking in the batter.</li>
+                <li>In a large bowl, beat the sugar, melted butter, and eggs together on medium speed until light and fluffy, about 2 minutes. Beat in the vanilla.</li>
+                <li>Add the flour mixture in three parts, alternating with half of the milk between flour additions (dry, milk, dry, milk, dry). Mix until just combined.</li>
+                <li>Fold in the blueberries.</li>
+                <li>Divide the batter among the lined cups — they will be full. Scatter a few extra blueberries on top and sprinkle with coarse sugar.</li>
+                <li>Bake for about 20 minutes, or until the tops are golden brown and a toothpick inserted into the center comes out with a few moist crumbs. Let the muffins cool in the tin for a few minutes before transferring to a wire rack.</li>
+            </ol>
+        </div>
+
+        <div class="card tips-card" id="tips">
+            <h2>Tips</h2>
+            <ul>
+                <li><strong>Weigh the flour.</strong> Too much flour is the most common cause of dry, dense muffins. If you don't have a scale, fluff the flour, spoon it into the measuring cup, and level it off with a knife.</li>
+                <li><strong>Use room-temperature eggs and milk.</strong> Set them out 30 to 60 minutes before baking. Room-temperature ingredients incorporate more easily and produce a more even crumb.</li>
+                <li><strong>Don't overmix the batter.</strong> Over-developing the gluten leads to tough muffins. Mix until the dry ingredients are just incorporated.</li>
+                <li><strong>Frozen blueberries work great.</strong> Use them straight from the freezer — don't thaw them first, or they'll bleed into the batter.</li>
+            </ul>
+        </div>
+
+        <div class="card" id="nutrition">
+            <h2>Nutrition Facts</h2>
+            <ul class="nutrition-list">
+                <li data-macro="calories"><strong>Calories</strong> 226</li>
+                <li data-macro="protein"><strong>Protein</strong> 4 g</li>
+                <li data-macro="fat"><strong>Fat</strong> 9 g</li>
+                <li data-macro="carbs"><strong>Carbs</strong> 32 g</li>
+                <li><strong>Sat. Fat</strong> 5 g</li>
+                <li><strong>Fiber</strong> 1 g</li>
+                <li><strong>Sugars</strong> 15 g</li>
+                <li><strong>Sodium</strong> 284 mg</li>
+            </ul>
+            <p class="nutrition-source">Nutrition from source · Per serving (based on 12 muffins)</p>
+        </div>
+
+        <div class="card weight-card" id="weight">
+            <h2>Weight Estimates</h2>
+            <ul class="weight-list">
+                <li><strong>Uncooked</strong> ~1,037 g</li>
+                <li><strong>Cooked</strong> ~900 g</li>
+                <li><strong>Per Serving</strong> ~75 g</li>
+            </ul>
+            <p class="method">Conservative 13% moisture loss during baking. 12 muffins at ~75 g each.</p>
+        </div>
+
+        <p class="recipe-attribution">Source: <a href="https://preppykitchen.com/blueberry-muffins-with-sour-cream/" target="_blank" rel="noopener">Preppy Kitchen</a><span class="contributor"> · By Eileen</span></p>
+
+        <a href="../" class="back-link">← All Recipes</a>
+
+    </div>
+</body>
+</html>
