@@ -24,6 +24,32 @@
     "photoUrl": "assets/photos/almond-delight/photo.webp"
   },
   {
+    "title": "Barbecue (Ice Cream Social)",
+    "description": "A Midwestern church-cookbook sloppy joe — tangy tomato soup, ketchup, onion, celery, and a splash of Worcestershire.",
+    "category": "Main Dishes",
+    "time": "25 min",
+    "timeMinutes": 25,
+    "servings": "4",
+    "method": "Stovetop",
+    "ingredients": [
+      "1 lb hamburger",
+      "1 cup condensed tomato soup",
+      "¼ cup ketchup",
+      "1 Tbsp sugar",
+      "1 tsp salt",
+      "½ tsp prepared mustard",
+      "⅛ tsp black pepper",
+      "½ cup chopped onion",
+      "¼ cup chopped celery",
+      "1 Tbsp vinegar",
+      "1½ tsp Worcestershire sauce"
+    ],
+    "addedBy": "Eileen",
+    "url": "main-dishes/barbecue-ice-cream-social.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/barbecue-ice-cream-social/photo.webp"
+  },
+  {
     "title": "Basic Vanilla Pudding",
     "description": "Creamy, old-fashioned stovetop pudding made from scratch. Top it however you like.",
     "category": "Desserts",
