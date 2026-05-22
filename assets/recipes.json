@@ -233,6 +233,32 @@
     "photoUrl": "assets/photos/double-chocolate-cookies/photo.webp"
   },
   {
+    "title": "French Boulangerie-Style Pizza",
+    "description": "Crème fraîche stands in for tomato sauce, Gruyère melts into a soft focaccia-like crust — the kind of pizza you'd grab from a French neighborhood bakery.",
+    "category": "Main Dishes",
+    "time": "2 hr",
+    "timeMinutes": 120,
+    "servings": "4",
+    "method": "Oven",
+    "ingredients": [
+      "250 g bread flour",
+      "1 teaspoon instant yeast",
+      "¾ teaspoon salt",
+      "¾ cup warm water",
+      "1 tablespoon olive oil",
+      "½ cup crème fraîche",
+      "2 garlic cloves, minced",
+      "1 teaspoon herbes de Provence",
+      "1½ cups Gruyère, grated",
+      "1 tomato, sliced in rounds",
+      "Salt and pepper to taste"
+    ],
+    "addedBy": "Kari",
+    "url": "main-dishes/french-boulangerie-style-pizza.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/french-boulangerie-style-pizza/photo.webp"
+  },
+  {
     "title": "Gochujang Chicken",
     "description": "Crispy air fryer chicken thighs with a sweet-spicy gochujang glaze that caramelizes into something dangerously good.",
     "category": "Main Dishes",
