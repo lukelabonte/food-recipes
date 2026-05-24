@@ -24,6 +24,31 @@
     "photoUrl": "assets/photos/almond-delight/photo.webp"
   },
   {
+    "title": "Banana Chocolate Chip Bars",
+    "description": "Banana bread's snackable cousin: soft, sweet, and loaded with chocolate chips in every bite.",
+    "category": "Desserts",
+    "time": "40 min",
+    "timeMinutes": 40,
+    "servings": "24 bars",
+    "method": "Oven",
+    "ingredients": [
+      "2 cups all-purpose flour",
+      "2 tsp baking powder",
+      "1/2 tsp salt",
+      "2/3 cup shortening",
+      "2/3 cup white sugar",
+      "2/3 cup brown sugar, packed",
+      "1 tsp vanilla extract",
+      "1 large egg",
+      "1 cup mashed ripe banana (about 2 medium)",
+      "1 cup semi-sweet chocolate chips"
+    ],
+    "addedBy": "Eileen",
+    "url": "desserts/banana-chocolate-chip-bars.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/banana-chocolate-chip-bars/photo.webp"
+  },
+  {
     "title": "Barbecue (Ice Cream Social)",
     "description": "A Midwestern church-cookbook sloppy joe — tangy tomato soup, ketchup, onion, celery, and a splash of Worcestershire.",
     "category": "Main Dishes",
