@@ -367,6 +367,27 @@
     "photoUrl": "assets/photos/kathys-meatloaf/photo.webp"
   },
   {
+    "title": "Key Lime Pie",
+    "description": "Tangy, creamy, and almost too easy — a no-fuss custard pie that tastes like a tropical getaway in a graham crust.",
+    "category": "Desserts",
+    "time": "3 hr 30 min",
+    "timeMinutes": 210,
+    "servings": "8",
+    "method": "Bake",
+    "ingredients": [
+      "1 Keebler Ready Crust graham pie crust, 10-inch",
+      "2 cans sweetened condensed milk, 14 oz each",
+      "2 large egg yolks",
+      "1/2 cup sour cream, preferably full-fat",
+      "3/4 cup key lime juice",
+      "Zest from 1 lime"
+    ],
+    "addedBy": "Kari",
+    "url": "desserts/key-lime-pie.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/key-lime-pie/photo.webp"
+  },
+  {
     "title": "LaBonte Chili",
     "description": "A no-fuss family chili with two kinds of kidney beans and a kick from Lipton onion soup mix.",
     "category": "Soups and Stews",
