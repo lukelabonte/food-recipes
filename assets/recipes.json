@@ -414,6 +414,33 @@
     "photoUrl": "assets/photos/labonte-chili/photo.webp"
   },
   {
+    "title": "Mac & Cheese Crockpot Magic",
+    "description": "Creamy, three-cheese comfort straight from the slow cooker — tender pasta and melted cheese with almost zero fuss.",
+    "category": "Main Dishes",
+    "time": "3 hr 10 min",
+    "timeMinutes": 190,
+    "servings": "24",
+    "method": "Slow Cooker (Low)",
+    "ingredients": [
+      "9 cups shredded sharp cheddar cheese",
+      "3 cups shredded mozzarella cheese",
+      "3 cups shredded Gruyère or Parmesan cheese",
+      "48 oz elbow macaroni, uncooked",
+      "12 cups whole milk",
+      "3 cans (12 oz each) evaporated milk",
+      "1½ cups unsalted butter, melted",
+      "1½ tsp garlic powder",
+      "1½ tsp onion powder",
+      "1½ tsp ground mustard (optional, for extra flavor)",
+      "Salt and black pepper, to taste",
+      "Fresh parsley or chives, for garnish (optional)"
+    ],
+    "addedBy": "Kari",
+    "url": "main-dishes/mac-and-cheese-crockpot-magic.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/mac-and-cheese-crockpot-magic/photo.webp"
+  },
+  {
     "title": "Mapo Tofu",
     "description": "The real-deal Sichuan classic — spicy, tongue-numbing, and absolutely not optional without rice.",
     "category": "Main Dishes",
