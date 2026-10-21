@@ -638,6 +638,29 @@
     "photoUrl": "assets/photos/moms-lasagna/photo.webp"
   },
   {
+    "title": "Mom's Potato Salad",
+    "description": "A classic, creamy potato salad made with tangy salad dressing, mustard, and sweet relish, topped with sliced hard-boiled eggs and a dusting of paprika.",
+    "category": "Salads",
+    "time": "1 hr 30 min, including recommended chilling",
+    "timeMinutes": 90,
+    "servings": "8",
+    "method": "Stovetop / No-Bake Assembly",
+    "ingredients": [
+      "4 cans (15 oz each) sliced potatoes, drained",
+      "5 large eggs",
+      "1 cup salad dressing (such as Miracle Whip)",
+      "1 tablespoon yellow mustard",
+      "1/4 cup sweet pickle relish",
+      "Salt, to taste",
+      "Black pepper, to taste",
+      "Paprika, for topping"
+    ],
+    "addedBy": "Colleen Swenson",
+    "url": "salads/moms-potato-salad.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/moms-potato-salad/photo.webp"
+  },
+  {
     "title": "Nana's Fish Chowder",
     "description": "A soul-warming, old-fashioned New England-style fish chowder with tender cod, buttery potatoes, and a rich, creamy milk broth — simple comfort food at its finest.",
     "category": "Soups and Stews",
