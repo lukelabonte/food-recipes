@@ -827,6 +827,31 @@
     "photoUrl": "assets/photos/rotel-tomato-cheese-dip/photo.webp"
   },
   {
+    "title": "Spanish Rice",
+    "description": "A hearty one-dish meal of seasoned ground beef, tender rice, and vegetables simmered in a rich tomato sauce with a gentle chili kick. Simple to make and deeply satisfying.",
+    "category": "Main Dishes",
+    "time": "45 min",
+    "timeMinutes": 45,
+    "servings": "4",
+    "method": "Stovetop + Oven",
+    "ingredients": [
+      "1/2 cup thinly sliced onion",
+      "1/2 cup diced green pepper",
+      "2 cups Minute Rice (instant white rice)",
+      "1/4 cup butter",
+      "2 cups hot water",
+      "2 small cans tomato sauce",
+      "1 teaspoon salt",
+      "1/4 teaspoon black pepper",
+      "1 teaspoon chili powder",
+      "1 pound ground beef (80/20)"
+    ],
+    "addedBy": "Matthew",
+    "url": "main-dishes/spanish-rice.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/spanish-rice/photo.webp"
+  },
+  {
     "title": "Speedy Taco Bake",
     "description": "A beefy, cheesy taco casserole with a Bisquick crust that bakes up golden in 35 minutes.",
     "category": "Main Dishes",
