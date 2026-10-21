@@ -710,6 +710,27 @@
     "photoUrl": "assets/photos/nanas-fish-chowder/photo.webp"
   },
   {
+    "title": "Orville's Enchiladas",
+    "description": "Tender corn tortillas stuffed with savory meat and melted Monterey Jack, blanketed in rich chili con queso and baked until golden and bubbling.",
+    "category": "Main Dishes",
+    "time": "45 min",
+    "timeMinutes": 45,
+    "servings": "6",
+    "method": "Oven",
+    "ingredients": [
+      "12 corn tortillas",
+      "2 cups prepared enchilada filling (seasoned ground beef, shredded pork, or shredded chicken)",
+      "1 1/2 cups grated Monterey Jack cheese",
+      "1 1/2 cups chili con queso",
+      "2 tablespoons butter, for the tortillas",
+      "Cooking spray, for the baking dish"
+    ],
+    "addedBy": "Matthew",
+    "url": "main-dishes/orvilles-enchiladas.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/orvilles-enchiladas/photo.webp"
+  },
+  {
     "title": "Pailin's Authentic Pad Thai",
     "description": "The real-deal Thai street food classic with tamarind, palm sugar, and all the proper bits.",
     "category": "Main Dishes",
