@@ -639,6 +639,23 @@
     "photoUrl": "assets/photos/quick-and-easy-chicken-noodle-soup/photo.webp"
   },
   {
+    "title": "Rotel Tomato Cheese Dip",
+    "description": "The ultimate two-ingredient queso dip — creamy, velvety Velveeta melted together with zesty Ro-Tel tomatoes and green chiles for a crowd-pleasing snack that comes together in minutes.",
+    "category": "Appetizers",
+    "time": "7 min",
+    "timeMinutes": 7,
+    "servings": "8",
+    "method": "Microwave",
+    "ingredients": [
+      "1 can (10 oz) Ro-Tel Original Diced Tomatoes with Green Chiles, drained",
+      "1 medium package (16 oz) Velveeta cheese, cubed"
+    ],
+    "addedBy": "Matthew",
+    "url": "appetizers/rotel-tomato-cheese-dip.html",
+    "hasPhoto": false,
+    "photoUrl": null
+  },
+  {
     "title": "Speedy Taco Bake",
     "description": "A beefy, cheesy taco casserole with a Bisquick crust that bakes up golden in 35 minutes.",
     "category": "Main Dishes",
