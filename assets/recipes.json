@@ -577,6 +577,25 @@
     "photoUrl": "assets/photos/marias-pepper-steak/photo.webp"
   },
   {
+    "title": "Mom's BBQ Beans",
+    "description": "A sweet and smoky baked bean casserole with a rich, caramelized glaze that's the perfect crowd-pleasing side dish for any cookout or family gathering.",
+    "category": "Side Dishes",
+    "time": "65 min",
+    "timeMinutes": 65,
+    "servings": "8",
+    "method": "Oven",
+    "ingredients": [
+      "3 cans (15 oz each) Campbell's Pork and Beans",
+      "1/4 cup chopped onions",
+      "1 cup BBQ sauce (hickory smoked recommended)",
+      "1 cup brown sugar"
+    ],
+    "addedBy": "Colleen Swenson",
+    "url": "side-dishes/moms-bbq-beans.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/moms-bbq-beans/photo.webp"
+  },
+  {
     "title": "Mom's Chili",
     "description": "A hearty, slow-cooked family chili packed with kidney beans, savory ground beef, and zesty pepperoni that deepens in flavor the longer it simmers.",
     "category": "Soups and Stews",
