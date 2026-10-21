@@ -577,6 +577,28 @@
     "photoUrl": "assets/photos/marias-pepper-steak/photo.webp"
   },
   {
+    "title": "Mom's Chili",
+    "description": "A hearty, slow-cooked family chili packed with kidney beans, savory ground beef, and zesty pepperoni that deepens in flavor the longer it simmers.",
+    "category": "Soups and Stews",
+    "time": "5 hr 10 min",
+    "timeMinutes": 310,
+    "servings": "6",
+    "method": "Slow Cooker / Stovetop",
+    "ingredients": [
+      "1 very large can (28 oz) kidney beans, drained",
+      "1 very large can (28 oz) crushed tomatoes",
+      "1 very large can (28 oz) tomato sauce",
+      "1/2 pound ground beef",
+      "1/2 package (about 2.5 oz) presliced pepperoni",
+      "1 package (1.25 oz) Old El Paso or McCormick chili seasoning mix",
+      "2 teaspoons chili powder"
+    ],
+    "addedBy": "Colleen Swenson",
+    "url": "soups-and-stews/moms-chili.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/moms-chili/photo.webp"
+  },
+  {
     "title": "Mom's Lasagna",
     "description": "A hearty, comforting classic layered with tender noodles, creamy cottage cheese, rich tomato sauce, and melted mozzarella — just like Grandma used to make.",
     "category": "Main Dishes",
