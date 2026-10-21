@@ -12,7 +12,7 @@ Photo directory structure per recipe:
     └── source-2.jpg       # Additional sources (if any)
 
 Prompt priority:
-    1. prompt.txt + recipe title/description (richest context)
+    1. prompt.txt visual description + fixed photography style
     2. Auto-built from recipe title + subtitle/description (fallback)
 
 Usage:
@@ -141,12 +141,10 @@ def discover_recipes(repo_root):
 # --- Prompt resolution ---
 
 def get_prompt(slug, title, description, photos_dir):
-    """Get the generation prompt: combine prompt.txt with recipe info, or fall back to template.
+    """Wrap a custom visual description in fixed style, or use the recipe fallback.
 
-    When prompt.txt exists (written by AI during upload with visual context from
-    source images), it's combined with the recipe title and description for the
-    richest possible prompt. Without prompt.txt, a template is built from title
-    and description alone.
+    Nonblank prompt.txt supplies the food description without adding the title
+    or subtitle again. Missing or blank files use the existing description template.
     """
     prompt_path = os.path.join(photos_dir, slug, "prompt.txt")
     if os.path.exists(prompt_path):
@@ -154,12 +152,11 @@ def get_prompt(slug, title, description, photos_dir):
             visual_context = f.read().strip()
         if visual_context:
             prompt = (
-                f"Overhead food photography of {title.lower()}: {description.lower()}. "
-                f"{visual_context} "
+                f"Overhead food photography of {visual_context} "
                 "Warm natural lighting, clean background, appetizing presentation. "
                 "No text, no watermarks, no UI elements."
             )
-            return prompt, "prompt.txt + recipe info"
+            return prompt, "prompt.txt"
 
     prompt = FALLBACK_PROMPT_TEMPLATE.format(description=description.lower())
     return prompt, "auto-generated"

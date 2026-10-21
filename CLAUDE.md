@@ -232,7 +232,7 @@ Every recipe has a hero photo on its recipe page and a thumbnail on index cards.
 - **Recipe page:** `<img class="recipe-hero" width="800" height="600">` inside `.header-card`, between `<h1>` and `.subtitle`. Include `width`/`height` to prevent CLS. Always present on all recipes.
 - **Index page:** `scripts/generate_index.py` adds `<img class="recipe-card-photo">` inside each card when `hasPhoto` is true in `recipes.json`. Photo appears as a small thumbnail on the left side of the card.
 - **OG thumbnails:** `scripts/generate_thumbnails.py` uses a split layout (photo left, text right) when available
-- **Generation:** `scripts/generate_photos.py` auto-discovers recipes and generates photos via Cloudflare Workers AI (Flux 2 Klein 4B). Uses `prompt.txt` + recipe title/description for richest prompts, falls back to auto-generated prompts from title/subtitle. Runs during deploy via `CLOUDFLARE_API_TOKEN` secret. Only processes recipes missing `photo.webp` (use `--force` to regenerate).
+- **Generation:** `scripts/generate_photos.py` auto-discovers recipes and generates photos via Cloudflare Workers AI (Flux 2 Klein 4B). Uses the trimmed visual description from `prompt.txt` once with fixed photography style, without adding the title/subtitle again; missing or blank prompts retain the title/subtitle-derived fallback. Runs during deploy via `CLOUDFLARE_API_TOKEN` secret. Only processes recipes missing `photo.webp` (use `--force` to regenerate).
 - **Format:** WebP only, 800x600px (4:3), ~35-90KB
 - **Print:** Hero photo and index card thumbnails hidden
 
