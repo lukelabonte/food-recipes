@@ -710,6 +710,29 @@
     "photoUrl": "assets/photos/nanas-fish-chowder/photo.webp"
   },
   {
+    "title": "Orville's Chili Con Queso",
+    "description": "A rich, creamy cheese dip loaded with green chiles and warm spices — perfect for scooping with tortilla chips or drizzling over enchiladas.",
+    "category": "Appetizers",
+    "time": "15 min",
+    "timeMinutes": 15,
+    "servings": "6",
+    "method": "Stovetop",
+    "ingredients": [
+      "8 ounces Velveeta cheese, cubed",
+      "4 ounces cream cheese, softened",
+      "3 tablespoons butter",
+      "1 can (4.5 ounces) chopped green chiles, undrained",
+      "1 teaspoon cumin",
+      "1/2 teaspoon chili powder",
+      "Salt and pepper, to taste",
+      "1/2 cup whole milk"
+    ],
+    "addedBy": "Matthew",
+    "url": "appetizers/orvilles-chili-con-queso.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/orvilles-chili-con-queso/photo.webp"
+  },
+  {
     "title": "Orville's Enchiladas",
     "description": "Tender corn tortillas stuffed with savory meat and melted Monterey Jack, blanketed in rich chili con queso and baked until golden and bubbling.",
     "category": "Main Dishes",
