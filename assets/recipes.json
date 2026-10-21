@@ -497,6 +497,33 @@
     "photoUrl": "assets/photos/labonte-chili/photo.webp"
   },
   {
+    "title": "Linda's Zucchini Bread",
+    "description": "A warmly spiced, impossibly moist quick bread packed with fresh zucchini and toasted nuts — the kind of heirloom recipe that disappears from the counter before it has a chance to cool.",
+    "category": "Breakfast",
+    "time": "80 min",
+    "timeMinutes": 80,
+    "servings": "24",
+    "method": "Oven",
+    "ingredients": [
+      "3 large eggs",
+      "2 cups granulated sugar",
+      "1 cup vegetable oil",
+      "1 tablespoon vanilla extract",
+      "2 cups grated zucchini, including seeds and peels",
+      "3 cups all-purpose flour",
+      "1 teaspoon salt",
+      "1 teaspoon baking soda",
+      "1 tablespoon ground cinnamon",
+      "1/2 teaspoon baking powder",
+      "1 cup chopped walnuts or pecans",
+      "1/2 cup chocolate chips (optional)"
+    ],
+    "addedBy": "Colette Ridley",
+    "url": "breakfast/lindas-zucchini-bread.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/lindas-zucchini-bread/photo.webp"
+  },
+  {
     "title": "Mac & Cheese Crockpot Magic",
     "description": "Creamy, three-cheese comfort straight from the slow cooker — tender pasta and melted cheese with almost zero fuss.",
     "category": "Main Dishes",
