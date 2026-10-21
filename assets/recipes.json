@@ -731,6 +731,28 @@
     "photoUrl": "assets/photos/orvilles-enchiladas/photo.webp"
   },
   {
+    "title": "Orville's Spanish Rice",
+    "description": "A boldly seasoned, golden-toasted rice simmered with zesty Ro-Tel tomatoes, cumin, and chili powder — a simple, satisfying Tex-Mex classic that pairs with almost anything.",
+    "category": "Side Dishes",
+    "time": "35 min",
+    "timeMinutes": 35,
+    "servings": "6",
+    "method": "Stovetop",
+    "ingredients": [
+      "1/4 cup olive oil",
+      "1 1/2 cups long-grain white rice",
+      "1 1/2 teaspoons salt",
+      "1 can (10 oz) Ro-Tel diced tomatoes and green chiles",
+      "1 teaspoon cumin",
+      "1/2 teaspoon chili powder",
+      "2 1/4 cups water, approximately; adjust with tomato liquid to total twice the rice volume listed in Ingredients"
+    ],
+    "addedBy": "Matthew",
+    "url": "side-dishes/orvilles-spanish-rice.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/orvilles-spanish-rice/photo.webp"
+  },
+  {
     "title": "Pailin's Authentic Pad Thai",
     "description": "The real-deal Thai street food classic with tamarind, palm sugar, and all the proper bits.",
     "category": "Main Dishes",
