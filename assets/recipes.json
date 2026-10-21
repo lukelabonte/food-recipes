@@ -167,6 +167,29 @@
     "photoUrl": "assets/photos/buttermilk-pancakes/photo.webp"
   },
   {
+    "title": "Championship Bean Dip",
+    "description": "A rich, cheesy slow-cooker bean dip loaded with refried beans, two melted cheeses, and a kick of chili spice — the ultimate crowd-pleasing party appetizer.",
+    "category": "Appetizers",
+    "time": "2 hr 10 min",
+    "timeMinutes": 130,
+    "servings": "9",
+    "method": "Slow Cooker",
+    "ingredients": [
+      "1 can (16 oz) refried beans",
+      "1 cup picante sauce",
+      "1 cup (4 oz) shredded Monterey Jack cheese",
+      "1 cup (4 oz) shredded cheddar cheese",
+      "3/4 cup sour cream",
+      "1 package (3 oz) cream cheese, softened",
+      "1 tablespoon chili powder",
+      "1/4 teaspoon ground cumin"
+    ],
+    "addedBy": "Matthew",
+    "url": "appetizers/championship-bean-dip.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/championship-bean-dip/photo.webp"
+  },
+  {
     "title": "Chicken Broccoli Rice Casserole",
     "description": "Cheesy one-pot comfort with tender chicken, broccoli, and rice, all topped with a buttery Ritz cracker crunch.",
     "category": "Main Dishes",
