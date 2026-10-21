@@ -9,10 +9,11 @@ Photo directory structure per recipe:
     ├── photo.webp         # Generated/final photo (used by the site)
     ├── prompt.txt         # Custom generation prompt (written by AI during upload)
     ├── source-1.jpg       # Original uploaded image (if any)
-    └── source-2.jpg       # Additional sources (if any)
+    ├── source-2.jpg       # Additional sources (if any)
+    └── reference.png      # Explicit human-reviewed food crop (optional AI input)
 
 Prompt priority:
-    1. prompt.txt + recipe title/description (richest context)
+    1. prompt.txt visual description + fixed photography style
     2. Auto-built from recipe title + subtitle/description (fallback)
 
 Usage:
@@ -29,6 +30,7 @@ import io
 import json
 import os
 import re
+import stat
 import sys
 import time
 import urllib.request
@@ -50,6 +52,8 @@ API_URL = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/{M
 TARGET_WIDTH = 800
 TARGET_HEIGHT = 600
 WEBP_QUALITY = 82
+REFERENCE_MAX_BYTES = 2 * 1024 * 1024
+REFERENCE_MAX_DIMENSION = 512
 
 WRANGLER_CONFIG = os.path.expanduser(
     "~/Library/Preferences/.wrangler/config/default.toml"
@@ -141,12 +145,10 @@ def discover_recipes(repo_root):
 # --- Prompt resolution ---
 
 def get_prompt(slug, title, description, photos_dir):
-    """Get the generation prompt: combine prompt.txt with recipe info, or fall back to template.
+    """Wrap a custom visual description in fixed style, or use the recipe fallback.
 
-    When prompt.txt exists (written by AI during upload with visual context from
-    source images), it's combined with the recipe title and description for the
-    richest possible prompt. Without prompt.txt, a template is built from title
-    and description alone.
+    Nonblank prompt.txt supplies the food description without adding the title
+    or subtitle again. Missing or blank files use the existing description template.
     """
     prompt_path = os.path.join(photos_dir, slug, "prompt.txt")
     if os.path.exists(prompt_path):
@@ -154,23 +156,76 @@ def get_prompt(slug, title, description, photos_dir):
             visual_context = f.read().strip()
         if visual_context:
             prompt = (
-                f"Overhead food photography of {title.lower()}: {description.lower()}. "
-                f"{visual_context} "
+                f"Overhead food photography of {visual_context} "
                 "Warm natural lighting, clean background, appetizing presentation. "
                 "No text, no watermarks, no UI elements."
             )
-            return prompt, "prompt.txt + recipe info"
+            return prompt, "prompt.txt"
 
     prompt = FALLBACK_PROMPT_TEMPLATE.format(description=description.lower())
     return prompt, "auto-generated"
 
 
+def load_reference(slug, photos_dir):
+    """Read only explicit reference.png opt-ins; return a decoded, metadata-free PNG.
+
+    Human review of the finished-food crop is required before adding this file.
+    Ordinary source-* files are never selected. Invalid opt-ins fail closed.
+    """
+    if not slug or slug in (".", "..") or os.path.basename(slug) != slug or "\\" in slug:
+        raise ValueError("Unsafe reference.png path")
+    reference_path = os.path.abspath(os.path.join(photos_dir, slug, "reference.png"))
+    try:
+        file_status = os.lstat(reference_path)
+    except FileNotFoundError:
+        return None
+    except OSError:
+        raise ValueError("Unsafe or unreadable reference.png") from None
+    if os.path.realpath(reference_path) != reference_path:
+        raise ValueError("Unsafe reference.png path: symlinks are not allowed")
+
+    try:
+        if not stat.S_ISREG(file_status.st_mode):
+            raise ValueError("reference.png must be a regular file")
+        descriptor = os.open(reference_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        with os.fdopen(descriptor, "rb") as reference_file:
+            file_status = os.fstat(reference_file.fileno())
+            if not stat.S_ISREG(file_status.st_mode) or not 0 < file_status.st_size <= REFERENCE_MAX_BYTES:
+                raise ValueError("reference.png must be a regular file of at most 2 MiB")
+            content = reference_file.read(REFERENCE_MAX_BYTES + 1)
+    except OSError:
+        raise ValueError("Unsafe or unreadable reference.png") from None
+    if len(content) > REFERENCE_MAX_BYTES or not content.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ValueError("reference.png must be a PNG of at most 2 MiB")
+
+    try:
+        with Image.open(io.BytesIO(content)) as image:
+            if (image.format != "PNG" or image.is_animated
+                    or not all(0 < dimension <= REFERENCE_MAX_DIMENSION for dimension in image.size)):
+                raise ValueError("Invalid reference dimensions or format")
+            image.verify()
+        with Image.open(io.BytesIO(content)) as image:
+            image.load()
+            # A fresh image carries pixels only, not text, EXIF, ICC, or trailing data.
+            clean_image = Image.frombytes("RGBA", image.size, image.convert("RGBA").tobytes())
+        output = io.BytesIO()
+        clean_image.save(output, "PNG")
+        cleaned = output.getvalue()
+        if len(cleaned) > REFERENCE_MAX_BYTES:
+            raise ValueError("Reference PNG exceeds byte bound")
+        return cleaned
+    except (OSError, SyntaxError, ValueError, Image.DecompressionBombError):
+        raise ValueError("reference.png must be a decodable, single-frame PNG at most 512x512") from None
+
+
 # --- Image generation ---
 
-def generate_image(prompt, token):
+def generate_image(prompt, token, reference_png=None):
     """Call Workers AI to generate an image, return PIL Image.
 
     Flux 2 models require multipart/form-data input, even for text-only prompts.
+    Optional reference_png bytes must come from load_reference. Only reference
+    requests set 1024x1024 and seed 2718; text-only defaults stay unchanged.
     Response is JSON with result.image as base64-encoded JPEG.
     """
     import base64
@@ -182,8 +237,20 @@ def generate_image(prompt, token):
         f"--{boundary}\r\n"
         f'Content-Disposition: form-data; name="prompt"\r\n\r\n'
         f"{safe_prompt}\r\n"
-        f"--{boundary}--\r\n"
     ).encode("utf-8")
+    if reference_png is not None:
+        for name, value in (("width", 1024), ("height", 1024), ("seed", 2718)):
+            body += (
+                f"--{boundary}\r\n"
+                f'Content-Disposition: form-data; name="{name}"\r\n\r\n'
+                f"{value}\r\n"
+            ).encode("utf-8")
+        body += (
+            f"--{boundary}\r\n"
+            'Content-Disposition: form-data; name="input_image_0"; filename="reference.png"\r\n'
+            "Content-Type: image/png\r\n\r\n"
+        ).encode("utf-8") + reference_png + b"\r\n"
+    body += f"--{boundary}--\r\n".encode("utf-8")
 
     req = urllib.request.Request(
         API_URL,
@@ -292,7 +359,8 @@ def main():
         start = time.time()
 
         try:
-            img = generate_image(prompt, token)
+            reference_png = load_reference(slug, photos_dir)
+            img = generate_image(prompt, token, reference_png=reference_png)
             resize_and_save(img, output_path)
             size_kb = os.path.getsize(output_path) / 1024
             elapsed = time.time() - start
