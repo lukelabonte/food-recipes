@@ -24,6 +24,28 @@
     "photoUrl": "assets/photos/almond-delight/photo.webp"
   },
   {
+    "title": "Bacon-Apple-Jalapeño Pop 'Ems",
+    "description": "Crispy bacon-wrapped jalapeño halves stuffed with a creamy apple-scallion filling — the ultimate crowd-pleasing party bite that balances heat, tang, and smoky richness in every pop.",
+    "category": "Appetizers",
+    "time": "65 min",
+    "timeMinutes": 65,
+    "servings": "40",
+    "method": "Oven",
+    "ingredients": [
+      "1 (8-ounce) package light cream cheese, at room temperature",
+      "1 large Granny Smith apple, cored and minced",
+      "3 large scallions, roots removed, green and white parts finely minced",
+      "Kosher salt, to taste",
+      "Freshly ground black pepper, to taste",
+      "20 jalapeños",
+      "20 strips thin-sliced bacon, cut in half"
+    ],
+    "addedBy": "Matthew",
+    "url": "appetizers/bacon-apple-jalape-o-pop-ems.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/bacon-apple-jalape-o-pop-ems/photo.webp"
+  },
+  {
     "title": "Banana Chocolate Chip Bars",
     "description": "Banana bread's snackable cousin: soft, sweet, and loaded with chocolate chips in every bite.",
     "category": "Desserts",
