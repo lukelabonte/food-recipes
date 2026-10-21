@@ -619,6 +619,28 @@
     "photoUrl": "assets/photos/moms-lasagna/photo.webp"
   },
   {
+    "title": "Nana's Fish Chowder",
+    "description": "A soul-warming, old-fashioned New England-style fish chowder with tender cod, buttery potatoes, and a rich, creamy milk broth — simple comfort food at its finest.",
+    "category": "Soups and Stews",
+    "time": "40 min",
+    "timeMinutes": 40,
+    "servings": "4",
+    "method": "Stovetop",
+    "ingredients": [
+      "1 small onion, diced",
+      "1 cup butter, divided (half for cooking, half added at the end)",
+      "2 cans (15 oz each) diced potatoes, drained",
+      "1.5 lbs frozen cod fillets, thawed (approximately)",
+      "2 cups water, approximately, or enough to cover the onion and potatoes",
+      "3 cups whole milk, approximately, or enough to cover after the fish cooks",
+      "Salt and pepper, to taste — approximately ½ tsp salt and ¼ tsp black pepper"
+    ],
+    "addedBy": "Matthew",
+    "url": "soups-and-stews/nanas-fish-chowder.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/nanas-fish-chowder/photo.webp"
+  },
+  {
     "title": "Pailin's Authentic Pad Thai",
     "description": "The real-deal Thai street food classic with tamarind, palm sugar, and all the proper bits.",
     "category": "Main Dishes",
