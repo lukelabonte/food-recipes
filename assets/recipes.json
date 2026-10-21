@@ -190,6 +190,26 @@
     "photoUrl": "assets/photos/championship-bean-dip/photo.webp"
   },
   {
+    "title": "Chicken Breast Casserole",
+    "description": "A comforting, weeknight-friendly casserole layered with tender chicken breasts, creamy mushroom sauce, and a golden, herb-seasoned stuffing crust that bakes up perfectly in under an hour.",
+    "category": "Main Dishes",
+    "time": "50 min",
+    "timeMinutes": 50,
+    "servings": "4",
+    "method": "Oven",
+    "ingredients": [
+      "4 boneless skinless chicken breasts (about 6 oz each)",
+      "1/3 cup sour cream",
+      "1 can (10.5 oz) cream of mushroom soup",
+      "1 package (6 oz) Stove Top stuffing mix (chicken flavor)",
+      "1/4 cup milk, approximately, adjusting as needed to moisten stuffing"
+    ],
+    "addedBy": "Matthew",
+    "url": "main-dishes/chicken-breast-casserole.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/chicken-breast-casserole/photo.webp"
+  },
+  {
     "title": "Chicken Broccoli Rice Casserole",
     "description": "Cheesy one-pot comfort with tender chicken, broccoli, and rice, all topped with a buttery Ritz cracker crunch.",
     "category": "Main Dishes",
