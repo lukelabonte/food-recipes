@@ -700,6 +700,26 @@
     "photoUrl": "assets/photos/speedy-taco-bake/photo.webp"
   },
   {
+    "title": "Uncle Larry's Cheese Bread Beer Dip",
+    "description": "A crowd-pleasing party classic featuring a creamy, beer-spiked cheese dip poured into a hollowed-out rye bread bowl, surrounded by chunks of soft bread for dipping.",
+    "category": "Appetizers",
+    "time": "10 min",
+    "timeMinutes": 10,
+    "servings": "10",
+    "method": "No-Cook / Assembly",
+    "ingredients": [
+      "1 round rye bread loaf (2 pounds)",
+      "1 large jar Cheez Whiz (15 oz)",
+      "1 large package cream cheese (8 oz)",
+      "7 ounces beer",
+      "1 teaspoon garlic salt"
+    ],
+    "addedBy": "Matthew",
+    "url": "appetizers/uncle-larrys-cheese-bread-beer-dip.html",
+    "hasPhoto": false,
+    "photoUrl": null
+  },
+  {
     "title": "White Chocolate Cranberry Oatmeal Cookies",
     "description": "Chewy, hearty oatmeal cookies loaded with sweet white chocolate chips and tangy dried cranberries, warmly spiced with cinnamon and kissed with vanilla.",
     "category": "Desserts",
