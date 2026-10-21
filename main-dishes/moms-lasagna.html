@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mom's Lasagna</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>.recipe { max-width: 640px; margin: 0 auto; }</style>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+    <meta property="og:title" content="Mom's Lasagna">
+    <meta property="og:description" content="A hearty, comforting classic layered with tender noodles, creamy cottage cheese, rich tomato sauce, and melted mozzarella — just like Grandma used to make. 10 servings · 1 hr 20 min.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://copyandpastry.com/assets/thumbnails/moms-lasagna.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://copyandpastry.com/main-dishes/moms-lasagna">
+    <script src="../assets/recipe.js" defer></script>
+    <script src="../assets/theme.js" defer></script>
+</head>
+<body>
+    <div class="recipe">
+
+        <div class="nav-bar">
+            <a href="../" class="back-link">← All Recipes</a>
+            <button class="print-btn" onclick="window.print()" aria-label="Print recipe">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18.25 7.28H5.75" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="card header-card">
+            <h1>Mom's Lasagna</h1>
+            <img class="recipe-hero" src="../assets/photos/moms-lasagna/photo.webp"
+                 alt="Mom's Lasagna" width="800" height="600" loading="lazy">
+            <p class="subtitle">A hearty, comforting classic layered with tender noodles, creamy cottage cheese, rich tomato sauce, and melted mozzarella — just like Grandma used to make.</p>
+        </div>
+
+        <nav class="recipe-nav">
+            <a href="#overview" class="recipe-nav-pill">Overview</a>
+            <a href="#ingredients" class="recipe-nav-pill">Ingredients</a>
+            <a href="#steps" class="recipe-nav-pill">Steps</a>
+            <a href="#tips" class="recipe-nav-pill">Tips</a>
+            <a href="#nutrition" class="recipe-nav-pill">Nutrition</a>
+            <a href="#weight" class="recipe-nav-pill">Weight</a>
+        </nav>
+
+        <div class="card" id="overview">
+            <ul class="meta-list">
+                <li><strong>Prep</strong> 20 min</li>
+                <li><strong>Cook</strong> 1 hr</li>
+                <li><strong>Total</strong> 1 hr 20 min</li>
+                <li><strong>Servings</strong> 10</li>
+                <li><strong>Method</strong> Oven</li>
+            </ul>
+        </div>
+
+        <div class="card" id="ingredients">
+            <h2>Ingredients</h2>
+            <ul class="ingredient-list">
+                <li data-subs>1 1/2 large cans garlic herb spaghetti sauce <span class="ingredient-grams">(~1,475 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Homemade marinara — 1:1</span>
+                            <span class="sub-note">Lower sodium and no added sugar; richer, fresher tomato flavor with slightly more effort</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Plain tomato sauce with Italian seasoning — 1:1</span>
+                            <span class="sub-note">Milder flavor; add garlic powder, basil, and oregano to compensate; lower calorie</span>
+                        </li>
+                    </ul>
+                </li>
+                <li data-subs>1 large container (32 oz) cottage cheese <span class="ingredient-grams">(~907 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Whole-milk ricotta — 1:1</span>
+                            <span class="sub-note">Richer, creamier texture and slightly higher calorie; more traditional Italian-style lasagna</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Part-skim ricotta — 1:1</span>
+                            <span class="sub-note">Similar creamy texture to cottage cheese; lower calorie than whole-milk ricotta</span>
+                        </li>
+                    </ul>
+                </li>
+                <li data-subs>1 box (16 oz) lasagna noodles <span class="ingredient-grams">(~454 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">No-boil lasagna noodles — 1:1</span>
+                            <span class="sub-note">Saves time; add a splash of water to sauce layers to ensure noodles fully hydrate during baking</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Gluten-free lasagna noodles — 1:1</span>
+                            <span class="sub-note">Suitable for gluten intolerance; texture may be slightly softer; same calorie range</span>
+                        </li>
+                    </ul>
+                </li>
+                <li data-subs>2 packages (16 oz each) shredded mozzarella cheese <span class="ingredient-grams">(~907 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">Part-skim shredded mozzarella — 1:1</span>
+                            <span class="sub-note">Lower calorie and lower fat; melts similarly with a slightly less rich flavor</span>
+                        </li>
+                        <li>
+                            <span class="sub-name">Provolone (shredded) — 1:1</span>
+                            <span class="sub-note">Sharper, slightly smoky flavor; melts well; similar calorie level</span>
+                        </li>
+                    </ul>
+                </li>
+                <li data-subs>1 large egg <span class="ingredient-grams">(~50 g)</span>
+                    <ul class="sub-list" hidden>
+                        <li>
+                            <span class="sub-name">1 tablespoon plain Greek yogurt — 1:1 (per egg)</span>
+                            <span class="sub-note">Binds the cottage cheese mixture similarly; negligible flavor difference; slightly lower calorie</span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card steps-card" id="steps">
+            <h2>Steps</h2>
+            <ol>
+                <li>Preheat your oven to 400°F (205°C). Bring a large pot of salted water to a boil, then cook the lasagna noodles until just tender according to package directions. Do not drain the pot — leave the noodles submerged in the hot water and remove individual noodles with tongs as you assemble the lasagna. This prevents sticking.</li>
+                <li>Spread a thin, even layer of garlic herb spaghetti sauce across the bottom of a 9x13-inch casserole dish. This prevents the bottom noodles from sticking and drying out during baking.</li>
+                <li>In a medium mixing bowl, combine the cottage cheese and egg. Stir well until fully incorporated into a cohesive, creamy mixture.</li>
+                <li>Lay a single layer of noodles over the sauce in the casserole dish, overlapping slightly as needed to cover the surface. Dot generous spoonfuls of the cottage cheese mixture evenly over the noodles. Ladle spaghetti sauce over the cottage cheese layer, then sprinkle a generous handful of shredded mozzarella on top.</li>
+                <li>Continue repeating the layers — noodles, cottage cheese mixture, sauce, mozzarella — until you reach about 1/4 inch from the top of the dish. Finish the top layer with a final spread of sauce and a generous covering of shredded mozzarella cheese.</li>
+                <li>Cover the dish tightly with nonstick aluminum foil, ensuring the foil does not touch the cheese on top. Bake at 400°F for 1 hour, until the sauce is bubbling around the edges and the cheese is fully melted. For a golden, bubbly top, remove the foil during the last 10 minutes of baking. Let rest for 10–15 minutes before slicing and serving.</li>
+            </ol>
+        </div>
+
+        <div class="card tips-card" id="tips">
+            <h2>Tips</h2>
+            <ul>
+                <li><strong>Don't Drain the Noodles</strong> Keeping the boiled noodles submerged in the pot of hot water throughout assembly is the key trick here — it keeps them pliable and prevents them from sticking together or tearing when you lift them out with tongs.</li>
+                <li><strong>Let It Rest Before Cutting</strong> Allowing the lasagna to sit for at least 10–15 minutes after coming out of the oven lets the layers firm up, making it far easier to cut clean, structured slices rather than a saucy mess.</li>
+                <li><strong>Foil Tent for a Golden Top</strong> If you want a browned, slightly crispy cheese top, remove the foil for the last 10 minutes of baking. Keep it covered the whole time for a softer, saucier finish.</li>
+                <li><strong>Make It Ahead</strong> This lasagna assembles beautifully up to 24 hours in advance. Cover and refrigerate unbaked, then bake directly from the fridge — add 15–20 extra minutes to the bake time to ensure it heats through completely.</li>
+                <li><strong>Season the Cottage Cheese</strong> For extra flavor, add a pinch of salt, black pepper, and dried Italian seasoning or fresh chopped basil to the cottage cheese and egg mixture before layering.</li>
+            </ul>
+        </div>
+
+        <div class="card" id="nutrition">
+            <h2>Nutrition Facts</h2>
+            <ul class="nutrition-list">
+                <li data-macro="calories"><strong>Calories</strong> 520</li>
+                <li data-macro="protein"><strong>Protein</strong> 31 g</li>
+                <li data-macro="fat"><strong>Fat</strong> 19 g</li>
+                <li data-macro="carbs"><strong>Carbs</strong> 57 g</li>
+                <li><strong>Sat. Fat</strong> 10 g</li>
+                <li><strong>Cholesterol</strong> 75 mg</li>
+                <li><strong>Sodium</strong> 1,020 mg</li>
+                <li><strong>Potassium</strong> 480 mg</li>
+                <li><strong>Fiber</strong> 3 g</li>
+                <li><strong>Sugars</strong> 9 g</li>
+            </ul>
+            <p class="nutrition-source">Estimated from USDA data and typical jarred sauce/packaged cheese nutrition labels; values are per serving (1/10 of dish) &middot; Per serving (based on 10 servings)</p>
+        </div>
+
+        <div class="card weight-card" id="weight">
+            <h2>Weight Estimates</h2>
+            <ul class="weight-list">
+                <li><strong>Uncooked</strong> ~3,800 g</li>
+                <li><strong>Cooked</strong> ~3,200 g</li>
+                <li><strong>Per Serving</strong> ~320 g</li>
+            </ul>
+            <p class="method">Moisture evaporates from the sauce during baking and some liquid releases from the cottage cheese, reducing total weight by roughly 15–18%</p>
+        </div>
+
+        <p class="recipe-attribution">
+            <span class="contributor">By Colleen Swenson</span>
+        </p>
+
+        <a href="../" class="back-link">← All Recipes</a>
+
+    </div>
+</body>
+</html>
