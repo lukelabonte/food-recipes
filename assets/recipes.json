@@ -349,6 +349,24 @@
     "photoUrl": "assets/photos/french-boulangerie-style-pizza/photo.webp"
   },
   {
+    "title": "Glazed Meatballs",
+    "description": "Tender meatballs simmered in a sweet-and-tangy chili-grape glaze that caramelizes into an irresistible sticky coating. A beloved party classic that comes together with just three ingredients.",
+    "category": "Appetizers",
+    "time": "30 min",
+    "timeMinutes": 30,
+    "servings": "12",
+    "method": "Stovetop",
+    "ingredients": [
+      "1 package (32 oz) frozen meatballs, thawed",
+      "2 jars (12 oz each) chili sauce",
+      "1 large jar (18 oz) grape jelly"
+    ],
+    "addedBy": "Matthew",
+    "url": "appetizers/glazed-meatballs.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/glazed-meatballs/photo.webp"
+  },
+  {
     "title": "Gochujang Chicken",
     "description": "Crispy air fryer chicken thighs with a sweet-spicy gochujang glaze that caramelizes into something dangerously good.",
     "category": "Main Dishes",
