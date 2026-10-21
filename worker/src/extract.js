@@ -119,11 +119,14 @@ function buildContent(text, urlContent, imageBase64, notes) {
  * Extract the JSON string from the model response, handling possible markdown fences.
  */
 function extractJsonFromResponse(result) {
-    if (!result.content || result.content.length === 0) {
+    let text = (result.content || [])
+        .filter(block => block.type === 'text')
+        .map(block => block.text)
+        .join('');
+
+    if (!text.trim()) {
         throw new Error('Empty response from extraction model');
     }
-
-    let text = result.content[0].text;
 
     // Strip markdown code fences if present
     const fenceMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
@@ -151,7 +154,8 @@ export async function extractRecipe(apiKey, { text, urlContent, imageBase64, not
             'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
+            model: 'claude-sonnet-5-5',
+            thinking: { type: 'between_tools' },
             max_tokens: 4096,
             messages: [{ role: 'user', content }]
         })
