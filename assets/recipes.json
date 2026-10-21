@@ -577,6 +577,26 @@
     "photoUrl": "assets/photos/marias-pepper-steak/photo.webp"
   },
   {
+    "title": "Mom's Lasagna",
+    "description": "A hearty, comforting classic layered with tender noodles, creamy cottage cheese, rich tomato sauce, and melted mozzarella — just like Grandma used to make.",
+    "category": "Main Dishes",
+    "time": "1 hr 20 min",
+    "timeMinutes": 80,
+    "servings": "10",
+    "method": "Oven",
+    "ingredients": [
+      "1 1/2 large cans garlic herb spaghetti sauce",
+      "1 large container (32 oz) cottage cheese",
+      "1 box (16 oz) lasagna noodles",
+      "2 packages (16 oz each) shredded mozzarella cheese",
+      "1 large egg"
+    ],
+    "addedBy": "Colleen Swenson",
+    "url": "main-dishes/moms-lasagna.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/moms-lasagna/photo.webp"
+  },
+  {
     "title": "Pailin's Authentic Pad Thai",
     "description": "The real-deal Thai street food classic with tamarind, palm sugar, and all the proper bits.",
     "category": "Main Dishes",
