@@ -324,6 +324,11 @@
         }
         var fullText = textNodes.map(function(n) { return n.textContent; }).join('');
 
+        // Leave unresolved leading ranges intact instead of scaling just one endpoint.
+        var leading = parseLeadingQty(fullText);
+        if (leading && new RegExp('^(?:to\\s+|—\\s*)[\\d' + FRAC_CHARS + ']', 'i')
+            .test(fullText.trim().substring(leading.end).trim())) return;
+
         // Check for range pattern: "7–10" or "½–1½"
         var rangeMatch = fullText.trimStart().match(/^(.+?)\s*([–\-])\s*/);
         if (rangeMatch) {
@@ -331,7 +336,9 @@
             var afterDash = fullText.trimStart().substring(rangeMatch[0].length);
             var first = parseLeadingQty(firstPart);
             var second = parseLeadingQty(afterDash);
-            if (first && second && second.value > first.value) {
+            // A later dash may belong to a package size, not the leading count.
+            if (first && first.end === firstPart.trim().length && second &&
+                /^\s/.test(afterDash.substring(second.end)) && second.value > first.value) {
                 li.setAttribute('data-orig-qty', first.value);
                 li.setAttribute('data-orig-qty2', second.value);
                 li.setAttribute('data-orig-text', fullText);

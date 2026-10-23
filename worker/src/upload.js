@@ -8,6 +8,7 @@ import { extractRecipe } from './extract.js';
 import { renderRecipeHTML } from './template.js';
 import { createPR, slugify } from './github.js';
 import { MAX_UPLOAD_BYTES, UPLOAD_SIZE_ERROR } from '../../assets/upload-limits.js';
+import { validateSourceUrl } from './recipe-data.js';
 
 /**
  * Generate a ULID-like unique ID (timestamp + random).
@@ -77,6 +78,7 @@ export async function handleUpload(request, env) {
         // Optionally fetch URL content
         let urlContent = null;
         if (url) {
+            validateSourceUrl(url);
             try {
                 const urlResponse = await fetch(url, {
                     headers: { 'User-Agent': 'RecipeUploadWorker/1.0' }

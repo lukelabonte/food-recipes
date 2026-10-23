@@ -146,6 +146,9 @@
         var qty = null, qty2 = null, unit = '', name = text, displayName = text;
 
         var parsed = parseLeadingQty(text);
+        // Keep an unresolved range as a source line, not an additive lower endpoint.
+        if (parsed && new RegExp('^(?:to\\s+|—\\s*)[\\d' + FRAC_CHARS + ']', 'i')
+            .test(text.substring(parsed.end).trim())) parsed = null;
         if (parsed) {
             qty = parsed.value;
             var rest = text.substring(parsed.end).trim();

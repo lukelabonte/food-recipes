@@ -87,6 +87,28 @@ Processing is limited to 20 MB of source bytes, 12.5 million source pixels, a 5,
 
 Run automated regressions from the repo root with `node --test worker/test/*.test.js`. For actual browser codecs and form integration, start `python3 scripts/serve.py 8765`, open `http://localhost:8765/worker/test/browser/image-optimizer.html`, and click **Run optimizer and upload checks**. The fixtures use a mocked upload response; nothing is sent to production. Inspect the small quantities in the original and optimized text crops. iPhone Safari and desktop Chromium checks are release requirements; Node tests and a desktop viewport resized to phone dimensions aren't substitutes for iPhone Safari validation.
 
+### Extraction and validation
+
+Extraction rules live in the Messages API's system field. Recipe text, fetched pages, contributor notes, and attachments stay in the user message as untrusted source material. Model output is data, not authorization to change the upload workflow. Each upload makes one extraction call. Validation failures use the existing HTTP 500 and KV error status path, before rendering or any GitHub request. There are no automatic retries or repair calls.
+
+`src/recipe-data.js` validates the existing schema and normalizes supported leading quantity ranges. For example, `1 to 2 packages bratwurst` becomes `1-2 packages bratwurst`. Integers, decimals, ASCII fractions, and supported Unicode fractions work at both endpoints. Units, package sizes, and preparation notes stay intact. Already-supported hyphens and en dashes stay unchanged. Em dashes become hyphens. Normalization is idempotent and doesn't rewrite prose, dimensions, or ranges inside package sizes. Repeated-unit ranges such as `1 cup to 2 cups` aren't normalized; extraction must use `1-2 cups`.
+
+Blocking errors include missing required text, empty ingredient/step lists, invalid nested values, unsupported fields or categories, unusable filenames, and nonpositive or noninteger servings. Source links must use HTTP(S) without embedded credentials. Simple measurements with negative values or clearly wrong gram/nutrient units are rejected. Optional nutrition and weight sections can be null or absent. A missing photo prompt keeps the existing title-derived fallback. If the source doesn't support a numeric serving basis, validation fails rather than inventing one. For a source range such as 8–10 servings, extraction can preserve that yield in Tips and explicitly document a source-supported integer scaling basis.
+
+Missing or unrecognized leading amounts create a nonblocking **Review source data** Tip. Unnormalized leading `to` and em-dash ranges also get that Tip, including ambiguous dimensions such as `1 to 2-inch piece ginger`. The browser leaves these lines unchanged when scaling and keeps them as unmerged source lines in the shopping list, rather than changing or summing only the first endpoint. Confirm their quantities manually. A count next to a package-size parenthesis, such as `1(12-ounce) can beer`, is recognized without a missing-amount warning. Quantity-free ingredients stay quantity-free. A simple cooked batch weight that differs from per-serving grams × servings by more than both 20 g and 15% also creates a Tip. Values aren't corrected. These warnings are idempotent and use the existing Tips card and recipe PR review, not a new review interface. Ranges and measurements with other notation aren't compared. Input gram totals aren't forced to match edible cooked weight: discarded liquid, optional toppings, package sizes, and moisture changes can explain differences.
+
+Extraction must cross-check preparation and serving instructions for missing food, preserve optional status, and avoid duplicate ingredients or equipment. A clear relationship such as one bun per explicitly specified sandwich can support an amount. Otherwise the amount stays unknown. Gram conversions and nutrition estimates need a defensible basis and honest labels. `nutrition.source`, `weight.method`, and Tips describe serving assumptions and whether buns, toppings, and drained liquids are included. No USDA lookup or other verification is available in this request. Source contradictions stay visible rather than being silently reconciled.
+
+Ingredient completeness, source quantity relationships, duplicate food names, conversion accuracy, nutrition provenance, and inclusion assumptions remain model-dependent and need human review. Schema validation doesn't establish that arbitrary recipe prose is correct or prevent every prompt-injection attempt. Per-serving nutrition remains unchanged when the browser changes only batch size.
+
+Focused local checks (Node and Python 3, no added dependencies):
+
+```bash
+node --test worker/test/recipe-data.test.js worker/test/extract.test.js worker/test/upload.test.js
+```
+
+Tests mock fetch/KV, exercise the existing scaler and shopping parser in isolated VM closures, and feed rendered HTML to the real Python search-index parser without writing generated files. No paid model calls, live uploads, deployments, or GitHub writes occur. Prompt assertions verify the rules supplied to the model, not model compliance. The serving-ingredient fixture is an expected extraction result, not evidence that a live model always finds omitted foods.
+
 ### Check upload status
 
 ```
