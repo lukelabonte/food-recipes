@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en" data-test-status="idle">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'self'; form-action 'none'">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Existing recipe scaling regression checks</title>
+    <style>
+        body { font: 16px system-ui; max-width: 900px; margin: 24px auto; padding: 0 12px; }
+        button { font: inherit; padding: 8px 16px; }
+        pre { white-space: pre-wrap; }
+        iframe { width: 100%; height: 250px; }
+    </style>
+</head>
+<body>
+    <h1>Existing recipe scaling regression checks</h1>
+    <p>Loopback only. Loads real recipe HTML and the real scaler. No uploads, external requests, or shopping-list writes.</p>
+    <button id="run" type="button">Run checks</button>
+    <pre id="results" role="status">Ready.</pre>
+    <div id="frames"></div>
+    <script>
+        const results = document.getElementById('results');
+        const runButton = document.getElementById('run');
+        const frames = document.getElementById('frames');
+        let passCount = 0;
+        let failCount = 0;
+
+        function assert(condition, message) {
+            if (!condition) throw new Error(message);
+        }
+
+        function equal(actual, expected, message) {
+            assert(actual === expected, `${message}: expected ${expected}, got ${actual}`);
+        }
+
+        async function page(path) {
+            assert(location.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname), 'Loopback origin required');
+            const response = await fetch(path, { cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(8000) });
+            assert(response.ok, `Cannot load ${path}`);
+            const documentSource = new DOMParser().parseFromString(await response.text(), 'text/html');
+            const base = documentSource.createElement('base');
+            base.href = new URL(path, location.origin).href;
+            documentSource.head.prepend(base);
+            documentSource.querySelectorAll('script').forEach(script => {
+                if (!script.getAttribute('src')?.endsWith('/assets/recipe.js')) script.remove();
+                else script.src = new URL(script.getAttribute('src'), base.href).href + '?scaling-audit=' + Date.now();
+            });
+            const errorCapture = documentSource.createElement('script');
+            errorCapture.textContent = 'window.fixtureErrors = []; window.addEventListener("error", event => { if (event.message) window.fixtureErrors.push(event.message); });';
+            documentSource.head.prepend(errorCapture);
+            const frame = document.createElement('iframe');
+            const loaded = new Promise((resolve, reject) => {
+                const timer = setTimeout(() => reject(new Error(`Frame timeout: ${path}`)), 8000);
+                frame.onload = () => { clearTimeout(timer); resolve(); };
+                frame.onerror = () => { clearTimeout(timer); reject(new Error(`Frame error: ${path}`)); };
+            });
+            frame.srcdoc = '<!doctype html>' + documentSource.documentElement.outerHTML;
+            frames.replaceChildren(frame);
+            await loaded;
+            assert(!frame.contentWindow.fixtureErrors?.length, frame.contentWindow.fixtureErrors?.join('\n'));
+            const recipeDocument = frame.contentDocument;
+            assert(recipeDocument.querySelector('[aria-label="Increase servings"]'), 'Real scaler initialized');
+            return recipeDocument;
+        }
+
+        function adjust(document, direction, count) {
+            const button = document.querySelector(`[aria-label="${direction} servings"]`);
+            for (let index = 0; index < count; index++) button.click();
+        }
+
+        function directText(element) {
+            return Array.from(element.childNodes).filter(node => node.nodeType === 3).map(node => node.textContent).join('').trim();
+        }
+
+        async function check(name, callback) {
+            try {
+                await callback();
+                passCount++;
+                results.textContent += `PASS ${name}\n`;
+            } catch (error) {
+                failCount++;
+                results.textContent += `FAIL ${name}: ${error.message}\n`;
+            }
+        }
+
+        async function run() {
+            runButton.disabled = true;
+            passCount = failCount = 0;
+            results.textContent = '';
+            document.documentElement.dataset.testStatus = 'running';
+            try {
+                await check('pizza: both ingredient sections, grams, and topping substitution controls', async () => {
+                    const document = await page('/main-dishes/french-boulangerie-style-pizza.html');
+                    const topping = document.querySelectorAll('.ingredient-list')[1].firstElementChild;
+                    equal(topping.getAttribute('role'), 'button', 'Topping keyboard role');
+                    const original = topping.textContent;
+                    topping.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+                    equal(topping.getAttribute('aria-expanded'), 'true', 'Topping keyboard expansion');
+                    adjust(document, 'Increase', 4);
+                    assert(directText(topping).startsWith('1 cup'), 'Topping quantity doubled: ' + directText(topping));
+                    equal(topping.querySelector('.ingredient-grams').textContent, '(240 g)', 'Topping grams doubled');
+                    adjust(document, 'Decrease', 4);
+                    equal(topping.textContent, original, 'Topping restored');
+                });
+                await check('casserole: all three ingredient sections and weight ranges', async () => {
+                    const document = await page('/main-dishes/chicken-broccoli-rice-casserole.html');
+                    const lists = document.querySelectorAll('.ingredient-list');
+                    equal(lists.length, 3, 'Real three-list recipe');
+                    const topping = lists[2].firstElementChild;
+                    const broccoli = Array.from(lists[0].children).find(element => /broccoli florets/.test(element.textContent));
+                    const originalBroccoli = broccoli.querySelector('.ingredient-grams').textContent;
+                    const weights = Array.from(document.querySelectorAll('.weight-list li'));
+                    const originals = weights.map(element => element.textContent);
+                    adjust(document, 'Increase', 6);
+                    assert(directText(topping).startsWith('2 cup'), 'Cracker topping doubled: ' + directText(topping));
+                    equal(broccoli.querySelector('.ingredient-grams').textContent, '(364–546 g)', 'Both ingredient gram endpoints doubled');
+                    assert(weights[0].textContent.includes('4,700') && weights[0].textContent.includes('4,882'), 'Both weight range endpoints doubled');
+                    adjust(document, 'Decrease', 6);
+                    weights.forEach((element, index) => equal(element.textContent, originals[index], 'Exact weight restoration'));
+                    equal(broccoli.querySelector('.ingredient-grams').textContent, originalBroccoli, 'Ingredient gram range restored');
+                });
+                await check('bean dip: equivalent ounces scale with cup amounts', async () => {
+                    const document = await page('/appetizers/championship-bean-dip.html');
+                    const cheese = Array.from(document.querySelectorAll('.ingredient-list > li')).find(element => /1 cup \(4 oz\)/.test(directText(element)));
+                    assert(cheese, 'Real cup/ounce equivalent exists');
+                    const original = directText(cheese);
+                    adjust(document, 'Increase', 9);
+                    assert(directText(cheese).startsWith('2 cup (8 oz)'), 'Both equivalent quantities doubled');
+                    adjust(document, 'Decrease', 9);
+                    equal(directText(cheese), original, 'Equivalent text restored');
+                });
+                await check('key lime pie: zest quantity and grams', async () => {
+                    const document = await page('/desserts/key-lime-pie.html');
+                    const zest = Array.from(document.querySelectorAll('.ingredient-list > li')).find(element => /zest/i.test(directText(element)));
+                    adjust(document, 'Increase', 8);
+                    assert(directText(zest).startsWith('2 lime'), 'Zest count doubled');
+                    equal(zest.querySelector('.ingredient-grams').textContent, '(12 g)', 'Zest grams doubled');
+                });
+                await check('beer brats: weight scope survives scale and return', async () => {
+                    const document = await page('/main-dishes/matts-beer-brats.html');
+                    const weights = Array.from(document.querySelectorAll('.weight-list li'));
+                    const originals = weights.map(element => element.textContent);
+                    adjust(document, 'Increase', 8);
+                    assert(weights[0].textContent.includes('excluding beer'), 'Raw scope preserved');
+                    assert(weights[1].textContent.includes('drained'), 'Cooked scope preserved');
+                    adjust(document, 'Decrease', 8);
+                    weights.forEach((element, index) => equal(element.textContent, originals[index], 'Exact original scope restored'));
+                });
+            } finally {
+                frames.replaceChildren();
+                results.textContent += `PASS: ${passCount}; FAIL: ${failCount}.\n`;
+                results.dataset.passCount = passCount;
+                results.dataset.failCount = failCount;
+                document.documentElement.dataset.testStatus = failCount ? 'fail' : 'pass';
+                runButton.disabled = false;
+            }
+        }
+
+        runButton.addEventListener('click', run);
+        if (new URLSearchParams(location.search).has('autorun')) run();
+    </script>
+</body>
+</html>

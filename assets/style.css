@@ -563,6 +563,12 @@ html[data-theme="light"] .recipe-nav { background: rgba(255, 255, 255, 0.75); }
     font-style: italic;
     padding: 0.25rem 0;
 }
+.scale-context-note {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0.5rem 0;
+}
 
 /* Ingredients — Substitutions */
 

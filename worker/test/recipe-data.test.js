@@ -79,8 +79,8 @@ test('fractional endpoints and package sizes survive rendering, indexing, scalin
     scaling.click('Increase servings', 8);
     assert.deepEqual(scaling.texts(), ['1-3 cups flour, sifted', '2-4 (12-ounce) cans beer, divided', '1-3 cups broth']);
     scaling.click('Decrease servings', 8);
-    // The existing scaler formats ASCII fractions as equivalent Unicode fractions.
-    assert.deepEqual(scaling.texts(), ['½-1½ cups flour, sifted', lines[1], '½-1½ cups broth']);
+    // Returning to the original serving count restores the exact source strings.
+    assert.deepEqual(scaling.texts(), lines);
     const parsed = lines.map(parseIngredient);
     assert.deepEqual(parsed.map(item => [item.qty, item.qty2]), [[0.5, 1.5], [1, 2], [0.5, 1.5]]);
     assert.match(parsed[1].raw, /\(12-ounce\) cans beer, divided/);

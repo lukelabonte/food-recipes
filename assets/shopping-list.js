@@ -124,10 +124,9 @@
     // --- Name normalization ---
 
     function normalizeName(str) {
-        return str.toLowerCase()
-            .replace(/,.*$/, '')           // strip prep text after comma
-            .replace(/\s*\(.*?\)\s*/g, '') // strip parentheticals
-            .trim();
+        // Retain package sizes and product distinctions. Under-merging is safer
+        // than combining differently sized cans or packages by count.
+        return stripPrepText(str).toLowerCase().replace(/\s+/g, ' ').trim();
     }
 
     // Strip prep instructions for shopping-friendly display.
@@ -215,9 +214,10 @@
 
             var key = item.name + '|' + item.unit;
             if (merged[key]) {
+                var previousUpper = merged[key].qty2 === null ? merged[key].qty : merged[key].qty2;
                 merged[key].qty += item.qty;
-                if (item.qty2 !== null) {
-                    merged[key].qty2 = (merged[key].qty2 || 0) + item.qty2;
+                if (merged[key].qty2 !== null || item.qty2 !== null) {
+                    merged[key].qty2 = previousUpper + (item.qty2 === null ? item.qty : item.qty2);
                 }
                 if (merged[key].sources.indexOf(item.source) === -1) {
                     merged[key].sources.push(item.source);
@@ -282,7 +282,7 @@
         if (item.qty === null) return item.raw;
         var qtyStr = formatQty(item.qty);
         if (item.qty2 !== null) qtyStr += '\u2013' + formatQty(item.qty2);
-        var unitStr = item.unit ? ' ' + pluralizeUnit(item.unit, item.qty) + ' ' : ' ';
+        var unitStr = item.unit ? ' ' + pluralizeUnit(item.unit, Math.max(item.qty, item.qty2 === null ? item.qty : item.qty2)) + ' ' : ' ';
         return qtyStr + unitStr + item.displayName;
     }
 

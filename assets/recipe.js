@@ -77,8 +77,8 @@
 
     // --- Ingredient substitutions ---
     var ingredientList = document.querySelector('.ingredient-list');
-    if (ingredientList) {
-        var subsItems = ingredientList.querySelectorAll('li[data-subs]');
+    document.querySelectorAll('.ingredient-list').forEach(function(list) {
+        var subsItems = list.querySelectorAll('li[data-subs]');
 
         // Add a11y attributes and remove hidden (CSS handles visibility)
         subsItems.forEach(function(li) {
@@ -99,22 +99,22 @@
             if (updateScrollPadding) updateScrollPadding();
         }
 
-        ingredientList.addEventListener('click', function(e) {
+        list.addEventListener('click', function(e) {
             var li = e.target.closest('li[data-subs]');
-            if (!li || !ingredientList.contains(li)) return;
+            if (!li || !list.contains(li)) return;
             if (e.target.closest('.sub-list')) return;
             toggleSub(li);
         });
 
-        ingredientList.addEventListener('keydown', function(e) {
+        list.addEventListener('keydown', function(e) {
             if (e.key !== 'Enter' && e.key !== ' ') return;
             var li = e.target.closest('li[data-subs]');
-            if (!li || !ingredientList.contains(li)) return;
+            if (!li || !list.contains(li)) return;
             if (e.target.closest('.sub-list')) return;
             e.preventDefault();
             toggleSub(li);
         });
-    }
+    });
 
     // --- Source link relocation ---
     // Move source link (or linkless source name) into header card; keep contributor for footer
@@ -281,6 +281,19 @@
         return (Math.round(value * 10) / 10).toFixed(1);
     }
 
+    // Only an immediate measured-unit equivalent is a batch amount. Package
+    // parentheses, dimensions, preparation prose, and substitution ratios aren't.
+    function scaleEquivalent(text, multiplier) {
+        return text.replace(/^(\s*(?:cups?|sticks?|tablespoons?|tbsp|teaspoons?|tsp|pounds?|lbs?|ounces?|oz|grams?|g|milliliters?|ml|liters?|l)\b\s*)\(([^()]*)\)/i,
+            function(match, prefix, equivalent) {
+                var quantity = parseLeadingQty(equivalent);
+                if (!quantity || !Number.isFinite(quantity.value)) return match;
+                var suffix = equivalent.trim().substring(quantity.end);
+                if (!/^\s+(?:cups?|tablespoons?|tbsp|teaspoons?|tsp|pounds?|lbs?|ounces?|oz|grams?|g|milliliters?|ml|liters?|l)\.?\s*$/i.test(suffix)) return match;
+                return prefix + '(' + formatQty(quantity.value * multiplier) + suffix + ')';
+            });
+    }
+
     // --- Store original values ---
 
     // Find the servings <li> in the overview card
@@ -315,7 +328,8 @@
     var currentServings = originalServings;
 
     // Store original values on each ingredient <li>
-    var ingredients = ingredientList.querySelectorAll(':scope > li');
+    var ingredients = document.querySelectorAll('.ingredient-list > li');
+    var originalIngredientNodes = new WeakMap();
     ingredients.forEach(function(li) {
         var textNodes = [];
         for (var i = 0; i < li.childNodes.length; i++) {
@@ -323,6 +337,9 @@
             if (node.nodeType === 3) textNodes.push(node);
         }
         var fullText = textNodes.map(function(n) { return n.textContent; }).join('');
+        originalIngredientNodes.set(li, textNodes.map(function(node) {
+            return { node: node, text: node.textContent };
+        }));
 
         // Leave unresolved leading ranges intact instead of scaling just one endpoint.
         var leading = parseLeadingQty(fullText);
@@ -375,9 +392,9 @@
         if (!strong) return;
         var label = strong.textContent.trim().toLowerCase();
         var valueText = li.textContent.replace(strong.textContent, '').trim();
-        var m = valueText.match(/~?([\d,]+(?:\.\d+)?)/);
+        var m = valueText.match(/^(~?\s*)(\d[\d,]*(?:\.\d+)?)(?:\s*([–\-])\s*(\d[\d,]*(?:\.\d+)?))?\s*g\b/);
         if (m) {
-            li.setAttribute('data-orig-weight', parseFloat(m[1].replace(/,/g, '')));
+            li.setAttribute('data-orig-weight', parseFloat(m[2].replace(/,/g, '')));
             li.setAttribute('data-orig-weight-text', valueText);
             li.setAttribute('data-weight-label', label);
         }
@@ -449,6 +466,13 @@
     printNote.id = 'scale-print-note';
     headerRow.parentNode.insertBefore(printNote, ingredientList);
 
+    var contextNote = document.createElement('p');
+    contextNote.className = 'scale-context-note';
+    contextNote.hidden = true;
+    contextNote.textContent = 'Ingredients and batch weights scale below. Fixed batch amounts in steps, tips, or substitutions refer to the original ' +
+        servingsFullText + ' servings; adjust those amounts proportionally. Keep times, temperatures, dimensions, and per-item formulas unchanged.';
+    headerRow.parentNode.insertBefore(contextNote, ingredientList);
+
     // --- Scaling engine ---
 
     function applyScale(newServings) {
@@ -460,6 +484,7 @@
         valueDisplay.textContent = String(newServings);
         minusBtn.disabled = newServings <= minServings;
         originalNote.style.visibility = newServings === originalServings ? 'hidden' : 'visible';
+        contextNote.hidden = newServings === originalServings;
 
         // Update servings in overview card (restore original range text when at base)
         var textNode = servingsLi.lastChild;
@@ -476,6 +501,19 @@
 
             origQty = parseFloat(origQty);
             var origText = li.getAttribute('data-orig-text');
+            var gramsSpan = li.querySelector('.ingredient-grams');
+            if (multiplier === 1) {
+                originalIngredientNodes.get(li).forEach(function(original) {
+                    original.node.textContent = original.text;
+                });
+                if (gramsSpan && gramsSpan.hasAttribute('data-orig-grams-text')) {
+                    gramsSpan.textContent = gramsSpan.getAttribute('data-orig-grams-text');
+                }
+                return;
+            }
+            // Rebuild only owned text nodes; keep gram spans and substitutions intact.
+            var ownedNodes = originalIngredientNodes.get(li);
+            ownedNodes.slice(1).forEach(function(original) { original.node.textContent = ''; });
             var newQty = origQty * multiplier;
             var isRange = li.getAttribute('data-is-range') === 'true';
 
@@ -488,7 +526,7 @@
                     var afterFirst = origText.trimStart().substring(rm[0].length);
                     var secondParsed = parseLeadingQty(afterFirst);
                     if (secondParsed) {
-                        var restOfText = afterFirst.substring(secondParsed.end);
+                        var restOfText = scaleEquivalent(afterFirst.substring(secondParsed.end), multiplier);
                         var newText = formatQty(newQty) + rm[2] + formatQty(newQty2) + restOfText;
                         for (var i = 0; i < li.childNodes.length; i++) {
                             if (li.childNodes[i].nodeType === 3) {
@@ -502,7 +540,7 @@
                 // Single quantity — replace the leading quantity portion
                 var parsed = parseLeadingQty(origText);
                 if (parsed) {
-                    var after = origText.substring(parsed.end);
+                    var after = scaleEquivalent(origText.trimStart().substring(parsed.end), multiplier);
                     var newText = formatQty(newQty) + after;
                     for (var i = 0; i < li.childNodes.length; i++) {
                         if (li.childNodes[i].nodeType === 3) {
@@ -514,7 +552,6 @@
             }
 
             // Scale gram weights — handle ranges and complex formats
-            var gramsSpan = li.querySelector('.ingredient-grams');
             if (gramsSpan && gramsSpan.hasAttribute('data-orig-grams')) {
                 var origGramsText = gramsSpan.getAttribute('data-orig-grams-text');
                 // Replace all numbers in the gram text proportionally
@@ -536,11 +573,19 @@
 
             if (wLabel === 'per serving') return;
 
-            var newWeight = origWeight * multiplier;
             var textNode = li.lastChild;
             if (textNode && textNode.nodeType === 3) {
-                var prefix = origText.charAt(0) === '~' ? '~' : '';
-                textNode.textContent = ' ' + prefix + formatGramsVal(newWeight) + ' g';
+                textNode.textContent = ' ' + (multiplier === 1 ? origText : origText.replace(
+                    /^(~?\s*)(\d[\d,]*(?:\.\d+)?)(\s*[–\-]\s*\d[\d,]*(?:\.\d+)?)?(\s*g\b)(.*)$/,
+                    function(match, prefix, first, range, unit, suffix) {
+                        var scaledRange = range ? range.replace(/\d[\d,]*(?:\.\d+)?/, function(second) {
+                            return formatGramsVal(parseFloat(second.replace(/,/g, '')) * multiplier);
+                        }) : '';
+                        var scaledSuffix = suffix.replace(/(\d[\d,]*(?:\.\d+)?)(\s*g\b)/g, function(component, grams, gramUnit) {
+                            return formatGramsVal(parseFloat(grams.replace(/,/g, '')) * multiplier) + gramUnit;
+                        });
+                        return prefix + formatGramsVal(origWeight * multiplier) + scaledRange + unit + scaledSuffix;
+                    }));
             }
         });
 

@@ -10,6 +10,12 @@ const shoppingContext = vm.createContext({});
 vm.runInContext(shoppingScript.slice(shoppingScript.indexOf('    var FRAC_MAP'),
     shoppingScript.indexOf('    // --- Smart merge ---')), shoppingContext);
 export const parseIngredient = (text) => shoppingContext.parseIngredient(text);
+vm.runInContext(shoppingScript.slice(shoppingScript.indexOf('    // --- Smart merge ---'),
+    shoppingScript.indexOf('    // --- Store section categorization ---')), shoppingContext);
+export const mergeIngredients = (items) => shoppingContext.mergeIngredients(items);
+vm.runInContext(shoppingScript.slice(shoppingScript.indexOf('    // --- Display formatting ---'),
+    shoppingScript.indexOf('    // --- DOM helper:')), shoppingContext);
+export const formatItemDisplay = (item) => shoppingContext.formatItemDisplay(item);
 
 export function indexIngredients(html) {
     const result = spawnSync('python3', ['-c',
@@ -45,7 +51,7 @@ function labelledValue(label, value) {
     return node;
 }
 
-export function scaler(ingredientTexts) {
+export function scaler(ingredientTexts, options = {}) {
     const ingredients = ingredientTexts.map((text) => {
         const node = element();
         node.childNodes = [{ nodeType: 3, textContent: text }];
@@ -55,12 +61,18 @@ export function scaler(ingredientTexts) {
     const heading = element();
     heading.parentNode = element();
     const servings = labelledValue('Servings', '8');
-    const weights = [labelledValue('Uncooked', '~488 g'), labelledValue('Cooked', '~480 g'), labelledValue('Per Serving', '~60 g')];
+    const weights = (options.weights || [['Uncooked', '~488 g'], ['Cooked', '~480 g'], ['Per Serving', '~60 g']])
+        .map(([label, value]) => labelledValue(label, value));
     const nutritionSource = element('Estimated · Per serving (based on 8 servings)');
     const nutritionValues = element('10 calories; 1 g protein');
     const created = [];
     const document = {
-        querySelectorAll: (selector) => selector === '.meta-list li' ? [servings] : weights,
+        querySelectorAll: (selector) => {
+            if (selector === '.meta-list li') return [servings];
+            if (selector === '.ingredient-list > li') return ingredients;
+            if (selector === '.weight-list li') return weights;
+            return [];
+        },
         querySelector: (selector) => ({ '#ingredients h2': heading, '.nutrition-source': nutritionSource, '.nutrition-list': nutritionValues })[selector],
         createElement() { const node = element(); created.push(node); return node; }
     };
@@ -74,6 +86,7 @@ export function scaler(ingredientTexts) {
         },
         texts: () => ingredients.map(node => node.childNodes[0].textContent),
         weights: () => weights.map(node => node.lastChild.textContent.trim()),
+        contextNote: () => created.find(node => node.className === 'scale-context-note'),
         nutritionSource, nutritionValues
     };
 }
