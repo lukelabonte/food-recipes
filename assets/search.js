@@ -20,6 +20,7 @@
 
     function makeCartIcon() {
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('aria-hidden', 'true');
         svg.setAttribute('fill', 'none');
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.setAttribute('stroke-width', '1.5');
@@ -32,49 +33,104 @@
         return svg;
     }
 
-    function addCartToggle(card, url) {
-        var btn = document.createElement('button');
-        btn.className = 'card-cart-btn';
-        if (selectedRecipes.has(url)) btn.classList.add('active');
-        btn.setAttribute('aria-label', selectedRecipes.has(url) ? 'Remove from shopping list' : 'Add to shopping list');
-        btn.appendChild(makeCartIcon());
+    function addCardActions(entry, url) {
+        var actions = document.createElement('div');
+        actions.className = 'recipe-card-actions';
 
-        btn.addEventListener('click', function(e) {
+        var addButton = document.createElement('button');
+        addButton.type = 'button';
+        addButton.className = 'card-cart-btn';
+        addButton.textContent = 'Add to shopping list';
+        addButton.appendChild(makeCartIcon());
+        addButton.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            var inList = selectedRecipes.has(url);
-            toggleRecipe(url, !inList);
+            toggleRecipe(url, true, entry);
         });
 
-        // Append to the meta row (after contributor)
-        var meta = card.querySelector('.recipe-card-meta');
-        if (meta) {
-            meta.appendChild(btn);
-        }
+        var addedLabel = document.createElement('span');
+        addedLabel.className = 'shopping-added-label';
+        addedLabel.textContent = '\u2713 Added to shopping list';
+
+        var removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'shopping-remove-btn';
+        removeButton.textContent = 'Remove';
+        var card = entry.querySelector('.recipe-card');
+        var title = card && card.querySelector('.recipe-card-title');
+        var recipeName = title ? title.textContent : 'recipe';
+        removeButton.setAttribute('aria-label', 'Remove ' + recipeName + ' from shopping list');
+        removeButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleRecipe(url, false, entry);
+        });
+
+        var viewLink = document.createElement('a');
+        viewLink.href = 'shopping-list';
+        viewLink.className = 'shopping-view-link';
+        viewLink.textContent = 'View shopping list';
+
+        actions.appendChild(addButton);
+        actions.appendChild(addedLabel);
+        actions.appendChild(removeButton);
+        actions.appendChild(viewLink);
+        entry.appendChild(actions);
+        updateCardActions(entry, selectedRecipes.has(url));
     }
 
-    function toggleRecipe(url, add) {
+    function updateCardActions(entry, isAdded) {
+        var addButton = entry.querySelector('.card-cart-btn');
+        var addedLabel = entry.querySelector('.shopping-added-label');
+        var removeButton = entry.querySelector('.shopping-remove-btn');
+        var viewLink = entry.querySelector('.shopping-view-link');
+        if (addButton) addButton.hidden = isAdded;
+        if (addedLabel) addedLabel.hidden = !isAdded;
+        if (removeButton) removeButton.hidden = !isAdded;
+        if (viewLink) viewLink.hidden = !isAdded;
+    }
+
+    function wrapCard(card, url) {
+        var entry = document.createElement('div');
+        entry.className = 'recipe-card-entry';
+        entry.setAttribute('data-recipe-url', url);
+        card.parentNode.insertBefore(entry, card);
+        entry.appendChild(card);
+        addCardActions(entry, url);
+        return entry;
+    }
+
+    function toggleRecipe(url, add, focusedEntry) {
         if (add) selectedRecipes.add(url);
         else selectedRecipes.delete(url);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(selectedRecipes)));
 
         // Sync all cards with this URL (same recipe appears in "Recently Added" + category)
-        document.querySelectorAll('.recipe-card[href="' + url + '"]').forEach(function(card) {
-            var cartBtn = card.querySelector('.card-cart-btn');
-            if (cartBtn) {
-                cartBtn.classList.toggle('active', add);
-                cartBtn.setAttribute('aria-label', add ? 'Remove from shopping list' : 'Add to shopping list');
-            }
+        document.querySelectorAll('.recipe-card-entry').forEach(function(entry) {
+            if (entry.getAttribute('data-recipe-url') === url) updateCardActions(entry, add);
         });
         updateShoppingLink();
+
+        if (focusedEntry) {
+            var focusTarget = focusedEntry.querySelector(add ? '.shopping-view-link' : '.card-cart-btn');
+            if (focusTarget) focusTarget.focus({ preventScroll: true });
+        }
     }
 
     function updateShoppingLink() {
         if (!shoppingLink) return;
         var count = selectedRecipes.size;
-        shoppingLink.classList.toggle('visible', count > 0);
         shoppingLinkCount.textContent = String(count);
+        shoppingLink.setAttribute('aria-label', 'Shopping list, ' + count + (count === 1 ? ' recipe' : ' recipes'));
     }
+
+    window.addEventListener('pageshow', function() {
+        selectedRecipes = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+        document.querySelectorAll('.recipe-card-entry').forEach(function(entry) {
+            updateCardActions(entry, selectedRecipes.has(entry.getAttribute('data-recipe-url')));
+        });
+        updateShoppingLink();
+    });
 
     function formatTime(minutes) {
         if (minutes >= 60) {
@@ -97,7 +153,8 @@
             cards.forEach(function(card) {
                 var t = parseInt(card.getAttribute('data-time-minutes'), 10);
                 var hidden = !isNaN(t) && t > maxMinutes;
-                card.style.display = hidden ? 'none' : '';
+                var entry = card.parentNode.classList.contains('recipe-card-entry') ? card.parentNode : card;
+                entry.style.display = hidden ? 'none' : '';
                 if (!hidden) visibleCount++;
             });
 
@@ -122,9 +179,31 @@
         var searchCards = searchResults.querySelectorAll('.recipe-card');
         searchCards.forEach(function(card) {
             var t = parseInt(card.getAttribute('data-time-minutes'), 10);
-            card.style.display = (!isNaN(t) && t > maxMinutes) ? 'none' : '';
+            var entry = card.parentNode.classList.contains('recipe-card-entry') ? card.parentNode : card;
+            entry.style.display = (!isNaN(t) && t > maxMinutes) ? 'none' : '';
         });
     }
+
+    // Keep the shopping list reachable while recipes.json or Fuse is loading or unavailable.
+    var indexWrapper = document.querySelector('.index');
+    var headerCard = indexWrapper && indexWrapper.querySelector('.header-card');
+    if (headerCard) {
+        shoppingLink = document.createElement('a');
+        shoppingLink.href = 'shopping-list';
+        shoppingLink.className = 'shopping-link';
+        shoppingLink.appendChild(document.createTextNode('Shopping list ('));
+        shoppingLinkCount = document.createElement('span');
+        shoppingLinkCount.className = 'shopping-link-count';
+        shoppingLink.appendChild(shoppingLinkCount);
+        shoppingLink.appendChild(document.createTextNode(')'));
+        headerCard.appendChild(shoppingLink);
+        updateShoppingLink();
+    }
+
+    document.querySelectorAll('#default-content .recipe-card').forEach(function(card) {
+        var href = card.getAttribute('href');
+        if (href) wrapCard(card, href);
+    });
 
     fetch('assets/recipes.json')
         .then(function(r) { return r.json(); })
@@ -225,16 +304,8 @@
                 }
             }
 
-            // --- Shopping list: per-card cart toggles + shopping link ---
-            var indexWrapper = document.querySelector('.index');
+            // --- Upload control ---
             if (indexWrapper) {
-                // Add cart toggle to all static cards
-                document.querySelectorAll('#default-content .recipe-card').forEach(function(card) {
-                    var href = card.getAttribute('href');
-                    if (href) addCartToggle(card, href);
-                });
-
-                var headerCard = indexWrapper.querySelector('.header-card');
                 if (headerCard) {
                     headerCard.style.position = 'relative';
 
@@ -264,30 +335,6 @@
                     uploadSvg.appendChild(line);
                     uploadBtn.appendChild(uploadSvg);
                     headerCard.appendChild(uploadBtn);
-
-                    // Inline shopping link (visible when selections exist)
-                    shoppingLink = document.createElement('a');
-                    shoppingLink.href = 'shopping-list';
-                    shoppingLink.className = 'shopping-link';
-                    shoppingLink.setAttribute('aria-label', 'View shopping list');
-                    var cartSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                    cartSvg.setAttribute('fill', 'none');
-                    cartSvg.setAttribute('viewBox', '0 0 24 24');
-                    cartSvg.setAttribute('stroke-width', '1.5');
-                    cartSvg.setAttribute('stroke', 'currentColor');
-                    cartSvg.setAttribute('width', '16');
-                    cartSvg.setAttribute('height', '16');
-                    var cartPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    cartPath.setAttribute('stroke-linecap', 'round');
-                    cartPath.setAttribute('stroke-linejoin', 'round');
-                    cartPath.setAttribute('d', 'M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z');
-                    cartSvg.appendChild(cartPath);
-                    shoppingLink.appendChild(cartSvg);
-                    shoppingLinkCount = document.createElement('span');
-                    shoppingLinkCount.className = 'shopping-link-count';
-                    shoppingLink.appendChild(shoppingLinkCount);
-                    headerCard.appendChild(shoppingLink);
-                    updateShoppingLink();
                 }
             }
         })
@@ -357,8 +404,12 @@
         }
         a.appendChild(content);
         a.appendChild(chevron);
-        if (recipe.url) addCartToggle(a, cleanUrl(recipe.url));
-        return a;
+        var entry = document.createElement('div');
+        entry.className = 'recipe-card-entry';
+        entry.setAttribute('data-recipe-url', cleanUrl(recipe.url));
+        entry.appendChild(a);
+        addCardActions(entry, cleanUrl(recipe.url));
+        return entry;
     }
 
     input.addEventListener('input', function() {
