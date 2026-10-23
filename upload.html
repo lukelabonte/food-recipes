@@ -86,6 +86,10 @@
             margin-top: 0.35rem;
             line-height: 1.4;
         }
+        .file-error {
+            color: var(--color-error);
+            font-style: normal;
+        }
 
         /* File input */
         .file-input-wrapper {
@@ -253,7 +257,7 @@
             <div class="form-group">
                 <label class="form-label" for="image">Photo or file <span class="optional">(optional)</span></label>
                 <div class="file-input-wrapper">
-                    <input type="file" id="image" name="image" accept="image/*,.pdf">
+                    <input type="file" id="image" name="image" accept="image/*,.pdf" aria-describedby="file-help file-error">
                     <label class="file-input-label" for="image" id="file-label">
                         <svg class="file-input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -262,6 +266,8 @@
                         <button type="button" class="file-input-clear" id="file-clear" aria-label="Remove file">&times;</button>
                     </label>
                 </div>
+                <p class="form-helper" id="file-help">Maximum file size: 7.5 MB.</p>
+                <p class="form-helper file-error" id="file-error" role="alert"></p>
             </div>
 
             <div class="form-group">
@@ -276,23 +282,27 @@
             </div>
 
             <button type="submit" class="submit-btn">Upload Recipe</button>
-            <div id="upload-status"></div>
+            <div id="upload-status" role="status" aria-live="polite"></div>
         </form>
 
         <a href="/" class="back-link">&larr; Back to Recipes</a>
     </div>
 
-    <script>
+    <script type="module">
+        import { MAX_UPLOAD_BYTES, UPLOAD_SIZE_ERROR } from './assets/upload-limits.js';
+
         // File input UI
         const fileInput = document.getElementById('image');
         const fileLabel = document.getElementById('file-label');
         const fileText = document.getElementById('file-text');
         const fileClear = document.getElementById('file-clear');
+        const fileError = document.getElementById('file-error');
 
         fileInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 fileText.textContent = this.files[0].name;
                 fileLabel.classList.add('has-file');
+                validateFileSize();
             } else {
                 resetFileInput();
             }
@@ -308,11 +318,25 @@
         function resetFileInput() {
             fileText.textContent = 'Choose a photo or PDF...';
             fileLabel.classList.remove('has-file');
+            fileError.textContent = '';
+            fileInput.removeAttribute('aria-invalid');
+        }
+
+        function validateFileSize() {
+            if (fileInput.files && fileInput.files[0]?.size > MAX_UPLOAD_BYTES) {
+                fileError.textContent = UPLOAD_SIZE_ERROR;
+                fileInput.setAttribute('aria-invalid', 'true');
+                return false;
+            }
+            fileError.textContent = '';
+            fileInput.removeAttribute('aria-invalid');
+            return true;
         }
 
         // Upload form
         document.getElementById('upload-form').addEventListener('submit', async function(e) {
             e.preventDefault();
+            if (!validateFileSize()) return;
             const status = document.getElementById('upload-status');
             const submitBtn = this.querySelector('.submit-btn');
 
@@ -327,9 +351,14 @@
                     method: 'POST',
                     body: formData
                 });
-                const data = await response.json();
+                // A proxy can reject the upload with an HTML or empty 413 response.
+                const data = response.status === 413
+                    ? { error: UPLOAD_SIZE_ERROR }
+                    : await response.json().catch(() => ({
+                        error: 'The upload server returned an unreadable response. Please try again.'
+                    }));
 
-                if (response.ok && data.status === 'complete') {
+                if (response.ok && data?.status === 'complete') {
                     status.className = 'status-success visible';
                     status.textContent = '';
                     status.appendChild(document.createTextNode('\u2713 '));
@@ -347,7 +376,7 @@
                     resetFileInput();
                 } else {
                     status.className = 'status-error visible';
-                    status.textContent = data.error || 'Something went wrong. Please try again.';
+                    status.textContent = data?.error || 'Something went wrong. Please try again.';
                 }
             } catch (err) {
                 status.className = 'status-error visible';

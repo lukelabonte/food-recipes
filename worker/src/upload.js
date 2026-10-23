@@ -7,6 +7,7 @@ import { authenticate } from './auth.js';
 import { extractRecipe } from './extract.js';
 import { renderRecipeHTML } from './template.js';
 import { createPR, slugify } from './github.js';
+import { MAX_UPLOAD_BYTES, UPLOAD_SIZE_ERROR } from '../../assets/upload-limits.js';
 
 /**
  * Generate a ULID-like unique ID (timestamp + random).
@@ -35,6 +36,11 @@ export async function handleUpload(request, env) {
     // Validate required fields
     if (!text) {
         return new Response(JSON.stringify({ error: 'Recipe text is required' }), { status: 400 });
+    }
+
+    // Reject before base64 conversion, status writes, or downstream API calls.
+    if (imageFile && imageFile.size > MAX_UPLOAD_BYTES) {
+        return new Response(JSON.stringify({ error: UPLOAD_SIZE_ERROR }), { status: 413 });
     }
 
     // Authenticate
