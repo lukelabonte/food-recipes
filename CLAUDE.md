@@ -227,7 +227,7 @@ Rules:
 Every recipe has a hero photo on its recipe page and a thumbnail on index cards.
 
 - **Storage:** `assets/photos/<slug>/photo.webp` — directory per recipe, named by HTML filename (without category prefix)
-- **Directory contents:** `photo.webp` (generated/final), `prompt.txt` (AI visual description), optional `source-N.ext` (original uploaded images), optional `reference.png` (explicit human-reviewed food crop)
+- **Directory contents:** `photo.webp` (generated/final), `prompt.txt` (AI visual description), optional `source-N.ext` (submitted source images), optional `reference.png` (explicit human-reviewed food crop)
 - **Photo assets created by both pipelines:** The Worker upload pipeline (`worker/src/extract.js` generates `photoPrompt`, `worker/src/github.js` commits `prompt.txt` + source image in the PR) and the Claude Web pipeline (`docs/claude-web-instructions.md` instructs manual creation of `prompt.txt` + source images). Both ensure `prompt.txt` exists before deploy generates the photo.
 - **Recipe page:** `<img class="recipe-hero" width="800" height="600">` inside `.header-card`, between `<h1>` and `.subtitle`. Include `width`/`height` to prevent CLS. Always present on all recipes.
 - **Index page:** `scripts/generate_index.py` adds `<img class="recipe-card-photo">` inside each card when `hasPhoto` is true in `recipes.json`. Photo appears as a small thumbnail on the left side of the card.
@@ -255,6 +255,7 @@ Trusted contributors can submit recipes via `upload.html`. A Cloudflare Worker p
 - **Pipeline:** Form submit → Worker authenticates → Sonnet 4.6 extracts structured JSON → `worker/src/template.js` renders HTML → Worker creates GitHub PR
 - **Admin:** REST endpoints on the Worker for managing users and access requests (protected by admin secret)
 - **Form fields:** passphrase, recipe text, optional URL, optional image, optional notes, optional "recipe from" override
+- **Image optimization:** `assets/image-optimizer.js` prepares oversized static images only when the contributor clicks Optimize image. Extraction and `source-1.*` use the optimized copy; the original stays on the contributor's device. Keep the server-side size check and the separate `reference.png` review policy. See `worker/README.md` for limits and browser validation.
 - **Request access:** Separate page (`request-access.html`) for anyone to request a passphrase. Linked from `upload.html`.
 - **Worker source:** `worker/src/` — router, auth, extract, template, github, admin modules
 - **Secrets:** `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`, `ADMIN_SECRET` (set via `wrangler secret put`)

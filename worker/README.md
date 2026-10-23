@@ -79,6 +79,14 @@ Fields:
   recipeFrom  (optional) - Attribution name (defaults to user's displayName)
 ```
 
+Attachments must fit within 7.5 MB (7,500,000 bytes). The Worker returns HTTP 413 for larger files.
+
+The upload page offers **Optimize image** for oversized static PNG, JPEG, and WebP files. Optimization happens in the browser and doesn't submit the recipe. Contributors can inspect the preview or restore the original before uploading. Only the optimized copy is uploaded, used for extraction, and archived as `source-1.*`. The original stays on the contributor's device. This doesn't create a photo-generation reference or change its human-review requirement.
+
+Processing is limited to 20 MB of source bytes, 12.5 million source pixels, a 5,400-pixel source edge, a 4,096-pixel canvas edge, and at most nine encoding attempts. Each attempt starts from the decoded source. Lossy exports use quality 0.95; resizing stops at 75% of the original dimensions. These bounds reduce memory risk but don't guarantee available device memory or readable recipe text. Oversized PDFs, HEIC, animated files, unsupported browsers, and images that can't safely fit keep the manual-resize fallback. Files already within the upload limit stay unchanged.
+
+Run automated regressions from the repo root with `node --test worker/test/*.test.js`. For actual browser codecs and form integration, start `python3 scripts/serve.py 8765`, open `http://localhost:8765/worker/test/browser/image-optimizer.html`, and click **Run optimizer and upload checks**. The fixtures use a mocked upload response; nothing is sent to production. Inspect the small quantities in the original and optimized text crops. iPhone Safari and desktop Chromium checks are release requirements; Node tests and a desktop viewport resized to phone dimensions aren't substitutes for iPhone Safari validation.
+
 ### Check upload status
 
 ```

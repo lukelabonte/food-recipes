@@ -90,6 +90,22 @@
             color: var(--color-error);
             font-style: normal;
         }
+        .file-action {
+            font: inherit;
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            min-height: 44px;
+            padding: 0.5rem 0.75rem;
+            margin: 0.35rem 0.35rem 0 0;
+            cursor: pointer;
+        }
+        .file-action:disabled { opacity: 0.6; cursor: wait; }
+        .file-preview { max-width: 100%; max-height: 260px; margin-top: 0.5rem; background: #fff; }
+        .file-preview-link { display: block; font-size: 0.85rem; margin-top: 0.35rem; }
+        .file-preview-link[hidden] { display: none; }
 
         /* File input */
         .file-input-wrapper {
@@ -268,6 +284,11 @@
                 </div>
                 <p class="form-helper" id="file-help">Maximum file size: 7.5 MB.</p>
                 <p class="form-helper file-error" id="file-error" role="alert"></p>
+                <button type="button" class="file-action" id="file-optimize" hidden>Optimize image</button>
+                <button type="button" class="file-action" id="file-restore" hidden>Restore original</button>
+                <p class="form-helper" id="file-optimization-status" role="status" aria-live="polite"></p>
+                <img class="file-preview" id="file-preview" alt="Optimized attachment. Check that the recipe text is readable." hidden>
+                <a class="file-preview-link" id="file-preview-link" target="_blank" rel="noopener" hidden>Open full-size preview</a>
             </div>
 
             <div class="form-group">
@@ -290,6 +311,7 @@
 
     <script type="module">
         import { MAX_UPLOAD_BYTES, UPLOAD_SIZE_ERROR } from './assets/upload-limits.js';
+        import { inspectImage, optimizeImage } from './assets/image-optimizer.js';
 
         // File input UI
         const fileInput = document.getElementById('image');
@@ -297,14 +319,108 @@
         const fileText = document.getElementById('file-text');
         const fileClear = document.getElementById('file-clear');
         const fileError = document.getElementById('file-error');
+        const optimizeButton = document.getElementById('file-optimize');
+        const restoreButton = document.getElementById('file-restore');
+        const optimizationStatus = document.getElementById('file-optimization-status');
+        const filePreview = document.getElementById('file-preview');
+        const previewLink = document.getElementById('file-preview-link');
+        const uploadForm = document.getElementById('upload-form');
+        const submitButton = uploadForm.querySelector('.submit-btn');
+        let optimizedFile = null;
+        let previewUrl = null;
+        let selectionId = 0;
+        let operationController = null;
+        let eligibleForOptimization = false;
+        let preparing = false;
+        let preparingSelection = null;
+        let uploading = false;
 
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                fileText.textContent = this.files[0].name;
+        function updateControls() {
+            optimizeButton.hidden = !eligibleForOptimization || !!optimizedFile;
+            optimizeButton.disabled = preparing || uploading;
+            restoreButton.hidden = !optimizedFile;
+            restoreButton.disabled = uploading;
+            filePreview.hidden = !optimizedFile;
+            previewLink.hidden = !optimizedFile;
+            submitButton.disabled = uploading || preparingSelection === selectionId;
+            fileInput.disabled = uploading;
+            fileClear.disabled = uploading;
+        }
+
+        function resetOptimization() {
+            operationController?.abort();
+            selectionId++;
+            optimizedFile = null;
+            eligibleForOptimization = false;
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+            previewUrl = null;
+            filePreview.removeAttribute('src');
+            previewLink.removeAttribute('href');
+            optimizationStatus.textContent = '';
+            updateControls();
+        }
+
+        async function handleFileChange() {
+            resetOptimization();
+            const originalFile = fileInput.files?.[0];
+            if (originalFile) {
+                fileText.textContent = originalFile.name;
                 fileLabel.classList.add('has-file');
                 validateFileSize();
+                if (originalFile.size > MAX_UPLOAD_BYTES) {
+                    const currentSelection = selectionId;
+                    operationController = new AbortController();
+                    try {
+                        await inspectImage(originalFile, { signal: operationController.signal });
+                        if (currentSelection !== selectionId) return;
+                        eligibleForOptimization = true;
+                    } catch (error) {
+                        if (currentSelection !== selectionId) return;
+                        optimizationStatus.textContent = error.message;
+                    }
+                    updateControls();
+                }
             } else {
                 resetFileInput();
+            }
+        }
+
+        fileInput.addEventListener('change', handleFileChange);
+        restoreButton.addEventListener('click', handleFileChange);
+
+        function formatFileSize(size) {
+            return size >= 1_000_000 ? `${(size / 1_000_000).toFixed(1)} MB` : `${Math.ceil(size / 1000)} KB`;
+        }
+
+        optimizeButton.addEventListener('click', async function() {
+            if (!eligibleForOptimization || optimizedFile || preparing || uploading) return;
+            const originalFile = fileInput.files?.[0];
+            const currentSelection = selectionId;
+            operationController = new AbortController();
+            preparing = true;
+            preparingSelection = currentSelection;
+            optimizationStatus.textContent = 'Preparing a smaller copy\u2026 Keep this page open.';
+            updateControls();
+            try {
+                const preparedFile = await optimizeImage(originalFile, { signal: operationController.signal });
+                if (currentSelection !== selectionId) return;
+                if (!preparedFile.size || preparedFile.size > MAX_UPLOAD_BYTES) {
+                    throw new Error('This image could not be made small enough. Choose a smaller image.');
+                }
+                previewUrl = URL.createObjectURL(preparedFile);
+                optimizedFile = preparedFile;
+                filePreview.src = previewUrl;
+                previewLink.href = previewUrl;
+                fileText.textContent = preparedFile.name;
+                optimizationStatus.textContent = `${formatFileSize(originalFile.size)} \u2192 ${formatFileSize(preparedFile.size)}. Only the optimized copy will be uploaded and saved. Your original file is unchanged. Check the recipe text in the preview before uploading.`;
+                validateFileSize();
+            } catch (error) {
+                if (currentSelection !== selectionId) return;
+                optimizationStatus.textContent = error.message;
+            } finally {
+                preparing = false;
+                preparingSelection = null;
+                updateControls();
             }
         });
 
@@ -316,6 +432,7 @@
         });
 
         function resetFileInput() {
+            resetOptimization();
             fileText.textContent = 'Choose a photo or PDF...';
             fileLabel.classList.remove('has-file');
             fileError.textContent = '';
@@ -323,7 +440,8 @@
         }
 
         function validateFileSize() {
-            if (fileInput.files && fileInput.files[0]?.size > MAX_UPLOAD_BYTES) {
+            const attachment = optimizedFile || fileInput.files?.[0];
+            if (attachment?.size > MAX_UPLOAD_BYTES) {
                 fileError.textContent = UPLOAD_SIZE_ERROR;
                 fileInput.setAttribute('aria-invalid', 'true');
                 return false;
@@ -334,19 +452,22 @@
         }
 
         // Upload form
-        document.getElementById('upload-form').addEventListener('submit', async function(e) {
+        uploadForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            if (uploading || preparingSelection === selectionId) return;
             if (!validateFileSize()) return;
             const status = document.getElementById('upload-status');
             const submitBtn = this.querySelector('.submit-btn');
 
             status.className = 'status-processing visible';
             status.textContent = 'Uploading and processing your recipe\u2026 This may take a minute.';
-            submitBtn.disabled = true;
             submitBtn.textContent = 'Processing\u2026';
 
             try {
                 const formData = new FormData(this);
+                if (optimizedFile) formData.set('image', optimizedFile, optimizedFile.name);
+                uploading = true;
+                updateControls();
                 const response = await fetch(this.action, {
                     method: 'POST',
                     body: formData
@@ -383,8 +504,16 @@
                 status.textContent = 'Network error. Please check your connection and try again.';
             }
 
-            submitBtn.disabled = false;
+            uploading = false;
+            updateControls();
             submitBtn.textContent = 'Upload Recipe';
+        });
+
+        window.addEventListener('pagehide', () => {
+            if (!uploading) resetOptimization();
+        });
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted && !uploading) handleFileChange();
         });
 
     </script>
