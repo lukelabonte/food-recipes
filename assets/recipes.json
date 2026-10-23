@@ -604,6 +604,28 @@
     "photoUrl": "assets/photos/marias-pepper-steak/photo.webp"
   },
   {
+    "title": "Matt's Beer Brats",
+    "description": "Bratwursts simmered in a sweet and savory beer bath with onions and dark brown sugar, then served in toasted buns with sauerkraut, mustard, and sliced onions.",
+    "category": "Main Dishes",
+    "time": "40 min",
+    "timeMinutes": 40,
+    "servings": "8",
+    "method": "Stovetop",
+    "ingredients": [
+      "1–2 packages bratwurst (about 5 brats per package)",
+      "4–6 cans beer (12 oz each)",
+      "1/2 onion, sliced",
+      "1 cup dark brown sugar",
+      "8 bratwurst buns",
+      "Sauerkraut, for serving (optional)",
+      "Mustard, for serving (optional)"
+    ],
+    "addedBy": "Matthew",
+    "url": "main-dishes/matts-beer-brats.html",
+    "hasPhoto": true,
+    "photoUrl": "assets/photos/matts-beer-brats/photo.webp"
+  },
+  {
     "title": "Mom's BBQ Beans",
     "description": "A sweet and smoky baked bean casserole with a rich, caramelized glaze that's the perfect crowd-pleasing side dish for any cookout or family gathering.",
     "category": "Side Dishes",
