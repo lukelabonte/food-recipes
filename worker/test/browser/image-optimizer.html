@@ -36,52 +36,57 @@
                 (blob) => blob ? resolve(blob) : reject(new Error('Encoder returned null')), type, quality
             ));
         }
-        function crop(image, label) {
+        function crop(image, label, scale = 1) {
             const container = document.createElement('div');
             const heading = document.createElement('h2');
             heading.textContent = label;
             const canvas = document.createElement('canvas');
-            canvas.width = 480;
-            canvas.height = 180;
-            canvas.getContext('2d').drawImage(image, 40, 40, 480, 180, 0, 0, 480, 180);
+            canvas.width = Math.floor(480 * scale);
+            canvas.height = Math.floor(180 * scale);
+            canvas.getContext('2d').drawImage(image, Math.round(40 * scale), Math.round(40 * scale),
+                canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
             container.append(heading, canvas);
             samples.append(container);
         }
         // Deterministic photo-like noise behind a small text panel keeps this PNG genuinely large.
         const source = document.createElement('canvas');
-        source.width = 2800;
-        source.height = 2200;
-        const context = source.getContext('2d');
-        const pixels = context.createImageData(source.width, source.height);
-        let seed = 2718;
-        for (let index = 0; index < pixels.data.length; index += 4) {
-            seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-            pixels.data[index] = seed & 255;
-            pixels.data[index + 1] = (seed >>> 8) & 255;
-            pixels.data[index + 2] = (seed >>> 16) & 255;
-            pixels.data[index + 3] = 255;
+        let png;
+        try {
+            source.width = 2800;
+            source.height = 2200;
+            const context = source.getContext('2d');
+            const pixels = context.createImageData(source.width, source.height);
+            let seed = 2718;
+            for (let index = 0; index < pixels.data.length; index += 4) {
+                seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+                pixels.data[index] = seed & 255;
+                pixels.data[index + 1] = (seed >>> 8) & 255;
+                pixels.data[index + 2] = (seed >>> 16) & 255;
+                pixels.data[index + 3] = 255;
+            }
+            context.putImageData(pixels, 0, 0);
+            context.fillStyle = '#fff';
+            context.fillRect(40, 40, 600, 240);
+            context.fillStyle = '#111';
+            context.font = '16px sans-serif';
+            ['½ tsp salt', '¼ cup sugar', '1½ tbsp oil', 'Bake at 350°F for 12–15 min.', '0.5 g yeast; 100 g flour'].forEach(
+                (line, index) => context.fillText(line, 55, 70 + index * 28)
+            );
+            crop(source, 'Original text');
+            const started = performance.now();
+            png = await encode(source, 'image/png');
+            const webp = await encode(source, 'image/webp', 0.95);
+            const decoded = await createImageBitmap(webp);
+            crop(decoded, 'WebP quality 0.95');
+            decoded.close();
+            log(`Browser: ${navigator.userAgent}`);
+            log(`Fixture: ${source.width} × ${source.height}; PNG ${png.size} bytes; WebP ${webp.size} bytes (${webp.type}).`);
+            log(`Native encoding probe: ${Math.round(performance.now() - started)} ms. Settings are not yet verified on iPhone Safari.`);
+            assert(png.size > 7_500_000, 'The source fixture must actually exceed the upload limit');
+            runButton.disabled = false;
+        } catch (error) {
+            log(`FAIL fixture preparation: ${error.stack || error.message}`);
         }
-        context.putImageData(pixels, 0, 0);
-        context.fillStyle = '#fff';
-        context.fillRect(40, 40, 600, 240);
-        context.fillStyle = '#111';
-        context.font = '16px sans-serif';
-        ['½ tsp salt', '¼ cup sugar', '1½ tbsp oil', 'Bake at 350°F for 12–15 min.', '0.5 g yeast; 100 g flour'].forEach(
-            (line, index) => context.fillText(line, 55, 70 + index * 28)
-        );
-        crop(source, 'Original text');
-        const started = performance.now();
-        const png = await encode(source, 'image/png');
-        const webp = await encode(source, 'image/webp', 0.95);
-        const decoded = await createImageBitmap(webp);
-        crop(decoded, 'WebP quality 0.95');
-        decoded.close();
-        log(`Browser: ${navigator.userAgent}`);
-        log(`Fixture: ${source.width} × ${source.height}; PNG ${png.size} bytes; WebP ${webp.size} bytes (${webp.type}).`);
-        log(`Native encoding probe: ${Math.round(performance.now() - started)} ms. Settings are not yet verified on iPhone Safari.`);
-        assert(png.size > 7_500_000, 'The source fixture must actually exceed the upload limit');
-        window.fixture = { png, webp, source, log, assert, encode, crop };
-        runButton.disabled = false;
 
         function waitFor(predicate, target = document.body) {
             if (predicate()) return Promise.resolve();
@@ -138,11 +143,16 @@
                 const optimized = await optimizeImage(original);
                 assert(optimized.size > 0 && optimized.size <= 7_500_000, 'Optimized bytes must fit');
                 const metadata = await inspectImage(optimized);
-                assert(metadata.width === source.width && metadata.height === source.height, 'High-quality same-size encoding should fit this fixture');
+                const scale = metadata.width / source.width;
+                assert(metadata.width >= Math.floor(source.width * 0.75) && metadata.width <= source.width &&
+                    metadata.height >= Math.floor(source.height * 0.75) && metadata.height <= source.height,
+                    'Output must respect the resize floor without upscaling');
+                assert(Math.abs(scale - metadata.height / source.height) <= 1 / Math.min(source.width, source.height),
+                    'Output must preserve aspect ratio within pixel rounding');
                 const bitmap = await createImageBitmap(optimized);
-                crop(bitmap, 'Actual optimizer output');
+                crop(bitmap, 'Actual optimizer output', scale);
                 bitmap.close();
-                log(`PASS native optimizer: ${original.size} → ${optimized.size} bytes, ${optimized.type}, ${Math.round(performance.now() - started)} ms.`);
+                log(`PASS native optimizer: ${original.size} → ${optimized.size} bytes, ${optimized.type}, ${metadata.width} × ${metadata.height} (${Math.round(scale * 100)}% scale), ${Math.round(performance.now() - started)} ms.`);
 
                 const transparent = document.createElement('canvas');
                 transparent.width = 200;
@@ -155,6 +165,26 @@
                 log('PASS transparent PNG and lossless-first encoding.');
 
                 const nativeToBlob = HTMLCanvasElement.prototype.toBlob;
+                const oversizedOutput = new Blob([new Uint8Array(7_500_001)], { type: 'image/png' });
+                let resizedResult;
+                try {
+                    // Simulate encoders that cannot fit until the permitted resize floor.
+                    HTMLCanvasElement.prototype.toBlob = function(callback, type, quality) {
+                        if (this.width > Math.floor(source.width * 0.75)) queueMicrotask(() => callback(oversizedOutput));
+                        else nativeToBlob.call(this, callback, type, quality);
+                    };
+                    resizedResult = await optimizeImage(original);
+                } finally {
+                    HTMLCanvasElement.prototype.toBlob = nativeToBlob;
+                }
+                const resizedMetadata = await inspectImage(resizedResult);
+                assert(resizedResult.size <= 7_500_000 && resizedMetadata.width === Math.floor(source.width * 0.75) &&
+                    resizedMetadata.height === Math.floor(source.height * 0.75), 'The bounded resize fallback must produce valid output');
+                const resizedBitmap = await createImageBitmap(resizedResult);
+                crop(resizedBitmap, '75% resize fallback text', 0.75);
+                resizedBitmap.close();
+                log(`PASS native resize fallback: ${resizedMetadata.width} × ${resizedMetadata.height}, ${resizedResult.size} bytes.`);
+
                 let jpegResult;
                 try {
                     HTMLCanvasElement.prototype.toBlob = function(callback, type, quality) {

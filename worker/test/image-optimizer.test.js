@@ -149,6 +149,7 @@ test('uses high-quality WebP only after lossless output fails the cap', async (c
     assert.equal(result.type, 'image/webp');
     assert.equal(result.name, 'recipe-optimized.webp');
     assert.equal(mocks.canvas.toBlob.mock.callCount(), 2);
+    assert.deepEqual(mocks.canvas.toBlob.mock.calls.map((call) => call.arguments[1]), ['image/png', 'image/webp']);
 });
 
 test('accepts actual PNG when the browser falls back from unsupported WebP export', async (context) => {
