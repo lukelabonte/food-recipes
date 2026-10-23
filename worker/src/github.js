@@ -2,6 +2,8 @@
  * GitHub REST API integration for creating recipe PRs.
  */
 
+import { escapeReviewText, renderReviewMarkdown } from './recipe-evidence.js';
+
 const GITHUB_API = 'https://api.github.com';
 
 /**
@@ -80,11 +82,12 @@ async function createBlob(token, repo, content, encoding = 'utf-8') {
  * @param {string} [params.photoPrompt] - Visual description for AI photo generation
  * @param {string} [params.sourceImageBase64] - Base64-encoded source image (without data: prefix)
  * @param {string} [params.sourceImageExt] - File extension for source image (e.g., 'jpg', 'png')
+ * @param {object} [params.review] - Server-checked evidence and extraction uncertainty for PR review
  * @returns {Promise<{prUrl: string, prNumber: number}>}
  */
 export async function createPR(token, repo, {
     slug, category, html, title, contributor, uploadId,
-    photoPrompt, sourceImageBase64, sourceImageExt
+    photoPrompt, sourceImageBase64, sourceImageExt, review
 }) {
     const branch = `upload/${uploadId}`;
     const htmlPath = `${category}/${slug}.html`;
@@ -159,10 +162,12 @@ export async function createPR(token, repo, {
         body: JSON.stringify({
             title: `Add recipe: ${title}`,
             body: [
-                `## New Recipe: ${title}`,
+                `## New Recipe: ${escapeReviewText(title)}`,
                 '',
-                `- **Contributor:** ${contributor}`,
-                `- **Category:** ${category}`,
+                renderReviewMarkdown(review),
+                '',
+                `- **Contributor:** ${escapeReviewText(contributor)}`,
+                `- **Category:** ${escapeReviewText(category)}`,
                 `- **Files:** ${fileList}`,
                 `- **Upload ID:** \`${uploadId}\``,
                 '',

@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en" data-test-status="idle">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-src 'self'; img-src data:; base-uri 'self'; form-action 'none'">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recipe pipeline browser regression checks</title>
+    <style>
+        body { font: 16px system-ui; max-width: 1000px; margin: 20px auto; padding: 0 12px; color: #111; background: #fff; }
+        button { font: inherit; padding: 8px 16px; }
+        pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+        iframe { width: 100%; height: 400px; border: 1px solid #aaa; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Recipe pipeline browser regression checks</h1>
+    <p>Local pages and assets only. KV, Anthropic, and GitHub are in-memory mocks; no uploads, image generation, or repository writes occur.</p>
+    <p>Shopping data uses explicit expected ingredient lines, not Python's RecipeParser. Captured HTML and expected index data are exposed in <code>window.recipePipelineArtifacts</code> for an independent parser comparison. Original shopping-list storage is restored after each run.</p>
+    <button id="run" type="button">Run checks</button>
+    <pre id="results" role="status" data-pass-count="0" data-fail-count="0">Ready. PASS: 0; FAIL: 0.</pre>
+    <div id="frames"></div>
+    <script>
+        // A classic bootstrap keeps import failures inside the visible FAIL path.
+        const results = document.getElementById('results');
+        const runButton = document.getElementById('run');
+        const frames = document.getElementById('frames');
+        const storageKeys = ['shopping-list-recipes', 'shopping-list-checked'];
+        const nativeFetch = window.fetch.bind(window);
+        const frameHandlers = new Map();
+        let nextFrameIdentifier = 0;
+        const timeoutMilliseconds = 15000;
+        let passCount = 0;
+        let failCount = 0;
+        let messages = [];
+        let running = false;
+        let activeRun = null;
+        let savedStorage = null;
+        let frameError = null;
+
+        function report(passed, message) {
+            if (passed) passCount++;
+            else failCount++;
+            messages.push(`${passed ? 'PASS' : 'FAIL'} ${message}`);
+            results.dataset.passCount = String(passCount);
+            results.dataset.failCount = String(failCount);
+            results.textContent = `PASS: ${passCount}; FAIL: ${failCount}.\n${messages.join('\n')}`;
+        }
+
+        function assert(condition, message) {
+            if (!condition) throw new Error(message);
+        }
+
+        function equal(actual, expected, message) {
+            assert(JSON.stringify(actual) === JSON.stringify(expected),
+                `${message}\nExpected: ${JSON.stringify(expected)}\nActual: ${JSON.stringify(actual)}`);
+        }
+
+        function checkRun(run = activeRun) {
+            if (!run || run !== activeRun || run.controller.signal.aborted) throw new Error('Fixture run cancelled');
+        }
+
+        function bounded(promise, label, run = activeRun, allowCancelled = false) {
+            if (!allowCancelled) checkRun(run);
+            let timer;
+            let cancel;
+            return Promise.race([
+                promise,
+                new Promise((resolve, reject) => {
+                    timer = setTimeout(() => reject(new Error(`Timed out: ${label}`)), timeoutMilliseconds);
+                    cancel = () => reject(new Error('Fixture run cancelled'));
+                    if (!allowCancelled) run.controller.signal.addEventListener('abort', cancel, { once: true });
+                })
+            ]).then(value => {
+                if (!allowCancelled) checkRun(run);
+                return value;
+            }).finally(() => {
+                clearTimeout(timer);
+                run.controller.signal.removeEventListener('abort', cancel);
+            });
+        }
+
+        function waitFor(predicate, target, label) {
+            checkRun();
+            if (frameError) return Promise.reject(frameError);
+            if (predicate()) return Promise.resolve();
+            let observer;
+            return bounded(new Promise((resolve, reject) => {
+                observer = new MutationObserver(() => {
+                    if (frameError) reject(frameError);
+                    else if (predicate()) resolve();
+                });
+                observer.observe(target, { attributes: true, childList: true, subtree: true, characterData: true });
+            }), label).finally(() => observer.disconnect());
+        }
+
+        function restoreStorage() {
+            if (!savedStorage) return;
+            for (const [key, value] of savedStorage) {
+                if (value === null) localStorage.removeItem(key);
+                else localStorage.setItem(key, value);
+            }
+            savedStorage = null;
+        }
+
+        function stopFrames() {
+            for (const frame of frames.children) frame.contentWindow.stop();
+            frames.replaceChildren();
+            frameHandlers.clear();
+        }
+
+        window.addEventListener('pagehide', () => {
+            if (!activeRun) return;
+            // Invalidate before stopping scripts or restoring shared origin storage.
+            activeRun.controller.abort();
+            stopFrames();
+            restoreStorage();
+            document.documentElement.dataset.testStatus = 'cancelled';
+        });
+
+        async function localPage(path) {
+            const run = activeRun;
+            checkRun(run);
+            assert(location.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname),
+                'Serve this fixture on an HTTP loopback origin only');
+            assert(['/upload.html', '/shopping-list.html'].includes(path), 'Unexpected local page');
+            const response = await bounded(nativeFetch(new URL(path, location.origin), {
+                redirect: 'error', signal: AbortSignal.any([run.controller.signal, AbortSignal.timeout(timeoutMilliseconds)])
+            }), `fetch ${path}`);
+            checkRun(run);
+            assert(response.ok, `Cannot load ${path}: HTTP ${response.status}`);
+            const html = await bounded(response.text(), `read ${path}`, run);
+            checkRun(run);
+            return html;
+        }
+
+        // This runs before ANY iframe page script, including the upload module and shopping fetch.
+        window.installRecipePipelineFrame = (page, identifier) => {
+            const run = activeRun;
+            checkRun(run);
+            const handler = frameHandlers.get(identifier);
+            assert(handler, 'Unknown iframe bridge');
+            page.fetch = handler;
+            const fail = (message) => {
+                if (run !== activeRun || run.controller.signal.aborted) return;
+                frameError = new Error(message);
+                report(false, message);
+            };
+            page.addEventListener('error', (event) => fail(`Iframe error: ${event.message || event.target.src || 'resource load'}`), true);
+            page.addEventListener('unhandledrejection', (event) => fail(`Iframe rejection: ${event.reason?.message || event.reason}`));
+            page.addEventListener('securitypolicyviolation', (event) => fail(`Blocked iframe request: ${event.violatedDirective}`));
+        };
+
+        async function loadFrame(html, title, basePath, handler) {
+            const run = activeRun;
+            checkRun(run);
+            const identifier = String(nextFrameIdentifier++);
+            frameHandlers.set(identifier, async (...inputs) => {
+                checkRun(run);
+                if (!handler) throw new Error('Unexpected iframe fetch');
+                const response = await handler(...inputs);
+                checkRun(run);
+                return response;
+            });
+            const frame = document.createElement('iframe');
+            frame.title = title;
+            // Allow submit events; CSP form-action still blocks native form navigation.
+            // Same origin is needed for DOM assertions. Popups/top navigation stay disabled.
+            frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms');
+            const loaded = bounded(new Promise((resolve, reject) => {
+                frame.addEventListener('load', resolve, { once: true });
+                frame.addEventListener('error', () => reject(new Error(`Could not load ${title}`)), { once: true });
+            }), `iframe load: ${title}`);
+            const policy = "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'self'; form-action 'none'";
+            const bootstrap = `<base href="${location.origin}${basePath}"><meta http-equiv="Content-Security-Policy" content="${policy}"><script>parent.installRecipePipelineFrame(window, '${identifier}');<\/script>`;
+            // Theme is irrelevant to these checks and must not read a developer's saved theme.
+            html = html.replace(/<script\b[^>]*src="(?:\.\.\/)?assets\/theme\.js"[^>]*><\/script>/g, '');
+            // Generated photo files do not exist: omit only the hero's src before parsing.
+            html = html.replace(/(<img\s+class="recipe-hero")\s+src="[^"]*"/, '$1');
+            frame.srcdoc = html.replace(/<head>/i, `<head>${bootstrap}`);
+            frames.append(frame);
+            await loaded;
+            checkRun(run);
+            if (frameError) throw frameError;
+            return frame;
+        }
+
+        function ingredientLines(page) {
+            return Array.from(page.querySelectorAll('.ingredient-list > li'), (item) =>
+                Array.from(item.childNodes).filter(node => node.nodeType === 3).map(node => node.textContent).join('').trim());
+        }
+
+        function weights(page) {
+            return Array.from(page.querySelectorAll('.weight-list > li'), item => item.lastChild.textContent.trim());
+        }
+
+        function changeServings(frame, label) {
+            const button = frame.contentDocument.querySelector(`[aria-label="${label}"]`);
+            assert(button, `Missing real scaler button: ${label}`);
+            for (let index = 0; index < 8; index++) button.click();
+        }
+
+        runButton.addEventListener('click', async () => {
+            if (running) return;
+            running = true;
+            const run = { controller: new AbortController(), workerTasks: [] };
+            activeRun = run;
+            runButton.disabled = true;
+            document.documentElement.dataset.testStatus = 'running';
+            passCount = 0;
+            failCount = 0;
+            messages = [];
+            frameError = null;
+            frames.replaceChildren();
+            frameHandlers.clear();
+            results.textContent = 'Running… PASS: 0; FAIL: 0.';
+            const originalFetch = window.fetch;
+            window.recipePipelineArtifacts = { recipes: [], githubRequests: [], indexSource: 'explicit expected ingredient lines; Python RecipeParser not executed' };
+            const artifacts = window.recipePipelineArtifacts;
+            try {
+                // Refuse remote hosting before imports, storage, or iframe creation.
+                assert(location.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname),
+                    'Serve this fixture on an HTTP loopback origin only');
+                const [{ default: worker }, { validRecipe, beerBrats }] = await bounded(Promise.all([
+                    import('../../src/index.js'), import('../fixtures/recipe.js')
+                ]), 'browser-safe Worker imports');
+                checkRun(run);
+                const uploadHTML = await localPage('/upload.html');
+                checkRun(run);
+                const shoppingHTML = await localPage('/shopping-list.html');
+                checkRun(run);
+                savedStorage = storageKeys.map(key => [key, localStorage.getItem(key)]);
+                // Snapshot opaque strings only; never parse or render the user's recipes/checkmarks.
+                localStorage.setItem(storageKeys[0], '[]');
+                localStorage.setItem(storageKeys[1], '{}');
+
+                const hostile = '<' + 'script>window.recipeSourceExecuted = true;<' + '/script> & "source"';
+                const unsupported = ['1 to 2 inch piece ginger', '1 to 2-inch piece ginger', '4 to 6, divided',
+                    '1—2 inch piece ginger', '½ to 1½-inch piece ginger'];
+                const cases = [
+                    {
+                        recipe: { ...structuredClone(beerBrats), photoPrompt: null,
+                            steps: [...beerBrats.steps, hostile], sourceName: hostile },
+                        expected: ['1-2 packages bratwurst', '4-6 cans beer', '8 buns',
+                            'Sauerkraut (optional), for serving', 'Mustard (optional), for serving'],
+                        doubled: ['2-4 packages bratwurst', '8-12 cans beer', '16 buns',
+                            'Sauerkraut (optional), for serving', 'Mustard (optional), for serving'],
+                        url: 'main-dishes/beer-brats.html'
+                    },
+                    {
+                        recipe: { ...structuredClone(validRecipe), title: 'Browser Package Soup', photoPrompt: null,
+                            ingredients: [...structuredClone(validRecipe.ingredients),
+                                { text: '2 (10-12 ounce) packages noodles', grams: null },
+                                { text: 'Salt to taste', grams: null },
+                                ...unsupported.map(text => ({ text, grams: null }))] },
+                        expected: ['2 cups broth', '2 (10-12 ounce) packages noodles', 'Salt to taste', ...unsupported],
+                        doubled: ['4 cups broth', '4 (10-12 ounce) packages noodles', 'Salt to taste', ...unsupported],
+                        url: 'soups-and-stews/browser-package-soup.html'
+                    }
+                ];
+                let currentCase;
+                let extractionCount = 0;
+                const kvValues = new Map();
+                const environment = {
+                    ALLOWED_ORIGIN: location.origin,
+                    GITHUB_REPO: 'browser-fixture/recipes',
+                    KV: {
+                        async get(key) {
+                            checkRun(run);
+                            if (key === 'auth:browser-fixture-only') return { displayName: 'Browser fixture' };
+                            return kvValues.has(key) ? JSON.parse(kvValues.get(key)) : null;
+                        },
+                        async put(key, value) {
+                            checkRun(run);
+                            assert(key.startsWith('upload:'), 'Only fixture upload status writes are allowed');
+                            kvValues.set(key, value);
+                        }
+                    }
+                };
+                // No fall-through to native fetch: every outbound Worker call is synthetic or fails.
+                window.fetch = async (input, options = {}) => {
+                    checkRun(run);
+                    const url = String(input);
+                    if (url === 'https://api.anthropic.com/v1/messages' && options.method === 'POST') {
+                        extractionCount++;
+                        const body = JSON.parse(options.body);
+                        assert(body.max_tokens === 8192, 'Production request must reserve the approved evidence output limit');
+                        assert(!body.system.includes(hostile), 'Source text must not enter the system prompt');
+                        assert(JSON.stringify(body.messages).includes('recipeSourceExecuted'), 'Source text must reach extraction');
+                        return Response.json({ content: [{ type: 'text', text: JSON.stringify(currentCase.recipe) }] });
+                    }
+                    const prefix = 'https://api.github.com/repos/browser-fixture/recipes/';
+                    assert(url.startsWith(prefix), 'Blocked unexpected outbound Worker request');
+                    const route = url.slice(prefix.length);
+                    const method = options.method || 'GET';
+                    const body = options.body ? JSON.parse(options.body) : null;
+                    const allowed = (method === 'GET' && ['git/ref/heads/main', 'git/commits/base'].includes(route)) ||
+                        (method === 'POST' && ['git/refs', 'git/blobs', 'git/trees', 'git/commits', 'pulls'].includes(route)) ||
+                        (method === 'PATCH' && route.startsWith('git/refs/heads/upload/'));
+                    assert(allowed, `Blocked unexpected mock GitHub route: ${method} ${route}`);
+                    artifacts.githubRequests.push({ route, method, body });
+                    if (route === 'git/ref/heads/main') return Response.json({ object: { sha: 'base' } });
+                    if (route === 'git/commits/base') return Response.json({ tree: { sha: 'tree' } });
+                    if (route === 'pulls') return Response.json({ html_url: `${location.origin}/#mock-pr`, number: 1 });
+                    return Response.json({ sha: 'fixture-sha' });
+                };
+                const uploadFrame = await loadFrame(uploadHTML, 'Real upload form (mock transport)', '/', async (input, options) => {
+                    checkRun(run);
+                    assert(String(input) === uploadFrame.contentDocument.getElementById('upload-form').action,
+                        'Only the form upload endpoint may enter the Worker bridge');
+                    assert(options.method === 'POST', 'Only form POSTs are accepted');
+                    // Replace the production action with a loopback Request handled in-process, never on the network.
+                    const request = new Request(`${location.origin}/upload`, { method: 'POST', body: options.body });
+                    const task = worker.fetch(request, environment);
+                    run.workerTasks.push(task);
+                    return bounded(task, 'in-process worker.fetch', run);
+                });
+                checkRun(run);
+                // The interception is already installed; rewriting action also makes native fallback harmless.
+                uploadFrame.contentDocument.getElementById('upload-form').action = `${location.origin}/upload`;
+                report(true, 'Real upload page loaded with fetch interception before any submission; network-disabled iframe.');
+
+                for (const testCase of cases) {
+                    currentCase = testCase;
+                    const start = artifacts.githubRequests.length;
+                    const formDocument = uploadFrame.contentDocument;
+                    formDocument.getElementById('passphrase').value = 'browser-fixture-only';
+                    formDocument.getElementById('recipe').value = `${testCase.recipe.title}\n${hostile}`;
+                    formDocument.getElementById('notes').value = hostile;
+                    formDocument.getElementById('upload-form').requestSubmit();
+                    await waitFor(() => !formDocument.querySelector('.submit-btn').disabled &&
+                        !formDocument.getElementById('upload-status').classList.contains('status-processing'),
+                        formDocument.body, `upload completion: ${testCase.recipe.title}`);
+                    checkRun(run);
+                    assert(formDocument.getElementById('upload-status').classList.contains('status-success'),
+                        `Real form failed: ${formDocument.getElementById('upload-status').textContent}`);
+                    const calls = artifacts.githubRequests.slice(start);
+                    const blobs = calls.filter(call => call.route === 'git/blobs');
+                    assert(blobs.length === 1, 'Only the recipe HTML blob is permitted; no images or prompts');
+                    const html = blobs[0].body.content;
+                    const pullRequests = calls.filter(call => call.route === 'pulls');
+                    assert(pullRequests.length === 1 && pullRequests[0].body.base === 'main' &&
+                        pullRequests[0].body.head.startsWith('upload/'), 'Mock PR must target a separate upload branch');
+                    const tree = calls.find(call => call.route === 'git/trees').body.tree;
+                    equal(tree.map(item => item.path), [testCase.url], 'Mock tree must contain only the fixture HTML');
+                    const artifact = { title: testCase.recipe.title, html, prBody: pullRequests[0].body.body,
+                        expectedIndex: { title: testCase.recipe.title, url: testCase.url, ingredients: testCase.expected } };
+                    artifacts.recipes.push(artifact);
+                    assert(artifact.prBody.includes('## Review before merging') &&
+                        artifact.prBody.includes('Source evidence is missing') && !artifact.prBody.includes(hostile),
+                        'PR must surface missing evidence and escape source notes');
+                    report(true, `${testCase.recipe.title}: DOM form → worker.fetch → extraction → template → captured mock PR.`);
+
+                    const recipeFrame = await loadFrame(html, `${testCase.recipe.title}: actual recipe.js`, `/${testCase.recipe.category}/`);
+                    checkRun(run);
+                    const page = recipeFrame.contentDocument;
+                    await waitFor(() => page.querySelector('.stepper-value'), page.body, 'real recipe.js scaler');
+                    checkRun(run);
+                    equal(ingredientLines(page), testCase.expected, 'Rendered ingredient lines');
+                    assert(page.querySelector('.stepper-value').textContent === '8', 'Initial servings must be eight');
+                    assert(page.querySelector('#tips').textContent.includes('not mechanically scalable'), 'Uncertain quantities need a review warning');
+                    if (testCase === cases[0]) {
+                        assert(html.includes('&lt;script&gt;') && !html.includes(hostile), 'Source markup must be escaped in captured HTML');
+                        equal(page.querySelector('#steps ol li:last-child').textContent, hostile, 'Escaped source text must display literally');
+                        equal(page.querySelector('.source-link').textContent, `Adapted from ${hostile}`, 'Source name must display literally');
+                        assert(!recipeFrame.contentWindow.recipeSourceExecuted && !page.querySelector('#steps script'), 'Source must never execute');
+                        report(true, 'Beer-brats serving ingredients and optional quantities preserved; hostile source text escaped.');
+                    }
+                    const nutrition = page.querySelector('.nutrition-list')?.textContent;
+                    const nutritionSource = page.querySelector('.nutrition-source')?.textContent;
+                    changeServings(recipeFrame, 'Increase servings');
+                    equal(page.querySelector('.stepper-value').textContent, '16', 'Doubled servings');
+                    equal(ingredientLines(page), testCase.doubled, 'Both range endpoints/counts scale; unresolved quantities stay intact');
+                    if (testCase.recipe.weight) {
+                        equal(weights(page), ['~976 g', '~960 g', '~60 g'], 'Only batch weight scales');
+                        equal(page.querySelector('.ingredient-grams').textContent, '(~976 g)', 'Ingredient gram weight scales');
+                        equal(page.querySelector('.nutrition-list').textContent, nutrition, 'Per-serving nutrition remains unchanged');
+                        assert(page.querySelector('.nutrition-source').textContent.includes('Batch scaled to 16 servings'), 'Nutrition must label the scaled batch');
+                    }
+                    changeServings(recipeFrame, 'Decrease servings');
+                    equal(page.querySelector('.stepper-value').textContent, '8', 'Original servings restored');
+                    equal(ingredientLines(page), testCase.expected, 'Original ingredient lines restored without cumulative drift');
+                    if (testCase.recipe.weight) {
+                        equal(weights(page), ['~488 g', '~480 g', '~60 g'], 'Original batch weight restored');
+                        equal(page.querySelector('.ingredient-grams').textContent, '(~488 g)', 'Original ingredient grams restored');
+                        equal(page.querySelector('.nutrition-list').textContent, nutrition, 'Nutrition unchanged after round trip');
+                        equal(page.querySelector('.nutrition-source').textContent, nutritionSource, 'Original nutrition source restored');
+                    }
+                    report(true, `${testCase.recipe.title}: actual recipe.js scales 8 → 16 → 8 with correct range, package, and weight semantics.`);
+                }
+                const beforeRejected = artifacts.githubRequests.length;
+                currentCase = { recipe: { ...structuredClone(validRecipe), evidence: [
+                    { field: '/servings', status: 'verified', sources: [], note: 'Untrusted verification claim.' }
+                ] } };
+                const rejectedForm = uploadFrame.contentDocument;
+                rejectedForm.getElementById('passphrase').value = 'browser-fixture-only';
+                rejectedForm.getElementById('recipe').value = `Synthetic invalid response\n${hostile}`;
+                rejectedForm.getElementById('upload-form').requestSubmit();
+                await waitFor(() => !rejectedForm.querySelector('.submit-btn').disabled &&
+                    !rejectedForm.getElementById('upload-status').classList.contains('status-processing'),
+                    rejectedForm.body, 'malformed-evidence error response');
+                checkRun(run);
+                assert(rejectedForm.getElementById('upload-status').classList.contains('status-error'),
+                    'Malformed evidence must surface an error in the real upload form');
+                equal(artifacts.githubRequests.length, beforeRejected, 'Rejected output must make no GitHub requests');
+                assert(extractionCount === cases.length + 1, 'Exactly one mocked extraction per form submission, without repair calls');
+                const finalStatuses = [...kvValues.values()].map(value => JSON.parse(value).status);
+                equal(finalStatuses.filter(status => status === 'complete').length, cases.length, 'Valid uploads complete');
+                equal(finalStatuses.filter(status => status === 'error').length, 1, 'Rejected upload records an error');
+                report(true, 'Malformed model evidence displays an upload error without any GitHub request or extra extraction call.');
+
+                const indexData = artifacts.recipes.map(recipe => recipe.expectedIndex);
+                checkRun(run);
+                localStorage.setItem(storageKeys[0], JSON.stringify(indexData.map(recipe => recipe.url.replace(/\.html$/, ''))));
+                let indexFetches = 0;
+                const shoppingFrame = await loadFrame(shoppingHTML, 'Real shopping-list.html with synthetic recipes.json', '/', async (input) => {
+                    checkRun(run);
+                    equal(new URL(String(input), location.origin).href, `${location.origin}/assets/recipes.json`, 'Only recipes.json may be requested');
+                    indexFetches++;
+                    return Response.json(indexData);
+                });
+                checkRun(run);
+                const shoppingPage = shoppingFrame.contentDocument;
+                await waitFor(() => shoppingPage.querySelectorAll('.shopping-item').length > 0, shoppingPage.body, 'shopping render');
+                checkRun(run);
+                equal(indexFetches, 1, 'Shopping must use one synthetic index, never the real recipes.json');
+                equal(shoppingPage.getElementById('shopping-recipe-count').textContent, '2 recipes', 'Only fixture recipes selected');
+                const shoppingLines = Array.from(shoppingPage.querySelectorAll('.shopping-item-text'), item => item.textContent);
+                const expectedShopping = ['1–2 pkg bratwurst', '4–6 cans beer', '8 buns',
+                    'Sauerkraut (optional), for serving', 'Mustard (optional), for serving',
+                    '2 cups broth', '2 (10-12 ounce) packages noodles', 'Salt to taste', ...unsupported];
+                equal(shoppingLines.slice().sort(), expectedShopping.slice().sort(), 'Actual shopping display retains all expected ingredient lines');
+                const checkbox = shoppingPage.querySelector('.shopping-checkbox');
+                checkbox.click();
+                assert(checkbox.checked && Object.values(JSON.parse(localStorage.getItem(storageKeys[1]))).some(Boolean),
+                    'Real shopping checkbox must persist fixture checkmarks');
+                assert(shoppingPage.querySelectorAll('.shopping-item-sources').length === expectedShopping.length,
+                    'Every shopping ingredient must retain its fixture recipe attribution');
+                artifacts.shoppingLines = shoppingLines;
+                report(true, 'Actual shopping-list.js renders ranges, serving/optional ingredients, unsupported ranges, and package sizes; checkbox persistence works.');
+                if (frameError) throw frameError;
+            } catch (error) {
+                report(false, error.stack || error.message || String(error));
+            } finally {
+                // Remove scripts/listeners before returning the original shopping state.
+                stopFrames();
+                // Keep fetch intercepted and new runs locked until in-process Worker calls
+                // settle. A stuck Worker must not resume against native fetch or a new run.
+                let workersSettled = false;
+                try {
+                    await bounded(Promise.allSettled(run.workerTasks), 'mock Worker cleanup', run, true);
+                    workersSettled = true;
+                } catch (error) {
+                    run.controller.abort();
+                    report(false, `${error.message}; reload the fixture before another run.`);
+                }
+                if (workersSettled) window.fetch = originalFetch;
+                try {
+                    if (savedStorage) {
+                        const expectedStorage = savedStorage.slice();
+                        restoreStorage();
+                        equal(storageKeys.map(key => [key, localStorage.getItem(key)]), expectedStorage, 'Original shopping storage restored byte-for-byte');
+                        report(true, 'Original shopping-list localStorage restored byte-for-byte.');
+                    }
+                } catch (error) {
+                    report(false, `Storage restoration: ${error.message}`);
+                }
+                artifacts.passCount = passCount;
+                artifacts.failCount = failCount;
+                document.documentElement.dataset.testStatus = run.controller.signal.aborted ? 'cancelled' : failCount ? 'fail' : 'pass';
+                if (workersSettled) {
+                    runButton.disabled = false;
+                    activeRun = null;
+                    running = false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 /** Deterministic upload boundary; this does not interpret arbitrary recipe prose. */
 import { slugify } from './github.js';
+import { validateEvidence } from './recipe-evidence.js';
 
 const CATEGORIES = new Set([
     'appetizers', 'beverages', 'breakfast', 'desserts', 'main-dishes', 'salads',
@@ -82,7 +83,7 @@ function checkUnit(value, unit, field) {
 export function validateRecipeData(recipe) {
     object(recipe, ['title', 'subtitle', 'category', 'prepTime', 'cookTime', 'totalTime',
         'servings', 'method', 'ingredients', 'steps', 'tips', 'nutrition', 'weight',
-        'sourceUrl', 'sourceName', 'photoPrompt'], 'recipe');
+        'sourceUrl', 'sourceName', 'photoPrompt', 'evidence'], 'recipe');
     for (const field of ['title', 'subtitle', 'category', 'prepTime', 'cookTime', 'totalTime', 'method']) {
         string(recipe[field], field);
     }
@@ -146,6 +147,7 @@ export function validateRecipeData(recipe) {
         for (const field of ['uncooked', 'cooked', 'perServing']) checkUnit(recipe.weight[field], 'g', `weight.${field}`);
     }
 
+    validateEvidence(recipe);
     const tips = [...(recipe.tips || [])];
     function review(text) {
         if (!tips.some(tip => tip.title === 'Review source data' && tip.text === text)) {

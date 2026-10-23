@@ -101,6 +101,37 @@ Extraction must cross-check preparation and serving instructions for missing foo
 
 Ingredient completeness, source quantity relationships, duplicate food names, conversion accuracy, nutrition provenance, and inclusion assumptions remain model-dependent and need human review. Schema validation doesn't establish that arbitrary recipe prose is correct or prevent every prompt-injection attempt. Per-serving nutrition remains unchanged when the browser changes only batch size.
 
+### Source evidence and PR review
+
+The extraction schema adds an optional top-level `evidence` array. New extractions are instructed to cover `/servings`, `/ingredients/N/text`, `/ingredients/N/grams`, `/nutrition`, and `/weight`. Ingredient indexes are zero-based. Existing recipes and saved responses without evidence still work; their PR review explicitly reports missing provenance. Recipe HTML and browser/index contracts don't change.
+
+```json
+{
+  "field": "/ingredients/2/text",
+  "status": "inferred",
+  "sources": [{ "source": "text", "quote": "Makes 8 sandwiches, one bun each." }],
+  "note": "Eight buns follow from the explicit sandwich count and one-bun relationship."
+}
+```
+
+`status` is `stated`, `inferred`, `estimated`, or `unknown`. It classifies the amount or calculation, not whether the named food exists. A source saying “serve with mustard” supports the ingredient but leaves its amount unknown. Unknown entries can have no excerpt. Other entries need a nonempty literal quote. Sources are `text`, `urlContent`, `notes`, or `attachment`. Only unique existing target fields are allowed. Malformed evidence, invented status names, and model-supplied verification flags fail validation before rendering or GitHub requests.
+
+The Worker checks each text excerpt against its submitted source channel. `literal-match` means only that the exact characters occur there. `not-found` and `unavailable` become nonblocking review flags. Attachment excerpts are `model-reported`, never independently verified. Quote presence doesn't establish that an inference, conversion, nutrition value, or source interpretation is correct. A missing field, inferred quantity, estimate, unknown value, or unverified attachment remains visible for human review.
+
+Each recipe PR starts with **Review before merging**, followed by model-reported Tips and nutrition/weight assumptions. A collapsible evidence table shows the field value, classification, excerpts, deterministic checks, and explanation. Source text and contributor metadata are escaped for Markdown/HTML and mentions. No new review page, automatic approval, or extra model call is added. Evidence excerpts become part of the PR, so only relevant recipe facts should be quoted. Avoid personal information, credentials, and unrelated contributor notes; this isn't an automated privacy guarantee.
+
+The output limit is 8,192 tokens to leave room for evidence on ingredient-rich recipes. This raises the maximum output-token cost compared with the prior 4,096 limit, not the number of model calls. Actual charges depend on usage and provider pricing. Very large recipes can still truncate; `max_tokens` remains an explicit error, with no automatic retry or repair.
+
+### Real-browser recipe pipeline checks
+
+Serve the repository with `python3 scripts/serve.py 8765`, open `http://localhost:8765/worker/test/browser/recipe-pipeline.html` in a browser, and click **Run checks**. This fixture loads the real upload form, executes the Worker in-browser with mocked fetch/KV, captures the HTML and mock PR, runs the real scaler, and opens the real shopping-list page. It also checks malformed evidence rejection without GitHub requests. It refuses remote hosting, intercepts before submission, blocks native outbound traffic, and restores the two shopping-list storage entries after each run. A fresh browser profile is still preferred.
+
+Completion is exposed as `document.documentElement.dataset.testStatus` (`pass`, `fail`, or `cancelled`), counts in `#results`, and synthetic artifacts in `window.recipePipelineArtifacts`. Navigation invalidates the active run before stopping frames and restoring storage. Resumed work can't write a new shopping selection. The fixture keeps new runs locked and fetch intercepted until in-process Worker calls settle; a cleanup timeout requires reloading the fixture. Frames and waits are bounded. A failed import or script renders FAIL. Shopping data uses explicit expected index lines; the fixture doesn't run Python. Compare its captured HTML with `RecipeParser` separately. Existing Node consumer tests already run that parser without writing generated files. Desktop Chrome or a narrow viewport doesn't establish iPhone Safari or handwriting recognition behavior.
+
+Run `node --test worker/test/browser-fixture-lifecycle.test.js` for deterministic suspend/resume regressions. These execute the actual fixture script with simulated imports, DOM/page scripts, Worker, transport, and BFCache events. They aren't proof that a particular browser restored the page from its native BFCache.
+
+The separate evaluation harness in [`eval/README.md`](eval/README.md) supplies six synthetic cases, no-cost dry-run/replay, and an explicitly approved live mode capped at six extraction calls. It uses the production request builder and response validator. Mocked responses test the harness, not model compliance. Live runs require an exported credential, record per-check outcomes and actual token usage, and never upload or publish recipes.
+
 Focused local checks (Node and Python 3, no added dependencies):
 
 ```bash

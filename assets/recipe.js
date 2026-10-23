@@ -329,22 +329,24 @@
         if (leading && new RegExp('^(?:to\\s+|—\\s*)[\\d' + FRAC_CHARS + ']', 'i')
             .test(fullText.trim().substring(leading.end).trim())) return;
 
-        // Check for range pattern: "7–10" or "½–1½"
-        var rangeMatch = fullText.trimStart().match(/^(.+?)\s*([–\-])\s*/);
+        // Only a separator immediately after the first quantity starts a range.
+        // Later dashes may belong to a package size, not the leading count.
+        var afterLeading = leading ? fullText.trimStart().substring(leading.end) : '';
+        var rangeMatch = afterLeading.match(/^\s*([–\-])\s*/);
         if (rangeMatch) {
-            var firstPart = rangeMatch[1];
-            var afterDash = fullText.trimStart().substring(rangeMatch[0].length);
-            var first = parseLeadingQty(firstPart);
+            var afterDash = afterLeading.substring(rangeMatch[0].length);
             var second = parseLeadingQty(afterDash);
-            // A later dash may belong to a package size, not the leading count.
-            if (first && first.end === firstPart.trim().length && second &&
-                /^\s/.test(afterDash.substring(second.end)) && second.value > first.value) {
-                li.setAttribute('data-orig-qty', first.value);
-                li.setAttribute('data-orig-qty2', second.value);
-                li.setAttribute('data-orig-text', fullText);
-                li.setAttribute('data-is-range', 'true');
-                // skip to gram storage below
-            }
+            var suffix = second ? afterDash.substring(second.end) : '';
+            // Accept package parentheses and punctuation, but never fall back to
+            // scaling one endpoint of an unresolved range or a length dimension.
+            if (!second || !Number.isFinite(leading.value) || !Number.isFinite(second.value) ||
+                leading.value <= 0 || second.value <= leading.value ||
+                !/^(?:\s|[(),;:.]|$)/.test(suffix) ||
+                /^\s*(?:inch(?:es)?|in\.?|cm|mm)\b/i.test(suffix)) return;
+            li.setAttribute('data-orig-qty', leading.value);
+            li.setAttribute('data-orig-qty2', second.value);
+            li.setAttribute('data-orig-text', fullText);
+            li.setAttribute('data-is-range', 'true');
         }
 
         if (!li.hasAttribute('data-orig-qty')) {

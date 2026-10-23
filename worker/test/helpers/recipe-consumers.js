@@ -66,7 +66,7 @@ export function scaler(ingredientTexts) {
     };
     const scalingSource = recipeScript.slice(recipeScript.indexOf('    // --- Recipe scaling ---'),
         recipeScript.indexOf('// --- Step tracking ---'));
-    vm.runInNewContext('(function() {\n' + scalingSource, { document, ingredientList, updateScrollPadding: null });
+    vm.runInNewContext('(function() {\n' + scalingSource, { document, ingredientList, updateScrollPadding: null }, { timeout: 1000 });
     return {
         click(label, times) {
             const button = created.find(node => node.getAttribute('aria-label') === label);

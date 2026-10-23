@@ -9,6 +9,7 @@ import { renderRecipeHTML } from './template.js';
 import { createPR, slugify } from './github.js';
 import { MAX_UPLOAD_BYTES, UPLOAD_SIZE_ERROR } from '../../assets/upload-limits.js';
 import { validateSourceUrl } from './recipe-data.js';
+import { buildExtractionReview } from './recipe-evidence.js';
 
 /**
  * Generate a ULID-like unique ID (timestamp + random).
@@ -136,7 +137,8 @@ export async function handleUpload(request, env) {
             uploadId,
             photoPrompt: recipeData.photoPrompt || null,
             sourceImageBase64,
-            sourceImageExt
+            sourceImageExt,
+            review: buildExtractionReview(recipeData, { text, urlContent, imageBase64, notes })
         });
 
         // Update KV with success

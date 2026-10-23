@@ -115,7 +115,7 @@ test('preserves the Messages request and text, URL content, and notes inputs', a
         'anthropic-version': '2023-06-01'
     });
     const request = JSON.parse(options.body);
-    assert.equal(request.max_tokens, 4096);
+    assert.equal(request.max_tokens, 8192);
     assert.deepEqual(Object.keys(request).sort(), ['max_tokens', 'messages', 'model', 'system', 'thinking']);
     assert.equal(request.messages.length, 1);
     assert.equal(request.messages[0].role, 'user');
@@ -268,7 +268,7 @@ test('preserves declared schema keys and the photoPrompt string field', async (c
     assert.deepEqual(Object.keys(schema), [
         'title', 'subtitle', 'category', 'prepTime', 'cookTime', 'totalTime', 'servings',
         'method', 'ingredients', 'steps', 'tips', 'nutrition', 'weight', 'sourceUrl',
-        'sourceName', 'photoPrompt'
+        'sourceName', 'photoPrompt', 'evidence'
     ]);
     assert.ok(schema.photoPrompt.startsWith('string — '));
     assert.equal(schema.servings, 'number');

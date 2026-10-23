@@ -108,6 +108,47 @@ test('a package-size range is not mistaken for the leading package count when sc
     assert.equal(parseIngredient(lines[0]).qty2, null);
 });
 
+for (const [text, doubled] of [
+    ['1-2(12-ounce) cans beer', '2-4(12-ounce) cans beer'],
+    ['4–6(12-ounce) cans beer, divided', '8–12(12-ounce) cans beer, divided'],
+    ['½–1½(8-ounce) packages noodles', '1–3(8-ounce) packages noodles'],
+    ['1-2, small onions, sliced', '2-4, small onions, sliced'],
+    ['1–2; small onions', '2–4; small onions'],
+    ['1–2: small onions', '2–4: small onions'],
+    ['1-2', '2-4']
+]) {
+    test(`scales both range endpoints across suffix boundaries: ${text}`, () => {
+        const scaling = scaler([text]);
+        scaling.click('Increase servings', 8);
+        assert.deepEqual(scaling.texts(), [doubled]);
+        scaling.click('Decrease servings', 8);
+        assert.deepEqual(scaling.texts(), [text]);
+    });
+}
+
+for (const text of ['1-2-inch piece ginger', '1–2 inch piece ginger', '1–2foo', '2-1 cans beer', '1-/2 cans beer', '1-2/0 cans beer']) {
+    test(`does not partially scale an unresolved dashed leading range: ${text}`, () => {
+        const scaling = scaler([text]);
+        scaling.click('Increase servings', 8);
+        assert.deepEqual(scaling.texts(), [text]);
+        scaling.click('Decrease servings', 8);
+        assert.deepEqual(scaling.texts(), [text]);
+    });
+}
+
+test('a parenthetical range suffix survives extraction, rendering, indexing and shopping parsing', async (context) => {
+    const recipe = await extract(context, { ...validRecipe,
+        ingredients: [{ text: '1-2(12-ounce) cans beer', grams: null }] });
+    const lines = indexIngredients(renderRecipeHTML(recipe, { slug: 'test', contributor: 'Test' }));
+    const scaling = scaler(lines);
+    scaling.click('Increase servings', 8);
+    assert.deepEqual(scaling.texts(), ['2-4(12-ounce) cans beer']);
+    const parsed = parseIngredient(lines[0]);
+    assert.equal(parsed.qty, 1);
+    assert.equal(parsed.qty2, 2);
+    assert.equal(parsed.raw, '1-2(12-ounce) cans beer');
+});
+
 const unsupportedRanges = ['1 to 2 inch piece ginger', '1 to 2-inch piece ginger', '4 to 6, divided',
     '1—2 inch piece ginger', '½ to 1½-inch piece ginger'];
 
